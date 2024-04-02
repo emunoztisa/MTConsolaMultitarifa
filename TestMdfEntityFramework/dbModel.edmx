@@ -231,12 +231,15 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_bolet
             <PropertyRef Name="pkBoleto" />
           </Key>
           <Property Name="pkBoleto" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="pkBoletoTISA" Type="bigint" />
           <Property Name="fkAsignacion" Type="bigint" />
           <Property Name="fkLugarOrigen" Type="bigint" />
           <Property Name="fkLugarDestino" Type="bigint" />
-          <Property Name="fkStatus" Type="int" />
+          <Property Name="fkStatus" Type="bigint" />
           <Property Name="folio" Type="nvarchar" MaxLength="100" />
-          <Property Name="total" Type="nvarchar" MaxLength="50" />
+          <Property Name="total" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="enviado" Type="int" />
+          <Property Name="confirmadoTISA" Type="int" />
           <Property Name="created_at" Type="nvarchar" MaxLength="50" />
           <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
           <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
@@ -248,12 +251,15 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_bolet
             <PropertyRef Name="pkBoletoDetalle" />
           </Key>
           <Property Name="pkBoletoDetalle" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="pkBoletoDetalleTISA" Type="bigint" />
           <Property Name="fkBoleto" Type="bigint" />
-          <Property Name="fkPerfil" Type="int" />
-          <Property Name="fkTarifa" Type="int" />
-          <Property Name="fkStatus" Type="int" />
+          <Property Name="fkPerfil" Type="bigint" />
+          <Property Name="fkTarifa" Type="bigint" />
+          <Property Name="fkStatus" Type="bigint" />
           <Property Name="cantidad" Type="int" />
-          <Property Name="subtotal" Type="nvarchar" MaxLength="50" />
+          <Property Name="subtotal" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="enviado" Type="int" />
+          <Property Name="confirmadoTISA" Type="int" />
           <Property Name="created_at" Type="nvarchar" MaxLength="50" />
           <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
           <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
@@ -388,12 +394,15 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="sy_boletos" EntityType="Self.sy_boletos" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [sy_boletos].[pkBoleto] AS [pkBoleto], 
+    [sy_boletos].[pkBoletoTISA] AS [pkBoletoTISA], 
     [sy_boletos].[fkAsignacion] AS [fkAsignacion], 
     [sy_boletos].[fkLugarOrigen] AS [fkLugarOrigen], 
     [sy_boletos].[fkLugarDestino] AS [fkLugarDestino], 
     [sy_boletos].[fkStatus] AS [fkStatus], 
     [sy_boletos].[folio] AS [folio], 
     [sy_boletos].[total] AS [total], 
+    [sy_boletos].[enviado] AS [enviado], 
+    [sy_boletos].[confirmadoTISA] AS [confirmadoTISA], 
     [sy_boletos].[created_at] AS [created_at], 
     [sy_boletos].[updated_at] AS [updated_at], 
     [sy_boletos].[deleted_at] AS [deleted_at]
@@ -402,12 +411,15 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="sy_boletos_detalle" EntityType="Self.sy_boletos_detalle" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [sy_boletos_detalle].[pkBoletoDetalle] AS [pkBoletoDetalle], 
+    [sy_boletos_detalle].[pkBoletoDetalleTISA] AS [pkBoletoDetalleTISA], 
     [sy_boletos_detalle].[fkBoleto] AS [fkBoleto], 
     [sy_boletos_detalle].[fkPerfil] AS [fkPerfil], 
     [sy_boletos_detalle].[fkTarifa] AS [fkTarifa], 
     [sy_boletos_detalle].[fkStatus] AS [fkStatus], 
     [sy_boletos_detalle].[cantidad] AS [cantidad], 
     [sy_boletos_detalle].[subtotal] AS [subtotal], 
+    [sy_boletos_detalle].[enviado] AS [enviado], 
+    [sy_boletos_detalle].[confirmadoTISA] AS [confirmadoTISA], 
     [sy_boletos_detalle].[created_at] AS [created_at], 
     [sy_boletos_detalle].[updated_at] AS [updated_at], 
     [sy_boletos_detalle].[deleted_at] AS [deleted_at]
@@ -466,8 +478,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="ct_consolas" EntityType="databaseModel.ct_consolas" />
           <EntitySet Name="ct_taquillas" EntityType="databaseModel.ct_taquillas" />
           <EntitySet Name="ct_tarifas_montos_fijos" EntityType="databaseModel.ct_tarifas_montos_fijos" />
-          <EntitySet Name="sy_boletos" EntityType="databaseModel.sy_boletos" />
-          <EntitySet Name="sy_boletos_detalle" EntityType="databaseModel.sy_boletos_detalle" />
           <EntitySet Name="ct_corredores" EntityType="databaseModel.ct_corredores" />
           <EntitySet Name="ct_empresas" EntityType="databaseModel.ct_empresas" />
           <EntitySet Name="ct_lugares" EntityType="databaseModel.ct_lugares" />
@@ -477,6 +487,8 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="ct_rutas" EntityType="databaseModel.ct_rutas" />
           <EntitySet Name="sy_status" EntityType="databaseModel.sy_status" />
           <EntitySet Name="sy_asignaciones" EntityType="databaseModel.sy_asignaciones" />
+          <EntitySet Name="sy_boletos" EntityType="databaseModel.sy_boletos" />
+          <EntitySet Name="sy_boletos_detalle" EntityType="databaseModel.sy_boletos_detalle" />
         </EntityContainer>
         <EntityType Name="config_varios">
           <Key>
@@ -609,36 +621,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="sy_boletos">
-          <Key>
-            <PropertyRef Name="pkBoleto" />
-          </Key>
-          <Property Name="pkBoleto" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="fkAsignacion" Type="Int64" />
-          <Property Name="fkLugarOrigen" Type="Int64" />
-          <Property Name="fkLugarDestino" Type="Int64" />
-          <Property Name="fkStatus" Type="Int32" />
-          <Property Name="folio" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="total" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="sy_boletos_detalle">
-          <Key>
-            <PropertyRef Name="pkBoletoDetalle" />
-          </Key>
-          <Property Name="pkBoletoDetalle" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="fkBoleto" Type="Int64" />
-          <Property Name="fkPerfil" Type="Int32" />
-          <Property Name="fkTarifa" Type="Int32" />
-          <Property Name="fkStatus" Type="Int32" />
-          <Property Name="cantidad" Type="Int32" />
-          <Property Name="subtotal" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityType Name="ct_corredores">
           <Key>
             <PropertyRef Name="pkCorredor" />
@@ -753,6 +735,42 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="ihora" Type="Int32" />
           <Property Name="cantidadAsientosDisp" Type="Int32" />
           <Property Name="recurrente" Type="Int32" />
+          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="sy_boletos">
+          <Key>
+            <PropertyRef Name="pkBoleto" />
+          </Key>
+          <Property Name="pkBoleto" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="pkBoletoTISA" Type="Int64" />
+          <Property Name="fkAsignacion" Type="Int64" />
+          <Property Name="fkLugarOrigen" Type="Int64" />
+          <Property Name="fkLugarDestino" Type="Int64" />
+          <Property Name="fkStatus" Type="Int64" />
+          <Property Name="folio" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="total" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="enviado" Type="Int32" />
+          <Property Name="confirmadoTISA" Type="Int32" />
+          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="sy_boletos_detalle">
+          <Key>
+            <PropertyRef Name="pkBoletoDetalle" />
+          </Key>
+          <Property Name="pkBoletoDetalle" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="pkBoletoDetalleTISA" Type="Int64" />
+          <Property Name="fkBoleto" Type="Int64" />
+          <Property Name="fkPerfil" Type="Int64" />
+          <Property Name="fkTarifa" Type="Int64" />
+          <Property Name="fkStatus" Type="Int64" />
+          <Property Name="cantidad" Type="Int32" />
+          <Property Name="subtotal" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="enviado" Type="Int32" />
+          <Property Name="confirmadoTISA" Type="Int32" />
           <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -926,38 +944,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="sy_boletos">
-            <EntityTypeMapping TypeName="databaseModel.sy_boletos">
-              <MappingFragment StoreEntitySet="sy_boletos">
-                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="total" ColumnName="total" />
-                <ScalarProperty Name="folio" ColumnName="folio" />
-                <ScalarProperty Name="fkStatus" ColumnName="fkStatus" />
-                <ScalarProperty Name="fkLugarDestino" ColumnName="fkLugarDestino" />
-                <ScalarProperty Name="fkLugarOrigen" ColumnName="fkLugarOrigen" />
-                <ScalarProperty Name="fkAsignacion" ColumnName="fkAsignacion" />
-                <ScalarProperty Name="pkBoleto" ColumnName="pkBoleto" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="sy_boletos_detalle">
-            <EntityTypeMapping TypeName="databaseModel.sy_boletos_detalle">
-              <MappingFragment StoreEntitySet="sy_boletos_detalle">
-                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="subtotal" ColumnName="subtotal" />
-                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
-                <ScalarProperty Name="fkStatus" ColumnName="fkStatus" />
-                <ScalarProperty Name="fkTarifa" ColumnName="fkTarifa" />
-                <ScalarProperty Name="fkPerfil" ColumnName="fkPerfil" />
-                <ScalarProperty Name="fkBoleto" ColumnName="fkBoleto" />
-                <ScalarProperty Name="pkBoletoDetalle" ColumnName="pkBoletoDetalle" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="ct_corredores">
             <EntityTypeMapping TypeName="databaseModel.ct_corredores">
               <MappingFragment StoreEntitySet="ct_corredores">
@@ -1082,6 +1068,44 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
                 <ScalarProperty Name="fkUnidad" ColumnName="fkUnidad" />
                 <ScalarProperty Name="fkRuta" ColumnName="fkRuta" />
                 <ScalarProperty Name="pkAsignacion" ColumnName="pkAsignacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sy_boletos">
+            <EntityTypeMapping TypeName="databaseModel.sy_boletos">
+              <MappingFragment StoreEntitySet="sy_boletos">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="confirmadoTISA" ColumnName="confirmadoTISA" />
+                <ScalarProperty Name="enviado" ColumnName="enviado" />
+                <ScalarProperty Name="total" ColumnName="total" />
+                <ScalarProperty Name="folio" ColumnName="folio" />
+                <ScalarProperty Name="fkStatus" ColumnName="fkStatus" />
+                <ScalarProperty Name="fkLugarDestino" ColumnName="fkLugarDestino" />
+                <ScalarProperty Name="fkLugarOrigen" ColumnName="fkLugarOrigen" />
+                <ScalarProperty Name="fkAsignacion" ColumnName="fkAsignacion" />
+                <ScalarProperty Name="pkBoletoTISA" ColumnName="pkBoletoTISA" />
+                <ScalarProperty Name="pkBoleto" ColumnName="pkBoleto" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sy_boletos_detalle">
+            <EntityTypeMapping TypeName="databaseModel.sy_boletos_detalle">
+              <MappingFragment StoreEntitySet="sy_boletos_detalle">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="confirmadoTISA" ColumnName="confirmadoTISA" />
+                <ScalarProperty Name="enviado" ColumnName="enviado" />
+                <ScalarProperty Name="subtotal" ColumnName="subtotal" />
+                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
+                <ScalarProperty Name="fkStatus" ColumnName="fkStatus" />
+                <ScalarProperty Name="fkTarifa" ColumnName="fkTarifa" />
+                <ScalarProperty Name="fkPerfil" ColumnName="fkPerfil" />
+                <ScalarProperty Name="fkBoleto" ColumnName="fkBoleto" />
+                <ScalarProperty Name="pkBoletoDetalleTISA" ColumnName="pkBoletoDetalleTISA" />
+                <ScalarProperty Name="pkBoletoDetalle" ColumnName="pkBoletoDetalle" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -58,13 +58,39 @@ namespace TestMdfEntityFramework.Views
 
         //TIMERS
         DispatcherTimer timerWait = new DispatcherTimer();
-        private string ESTATUS = "0";
         DispatcherTimer timerEvalua = new DispatcherTimer();
 
 
-        //DEFINICION DE DELEGADOS
+        #region DEFINICION DE DELEGADOS
+
+        private string ESTATUS = "0";
         delegate void delegate_actualizaTxtStatus();
         delegate_actualizaTxtStatus delegado_actualiza_txt_status = null;
+
+        private string MONTO_INGRESADO = "0";
+        delegate void delegate_actualizalblMontoIngresado();
+        delegate_actualizalblMontoIngresado delegado_actualiza_lbl_monto_ingresado = null;
+
+        #endregion
+
+        #region DEFINICIOS DE VARIABLES PARA EL PROCESO DE MULTITARIFA
+        string lugOri = "";
+        string lugDes = "";
+
+        string perfil1 = "";
+        string perfil2 = "";
+        string perfil3 = "";
+        string perfil4 = "";
+        string perfil5 = "";
+        string perfil6 = "";
+
+        int cant1 = 0;
+        int cant2 = 0;
+        int cant3 = 0;
+        int cant4 = 0;
+        int cant5 = 0;
+        int cant6 = 0;
+        #endregion
 
 
         public CobroMultitarifaV1()
@@ -76,14 +102,11 @@ namespace TestMdfEntityFramework.Views
             delegado_actualiza_txt_status = new delegate_actualizaTxtStatus(actualizaTxtStatus);
             delegado_actualiza_txt_status();
 
+            delegado_actualiza_lbl_monto_ingresado = new delegate_actualizalblMontoIngresado(actualizalblMontoIngresado);
+            delegado_actualiza_lbl_monto_ingresado();
+
             configura_puerto_serial(); // UTILIZA ENTITY FRAMEWORK CON CONEXION A database.mdf
 
-            // REGISTRAR EVENTO DEL LOS COMBOS
-            //cmbPerfilUno.SelectionChanged += new SelectionChangedEventHandler(cmbPerfilUno_SelectionChanged);
-            //cmbPerfilDos.SelectionChanged += new SelectionChangedEventHandler(cmbPerfilDos_SelectionChanged);
-
-            //cmbCantUno.SelectionChanged += new SelectionChangedEventHandler(cmbCantUno_SelectionChanged);
-            //cmbCantDos.SelectionChanged += new SelectionChangedEventHandler(cmbCantDos_SelectionChanged);
         }
 
         #region EVENTOS BOTONES Y VENTANAS
@@ -106,161 +129,189 @@ namespace TestMdfEntityFramework.Views
         }
         private void btnCobrar_Click(object sender, RoutedEventArgs e)
         {
-            bloqueaCamposMientrasIngresaMonedas();
-
-            inicializa_timer_wait();
-            inicializa_timer_evalua();
-
-            const Int32 K_posicionCantidadTarifas = 11;
-            //const decimal CantidadDatos = 17;
-            const decimal Comando = 1;
-            //const byte CantidadTarifas = 1;
-            const decimal CRC1 = 193;
-            const decimal CRC2 = 194;
-
-            Int32 CantidadDatos = 0;
-            Decimal CantidadTarifas = 0;
-
-            //FOLIO BOLETO
-            UInt32 folioVenta = 1; //ObtenerUltimoFolioInsertado(); CONSULTA LA BASE DE DATOS database.mdf
-            folioVenta += 1;
-
-            DateTime varFechaHora = DateTime.Now;
-
-            byte[] BCDDateTime = ToBCD_DT(varFechaHora);
-
-            ClearBufferSendData();
-
-            BufferSendData[0] = decimal.ToByte(ByteInicio);
-            BufferSendData[1] = decimal.ToByte(AddressConsola);
-            BufferSendData[2] = decimal.ToByte(AddressAlcancia);
-
-            BufferSendData[4] = decimal.ToByte(Comando);
-            CantidadDatos += 1;
-
-            // PREGUNTAR A GILBERTO
-            varInteger32ToByte(K_offsetDatos + CantidadDatos, folioVenta);
-            CantidadDatos += 4;
-
-            //COLOCA FECHA EN EL BUFFER
-            BufferSendData[9] = BCDDateTime[0];
-            BufferSendData[10] = BCDDateTime[1];
-            BufferSendData[11] = BCDDateTime[2];
-            BufferSendData[12] = BCDDateTime[3];
-            BufferSendData[13] = BCDDateTime[4];
-            BufferSendData[14] = BCDDateTime[5];
-            CantidadDatos += 6;
-
-            // Se incrementa la variable de "CantidadDatos" para compensar la posición de las tarifas
-            //BufferSendData[K_offsetDatos + K_posicionCantidadTarifas] = decimal.ToByte(CantidadTarifas);
-            CantidadDatos += 1;
-
-
-            //PERFIL y CANT UNO
-            string tarifa_1 = ObtenerTarifa(1); // YA OBTIENE LA TARIFA CON EL PERFIL y CANTIDAD
-            tarifa_1 = tarifa_1.Replace(".", "");
-            UInt32 PrecioTarifa1 = Convert.ToUInt32(tarifa_1);
-            int cant1 = Convert.ToInt32(cmbCantUno.Text);
-            if (!(cant1 == 0) && !(PrecioTarifa1 == 0))
+            try
             {
-                BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(cant1);
+                bloqueaCamposMientrasIngresaMonedas();
+
+                //inicializa_timer_wait();
+                //inicializa_timer_evalua();
+
+                const Int32 K_posicionCantidadTarifas = 11;
+                //const decimal CantidadDatos = 17;
+                const decimal Comando = 1;
+                //const byte CantidadTarifas = 1;
+                const decimal CRC1 = 193;
+                const decimal CRC2 = 194;
+
+                Int32 CantidadDatos = 0;
+                Decimal CantidadTarifas = 0;
+
+                //FOLIO BOLETO
+                UInt32 folioVenta = 1; //ObtenerUltimoFolioInsertado(); CONSULTA LA BASE DE DATOS database.mdf
+                folioVenta += 1;
+
+                DateTime varFechaHora = DateTime.Now;
+
+                byte[] BCDDateTime = ToBCD_DT(varFechaHora);
+
+                ClearBufferSendData();
+
+                BufferSendData[0] = decimal.ToByte(ByteInicio);
+                BufferSendData[1] = decimal.ToByte(AddressConsola);
+                BufferSendData[2] = decimal.ToByte(AddressAlcancia);
+
+                BufferSendData[4] = decimal.ToByte(Comando);
                 CantidadDatos += 1;
 
-                varInteger32ToByte(K_offsetDatos + CantidadDatos, PrecioTarifa1);
+                // PREGUNTAR A GILBERTO
+                varInteger32ToByte(K_offsetDatos + CantidadDatos, folioVenta);
                 CantidadDatos += 4;
-                CantidadTarifas += 1;
-            }
 
+                //COLOCA FECHA EN EL BUFFER
+                BufferSendData[9] = BCDDateTime[0];
+                BufferSendData[10] = BCDDateTime[1];
+                BufferSendData[11] = BCDDateTime[2];
+                BufferSendData[12] = BCDDateTime[3];
+                BufferSendData[13] = BCDDateTime[4];
+                BufferSendData[14] = BCDDateTime[5];
+                CantidadDatos += 6;
 
-            //PERFIL y CANT DOS
-            string tarifa_2 = ObtenerTarifa(2); // YA OBTIENE LA TARIFA CON EL PERFIL y CANTIDAD
-            tarifa_2 = tarifa_2.Replace(".", "");
-            UInt32 PrecioTarifa2 = Convert.ToUInt32(tarifa_2);
-            int cant2 = Convert.ToInt32(cmbCantDos.Text);
-            if (!(cant2 == 0) && !(PrecioTarifa2 == 0))
-            {
-                BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(cant2);
+                // Se incrementa la variable de "CantidadDatos" para compensar la posición de las tarifas
+                //BufferSendData[K_offsetDatos + K_posicionCantidadTarifas] = decimal.ToByte(CantidadTarifas);
                 CantidadDatos += 1;
 
-                varInteger32ToByte(K_offsetDatos + CantidadDatos, PrecioTarifa2);
-                CantidadDatos += 4;
-                CantidadTarifas += 1;
-            }
 
-            //PERFIL y CANT TRES
-            string tarifa_3 = ObtenerTarifa(3); // YA OBTIENE LA TARIFA CON EL PERFIL y CANTIDAD
-            tarifa_3 = tarifa_3.Replace(".", "");
-            UInt32 PrecioTarifa3 = Convert.ToUInt32(tarifa_3);
-            int cant3 = Convert.ToInt32(cmbCantTres.Text);
-            if (!(cant3 == 0) && !(PrecioTarifa3 == 0))
+                //PERFIL y CANT UNO
+                string tarifa_1 = ObtenerTarifa(1); // YA OBTIENE LA TARIFA CON EL PERFIL y CANTIDAD
+                tarifa_1 = tarifa_1.Replace(".", "");
+                UInt32 PrecioTarifa1 = Convert.ToUInt32(tarifa_1);
+                int cant1 = Convert.ToInt32(cmbCantUno.Text);
+                if (!(cant1 == 0) && !(PrecioTarifa1 == 0))
+                {
+                    BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(cant1);
+                    CantidadDatos += 1;
+
+                    varInteger32ToByte(K_offsetDatos + CantidadDatos, PrecioTarifa1);
+                    CantidadDatos += 4;
+                    CantidadTarifas += 1;
+                }
+
+                //PERFIL y CANT DOS
+                string tarifa_2 = ObtenerTarifa(2); // YA OBTIENE LA TARIFA CON EL PERFIL y CANTIDAD
+                tarifa_2 = tarifa_2.Replace(".", "");
+                UInt32 PrecioTarifa2 = Convert.ToUInt32(tarifa_2);
+                int cant2 = Convert.ToInt32(cmbCantDos.Text);
+                if (!(cant2 == 0) && !(PrecioTarifa2 == 0))
+                {
+                    BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(cant2);
+                    CantidadDatos += 1;
+
+                    varInteger32ToByte(K_offsetDatos + CantidadDatos, PrecioTarifa2);
+                    CantidadDatos += 4;
+                    CantidadTarifas += 1;
+                }
+
+                //PERFIL y CANT TRES
+                string tarifa_3 = ObtenerTarifa(3); // YA OBTIENE LA TARIFA CON EL PERFIL y CANTIDAD
+                tarifa_3 = tarifa_3.Replace(".", "");
+                UInt32 PrecioTarifa3 = Convert.ToUInt32(tarifa_3);
+                int cant3 = Convert.ToInt32(cmbCantTres.Text);
+                if (!(cant3 == 0) && !(PrecioTarifa3 == 0))
+                {
+                    BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(cant3);
+                    CantidadDatos += 1;
+
+                    varInteger32ToByte(K_offsetDatos + CantidadDatos, PrecioTarifa3);
+                    CantidadDatos += 4;
+                    CantidadTarifas += 1;
+                }
+
+                //PERFIL y CANT CUATRO
+                string tarifa_4 = ObtenerTarifa(4); // YA OBTIENE LA TARIFA CON EL PERFIL y CANTIDAD
+                tarifa_4 = tarifa_4.Replace(".", "");
+                UInt32 PrecioTarifa4 = Convert.ToUInt32(tarifa_4);
+                int cant4 = Convert.ToInt32(cmbCantCuatro.Text);
+                if (!(cant4 == 0) && !(PrecioTarifa4 == 0))
+                {
+                    BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(cant4);
+                    CantidadDatos += 1;
+
+                    varInteger32ToByte(K_offsetDatos + CantidadDatos, PrecioTarifa4);
+                    CantidadDatos += 4;
+                    CantidadTarifas += 1;
+                }
+
+                //PERFIL y CANT CINCO
+                string tarifa_5 = ObtenerTarifa(5); // YA OBTIENE LA TARIFA CON EL PERFIL y CANTIDAD
+                tarifa_5 = tarifa_5.Replace(".", "");
+                UInt32 PrecioTarifa5 = Convert.ToUInt32(tarifa_5);
+                int cant5 = Convert.ToInt32(cmbCantCinco.Text);
+                if (!(cant5 == 0) && !(PrecioTarifa5 == 0))
+                {
+                    BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(cant5);
+                    CantidadDatos += 1;
+
+                    varInteger32ToByte(K_offsetDatos + CantidadDatos, PrecioTarifa5);
+                    CantidadDatos += 4;
+                    CantidadTarifas += 1;
+                }
+
+                //PERFIL y CANT SEIS
+                string tarifa_6 = ObtenerTarifa(6); // YA OBTIENE LA TARIFA CON EL PERFIL y CANTIDAD
+                tarifa_6 = tarifa_6.Replace(".", "");
+                UInt32 PrecioTarifa6 = Convert.ToUInt32(tarifa_6);
+                int cant6 = Convert.ToInt32(cmbCantSeis.Text);
+                if (!(cant6 == 0) && !(PrecioTarifa6 == 0))
+                {
+                    BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(cant6);
+                    CantidadDatos += 1;
+
+                    varInteger32ToByte(K_offsetDatos + CantidadDatos, PrecioTarifa6);
+                    CantidadDatos += 4;
+                    CantidadTarifas += 1;
+                }
+
+
+                //La cantidad de datos se incremento previo a copiar las tarifas y cantidad de usuarios.
+                BufferSendData[K_offsetDatos + K_posicionCantidadTarifas] = decimal.ToByte(CantidadTarifas);
+
+                BufferSendData[K_posicionCantidadDatos] = (byte)(CantidadDatos);
+
+                BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
+                BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+
+                ClearBufferRecievedDataGlobal();
+
+                //ESCRIBIR EN EL PUERTO COM DE LA ALCANCIA
+                open_serial_port();
+                puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
+                
+                //PRUEBAS GIL
+                //solicitar_status_alcancia_commando_05();
+                //solicitar_total_cobrado_ultima_venta_commando_02();
+
+                Task.WaitAll(new Task[] { Task.Delay(200) });
+                puertoSerie1.Read(RecievedDataGlobal, 0, 32);
+
+                if (RecievedDataGlobal[5] == 0)
+                {
+                    // Entrara aqui solo si la respuesta a la asignacion de tarifa es: 00
+                    // Comando recibido correctamente.
+
+                    //ClearBufferRecievedDataGlobal();
+
+                    inicializa_timer_wait();
+                    inicializa_timer_evalua();
+                }
+
+
+
+            }
+            catch (Exception ex)
             {
-                BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(cant3);
-                CantidadDatos += 1;
-
-                varInteger32ToByte(K_offsetDatos + CantidadDatos, PrecioTarifa3);
-                CantidadDatos += 4;
-                CantidadTarifas += 1;
+                MessageBox.Show(ex.Message);
             }
-
-            //PERFIL y CANT CUATRO
-            string tarifa_4 = ObtenerTarifa(4); // YA OBTIENE LA TARIFA CON EL PERFIL y CANTIDAD
-            tarifa_4 = tarifa_4.Replace(".", "");
-            UInt32 PrecioTarifa4 = Convert.ToUInt32(tarifa_4);
-            int cant4 = Convert.ToInt32(cmbCantCuatro.Text);
-            if (!(cant4 == 0) && !(PrecioTarifa4 == 0))
-            {
-                BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(cant4);
-                CantidadDatos += 1;
-
-                varInteger32ToByte(K_offsetDatos + CantidadDatos, PrecioTarifa4);
-                CantidadDatos += 4;
-                CantidadTarifas += 1;
-            }
-
-            //PERFIL y CANT CINCO
-            string tarifa_5 = ObtenerTarifa(5); // YA OBTIENE LA TARIFA CON EL PERFIL y CANTIDAD
-            tarifa_5 = tarifa_5.Replace(".", "");
-            UInt32 PrecioTarifa5 = Convert.ToUInt32(tarifa_5);
-            int cant5 = Convert.ToInt32(cmbCantCinco.Text);
-            if (!(cant5 == 0) && !(PrecioTarifa5 == 0))
-            {
-                BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(cant5);
-                CantidadDatos += 1;
-
-                varInteger32ToByte(K_offsetDatos + CantidadDatos, PrecioTarifa5);
-                CantidadDatos += 4;
-                CantidadTarifas += 1;
-            }
-
-            //PERFIL y CANT SEIS
-            string tarifa_6 = ObtenerTarifa(6); // YA OBTIENE LA TARIFA CON EL PERFIL y CANTIDAD
-            tarifa_6 = tarifa_6.Replace(".", "");
-            UInt32 PrecioTarifa6 = Convert.ToUInt32(tarifa_6);
-            int cant6 = Convert.ToInt32(cmbCantSeis.Text);
-            if (!(cant6 == 0) && !(PrecioTarifa6 == 0))
-            {
-                BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(cant6);
-                CantidadDatos += 1;
-
-                varInteger32ToByte(K_offsetDatos + CantidadDatos, PrecioTarifa6);
-                CantidadDatos += 4;
-                CantidadTarifas += 1;
-            }
-
-
-            //La cantidad de datos se incremento previo a copiar las tarifas y cantidad de usuarios.
-            BufferSendData[K_offsetDatos + K_posicionCantidadTarifas] = decimal.ToByte(CantidadTarifas);
-
-            BufferSendData[K_posicionCantidadDatos] = (byte)(CantidadDatos);
-
-            BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
-            BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
-
-
-            //ESCRIBIR EN EL PUERTO COM DE LA ALCANCIA
-            open_serial_port();
-            puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
-
 
         }
         #endregion
@@ -337,33 +388,227 @@ namespace TestMdfEntityFramework.Views
 
         private void InsertarBoleto()
         {
-            ServiceBoletos serv_boletos = new ServiceBoletos();
-            sy_boletos sb = new sy_boletos();
-            sb.fkAsignacion = asign_activa.pkAsignacion;
-            sb.fkLugarOrigen = 0;
-            sb.fkLugarDestino = 0;
-            sb.fkStatus = 1;
-            sb.folio = "";
-            sb.total = "";
-            sb.created_at = "";
-            sb.updated_at = "";
+            try
+            {
+                ServiceTarifas serv_tarifas = new ServiceTarifas();
 
-            serv_boletos.addEntity(sb);
+                List<sy_boletos_detalle> list_boletos_detalle = new List<sy_boletos_detalle>();
+                Int64 pkBoletoInserted = 0;
+
+                double total = 0;
+
+                if (lugOri != "" && lugDes != "")
+                {
+                    //obtener los fk de lugar origen y destino
+                    ServiceLugares serv_lug = new ServiceLugares();
+                    ct_lugares fkLugarOrigen = serv_lug.getEntityByNombre(lugOri);
+                    ct_lugares fkLugarDestino = serv_lug.getEntityByNombre(lugDes);
+
+                    // Validacion si hay por lo menos un perfil y cantidad para insertar el boleto
+                    if ((perfil1 != "" && cant1 != 0) || (perfil2 != "" && cant2 != 0) ||
+                        (perfil3 != "" && cant3 != 0) || (perfil4 != "" && cant4 != 0) ||
+                        (perfil5 != "" && cant5 != 0) || (perfil6 != "" && cant6 != 0)){
+
+                        //Obtener el Folio siguiente para el boleto a insertar
+                        string siguienteFolioAInsertar = ObtenerSiguienteFolioAInsertarEnDbLocal();
+
+                        //Crear los objetos de boletos y detalle.
+                        ServiceBoletos serv_boletos = new ServiceBoletos();
+                        sy_boletos sb = new sy_boletos();
+                        sb.fkAsignacion = asign_activa.pkAsignacion;
+                        sb.fkLugarOrigen = fkLugarOrigen.pkLugar;
+                        sb.fkLugarDestino = fkLugarDestino.pkLugar;
+                        sb.fkStatus = 1;
+                        sb.folio = siguienteFolioAInsertar;
+                        sb.total = 0;
+                        sb.created_at = "";
+                        sb.updated_at = "";
+
+                        sy_boletos entity_boleto_inserted = serv_boletos.addEntityReturnPkInserted(sb);
+                        pkBoletoInserted = entity_boleto_inserted.pkBoleto;
+                    }
+
+
+                    ServiceBoletosDetalles serv_boletos_detalle = new ServiceBoletosDetalles();
+                    string fecha_actual = DateTime.Now.Date.ToLongDateString();
+                    
+                    for (int i = 1; i <= 6; i++)
+                    {
+                        sy_boletos_detalle sbd = new sy_boletos_detalle();
+                        sbd.fkBoleto = pkBoletoInserted;
+                        sbd.fkStatus = 1;
+                        sbd.created_at = fecha_actual;
+
+                        int num_perfil = i;
+                        decimal tarifa_perfil_cantidad = 0;
+
+                        switch (num_perfil)
+                        {
+                            case 1:
+                                if (perfil1 != "" && cant1 != 0)
+                                {
+                                    //obtener los fk de perfil
+                                    ServicePerfiles serv_perf = new ServicePerfiles();
+                                    ct_perfiles fkPerfil1 = serv_perf.getEntityByNombre(perfil1);
+
+                                    //sumar monto a tarifa a cobrar
+                                    sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil1.pkPerfil);
+                                    tarifa_perfil_cantidad = st.monto;
+
+                                    //construccion de la parte correspondiente para el objeto sy_boleto_detalle
+                                    sbd.fkPerfil = fkPerfil1.pkPerfil;
+                                    sbd.fkTarifa = st.pkTarifa;
+                                    sbd.cantidad = cant1;
+                                    sbd.subtotal = tarifa_perfil_cantidad;
+                                }
+
+                                break;
+                            case 2:
+                                if (perfil2 != "" && cant2 != 0)
+                                {
+                                    //obtener los fk de perfil
+                                    ServicePerfiles serv_perf = new ServicePerfiles();
+                                    ct_perfiles fkPerfil2 = serv_perf.getEntityByNombre(perfil2);
+
+                                    //sumar monto a tarifa a cobrar
+                                    sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil2.pkPerfil);
+                                    tarifa_perfil_cantidad = st.monto;
+
+                                    //construccion de la parte correspondiente para el objeto sy_boleto_detalle
+                                    sbd.fkPerfil = fkPerfil2.pkPerfil;
+                                    sbd.fkTarifa = st.pkTarifa;
+                                    sbd.cantidad = cant2;
+                                    sbd.subtotal = tarifa_perfil_cantidad;
+                                }
+                                break;
+                            case 3:
+                                if (perfil3 != "" && cant3 != 0)
+                                {
+                                    //obtener los fk de perfil
+                                    ServicePerfiles serv_perf = new ServicePerfiles();
+                                    ct_perfiles fkPerfil3 = serv_perf.getEntityByNombre(perfil3);
+
+                                    //sumar monto a tarifa a cobrar
+                                    sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil3.pkPerfil);
+                                    tarifa_perfil_cantidad = st.monto;
+
+                                    //construccion de la parte correspondiente para el objeto sy_boleto_detalle
+                                    sbd.fkPerfil = fkPerfil3.pkPerfil;
+                                    sbd.fkTarifa = st.pkTarifa;
+                                    sbd.cantidad = cant3;
+                                    sbd.subtotal = tarifa_perfil_cantidad;
+                                }
+                                break;
+                            case 4:
+                                if (perfil4 != "" && cant4 != 0)
+                                {
+                                    //obtener los fk de perfil
+                                    ServicePerfiles serv_perf = new ServicePerfiles();
+                                    ct_perfiles fkPerfil4 = serv_perf.getEntityByNombre(perfil4);
+
+                                    //sumar monto a tarifa a cobrar
+                                    sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil4.pkPerfil);
+                                    tarifa_perfil_cantidad = st.monto;
+
+                                    //construccion de la parte correspondiente para el objeto sy_boleto_detalle
+                                    sbd.fkPerfil = fkPerfil4.pkPerfil;
+                                    sbd.fkTarifa = st.pkTarifa;
+                                    sbd.cantidad = cant4;
+                                    sbd.subtotal = tarifa_perfil_cantidad;
+                                }
+                                break;
+                            case 5:
+                                if (perfil5 != "" && cant5 != 0)
+                                {
+                                    //obtener los fk de perfil
+                                    ServicePerfiles serv_perf = new ServicePerfiles();
+                                    ct_perfiles fkPerfil5 = serv_perf.getEntityByNombre(perfil5);
+
+                                    //sumar monto a tarifa a cobrar
+                                    sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil5.pkPerfil);
+                                    tarifa_perfil_cantidad = st.monto;
+
+                                    //construccion de la parte correspondiente para el objeto sy_boleto_detalle
+                                    sbd.fkPerfil = fkPerfil5.pkPerfil;
+                                    sbd.fkTarifa = st.pkTarifa;
+                                    sbd.cantidad = cant5;
+                                    sbd.subtotal = tarifa_perfil_cantidad;
+                                }
+                                break;
+                            case 6:
+                                if (perfil6 != "" && cant6 != 0)
+                                {
+                                    //obtener los fk de perfil
+                                    ServicePerfiles serv_perf = new ServicePerfiles();
+                                    ct_perfiles fkPerfil6 = serv_perf.getEntityByNombre(perfil6);
+
+                                    //sumar monto a tarifa a cobrar
+                                    sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil6.pkPerfil);
+                                    tarifa_perfil_cantidad = st.monto;
+
+                                    //construccion de la parte correspondiente para el objeto sy_boleto_detalle
+                                    sbd.fkPerfil = fkPerfil6.pkPerfil;
+                                    sbd.fkTarifa = st.pkTarifa;
+                                    sbd.cantidad = cant6;
+                                    sbd.subtotal = tarifa_perfil_cantidad;
+                                }
+                                break;
+                        }
+
+                        list_boletos_detalle.Add(sbd);
+                        
+
+                    }
+                }
+
+
+                InsertarBoletoDetalle(pkBoletoInserted,list_boletos_detalle);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
-        private void InsertarBoletoDetalle(int pkBoleto)
-        {
-            ServiceBoletosDetalles serv_boletos_detalle = new ServiceBoletosDetalles();
-            sy_boletos_detalle sbd = new sy_boletos_detalle();
-            sbd.fkBoleto = pkBoleto;
-            sbd.fkPerfil = 0;
-            sbd.fkTarifa = 0;
-            sbd.fkStatus = 1;
-            sbd.cantidad = 0;
-            sbd.subtotal = "";
-            sbd.created_at = "";
-            sbd.updated_at = "";
 
-            serv_boletos_detalle.addEntity(sbd);
+        private string ObtenerSiguienteFolioAInsertarEnDbLocal()
+        {
+            string siguienteFolioAInsertar = "";
+
+            ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
+
+            config_varios cv_pfc_ = serv_conf_varios.getEntityByClave("PREFIJO_FOLIO_CONSOLA");
+            string prefijo_folio_consola = cv_pfc_.valor;
+
+            config_varios cv_nu = serv_conf_varios.getEntityByClave("NUMERO_UNIDAD");
+            string numero_unidad = cv_nu.valor;
+
+            ServiceBoletos serv_boletos = new ServiceBoletos();
+            sy_boletos last_boleto = serv_boletos.getEntityLast();
+            siguienteFolioAInsertar = prefijo_folio_consola + "_" + numero_unidad + "_" + (last_boleto.pkBoleto + 1);
+
+            return siguienteFolioAInsertar;
+        }
+
+        private void InsertarBoletoDetalle(Int64 pkBoleto, List<sy_boletos_detalle> list_sbd)
+        {
+            foreach (var it in list_sbd)
+            {
+                ServiceBoletosDetalles serv_boletos_detalle = new ServiceBoletosDetalles();
+                sy_boletos_detalle sbd = new sy_boletos_detalle();
+                sbd.fkBoleto = pkBoleto;
+                sbd.fkPerfil = it.fkPerfil;
+                sbd.fkTarifa = it.fkTarifa;
+                sbd.fkStatus = it.fkStatus;
+                sbd.cantidad = it.cantidad;
+                sbd.subtotal = it.subtotal;
+                sbd.created_at = it.created_at;
+                sbd.updated_at = it.updated_at;
+
+                serv_boletos_detalle.addEntity(sbd);
+            }
         }
 
         #endregion
@@ -555,89 +800,103 @@ namespace TestMdfEntityFramework.Views
             }
             return tarifa_perfil_cantidad;
         }
-        private void recalcular_tarifa()
+        private void recalcular_tarifa(object sender)
         {
             try
             {
+                var currentSelectedIndex = ((ComboBox)sender).SelectedIndex;
+                string textSelected = ((ComboBox)sender).Items[currentSelectedIndex].ToString();
+                string nombreCombo = ((ComboBox)sender).Name;
 
+                switch (nombreCombo)
+                {
+                    case "cmbLugarOrigen":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            lugOri = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbLugarDestino":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            lugDes = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbPerfilUno":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            perfil1 = ((ComboBox)sender).SelectedValue.ToString().Trim();   
+                        }
+                        break;
+                    case "cmbPerfilDos":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            perfil2 = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbPerfilTres":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            perfil3 = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbPerfilCuatro":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            perfil4 = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbPerfilCinco":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            perfil5 = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbPerfilSeis":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            perfil6 = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbCantUno":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            cant1 = Convert.ToInt32(((ComboBox)sender).SelectedValue);   
+                        }
+                        break;
+                    case "cmbCantDos":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            cant2 = Convert.ToInt32(((ComboBox)sender).SelectedValue);
+                        }
+                        break;
+                    case "cmbCantTres":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            cant3 = Convert.ToInt32(((ComboBox)sender).SelectedValue);
+                        }
+                        break;
+                    case "cmbCantCuatro":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            cant4 = Convert.ToInt32(((ComboBox)sender).SelectedValue);
+                        }
+                        break;
+                    case "cmbCantCinco":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            cant5 = Convert.ToInt32(((ComboBox)sender).SelectedValue);
+                        }
+                        break;
+                    case "cmbCantSeis":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            cant6 = Convert.ToInt32(((ComboBox)sender).SelectedValue);
+                        }
+                        break;
+                }
 
                 ServiceTarifas serv_tarifas = new ServiceTarifas();
-
-                string lugOri = "";
-                string lugDes = "";
-
-                string perfil1 = "";
-                string perfil2 = "";
-                string perfil3 = "";
-                string perfil4 = "";
-                string perfil5 = "";
-                string perfil6 = "";
-
-                string cant1 = "";
-                string cant2 = "";
-                string cant3 = "";
-                string cant4 = "";
-                string cant5 = "";
-                string cant6 = "";
-
-                if (cmbLugarOrigen != null && cmbLugarOrigen.Text != "")
-                {
-                    lugOri = cmbLugarOrigen.SelectedValue.ToString().Trim();
-                }
-                if (cmbLugarDestino != null && cmbLugarDestino.Text != "")
-                {
-                    lugDes = cmbLugarDestino.SelectedValue.ToString().Trim();
-                }
-
-                if (cmbPerfilUno != null && cmbPerfilUno.Text != "")
-                {
-                    perfil1 = cmbPerfilUno.SelectedValue.ToString().Trim();
-                }
-                if (cmbPerfilDos != null && cmbPerfilDos.Text != "")
-                {
-                    perfil2 = cmbPerfilDos.SelectedValue.ToString().Trim();
-                }
-                if (cmbPerfilTres != null && cmbPerfilTres.Text != "")
-                {
-                    perfil3 = cmbPerfilTres.SelectedValue.ToString().Trim();
-                }
-                if (cmbPerfilCuatro != null && cmbPerfilCuatro.Text != "")
-                {
-                    perfil4 = cmbPerfilCuatro.SelectedValue.ToString().Trim();
-                }
-                if (cmbPerfilCinco != null && cmbPerfilCinco.Text != "")
-                {
-                    perfil5 = cmbPerfilCinco.SelectedValue.ToString().Trim();
-                }
-                if (cmbPerfilSeis != null && cmbPerfilSeis.Text != "")
-                {
-                    perfil6 = cmbPerfilSeis.SelectedValue.ToString().Trim();
-                }
-
-                if (cmbCantUno != null && cmbCantUno.Text != "")
-                {
-                    cant1 = cmbCantUno.SelectedValue.ToString().Trim();
-                }
-                if (cmbCantDos != null && cmbCantDos.Text != "")
-                {
-                    cant2 = cmbCantDos.SelectedValue.ToString().Trim();
-                }
-                if (cmbCantTres != null && cmbCantTres.Text != "")
-                {
-                    cant3 = cmbCantTres.SelectedValue.ToString().Trim();
-                }
-                if (cmbCantCuatro != null && cmbCantCuatro.Text != "")
-                {
-                    cant4 = cmbCantCuatro.SelectedValue.ToString().Trim();
-                }
-                if (cmbCantCinco != null && cmbCantCinco.Text != "")
-                {
-                    cant5 = cmbCantCinco.SelectedValue.ToString().Trim();
-                }
-                if (cmbCantSeis != null && cmbCantSeis.Text != "")
-                {
-                    cant6 = cmbCantSeis.SelectedValue.ToString().Trim();
-                }
 
                 double tarifa_a_cobrar = 0;
 
@@ -648,7 +907,7 @@ namespace TestMdfEntityFramework.Views
                     ct_lugares fkLugarOrigen = serv_lug.getEntityByNombre(lugOri);
                     ct_lugares fkLugarDestino = serv_lug.getEntityByNombre(lugDes);
 
-                    if (perfil1 != "" && cant1 != "")
+                    if (perfil1 != "" && cant1 != 0)
                     {
                         //obtener los fk de perfil
                         ServicePerfiles serv_perf = new ServicePerfiles();
@@ -658,7 +917,7 @@ namespace TestMdfEntityFramework.Views
                         sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil1.pkPerfil);
                         tarifa_a_cobrar += Convert.ToDouble(st.monto) * Convert.ToDouble(cant1);
                     }
-                    if (perfil2 != "" && cant2 != "")
+                    if (perfil2 != "" && cant2 != 0)
                     {
                         //obtener los fk de perfil
                         ServicePerfiles serv_perf = new ServicePerfiles();
@@ -668,7 +927,7 @@ namespace TestMdfEntityFramework.Views
                         sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil2.pkPerfil);
                         tarifa_a_cobrar += Convert.ToDouble(st.monto) * Convert.ToDouble(cant2);
                     }
-                    if (perfil3 != "" && cant3 != "")
+                    if (perfil3 != "" && cant3 != 0)
                     {
                         //obtener los fk de perfil
                         ServicePerfiles serv_perf = new ServicePerfiles();
@@ -678,7 +937,7 @@ namespace TestMdfEntityFramework.Views
                         sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil3.pkPerfil);
                         tarifa_a_cobrar += Convert.ToDouble(st.monto) * Convert.ToDouble(cant3);
                     }
-                    if (perfil4 != "" && cant4 != "")
+                    if (perfil4 != "" && cant4 != 0)
                     {
                         //obtener los fk de perfil
                         ServicePerfiles serv_perf = new ServicePerfiles();
@@ -688,7 +947,7 @@ namespace TestMdfEntityFramework.Views
                         sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil4.pkPerfil);
                         tarifa_a_cobrar += Convert.ToDouble(st.monto) * Convert.ToDouble(cant4);
                     }
-                    if (perfil5 != "" && cant5 != "")
+                    if (perfil5 != "" && cant5 != 0)
                     {
                         //obtener los fk de perfil
                         ServicePerfiles serv_perf = new ServicePerfiles();
@@ -698,7 +957,7 @@ namespace TestMdfEntityFramework.Views
                         sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil5.pkPerfil);
                         tarifa_a_cobrar += Convert.ToDouble(st.monto) * Convert.ToDouble(cant5);
                     }
-                    if (perfil6 != "" && cant6 != "")
+                    if (perfil6 != "" && cant6 != 0)
                     {
                         //obtener los fk de perfil
                         ServicePerfiles serv_perf = new ServicePerfiles();
@@ -717,7 +976,6 @@ namespace TestMdfEntityFramework.Views
                 MessageBox.Show(ex.Message);
             }
         }
-
         private void LimpiarCamposDespuesDeVentaBoleto()
         {
             cmbLugarOrigen.Text = "";
@@ -741,77 +999,77 @@ namespace TestMdfEntityFramework.Views
             lblMontoIngresado.Text = "";
         }
 
+        private uint obtenerMontoIngresadoActual(byte[] RecievedDataGlobal)
+        {
+            uint monto_actual_ingresado = 0;
+            monto_actual_ingresado = VarByteToUInteger32_comand_05(RecievedDataGlobal);
+            return monto_actual_ingresado;
+        }
+
         #endregion
 
         #region EVENTOS SELECTION CHANGED EN COMBOBOXES
         private void cmbPerfilUno_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recalcular_tarifa();
-        }
+            //var currentSelectedIndex = cmbPerfilUno.SelectedIndex;
+            //string textSelected = ((ComboBox)sender).Items[currentSelectedIndex].ToString();
+            //string nombreCombo = ((ComboBox)sender).Name;
 
+            recalcular_tarifa(sender);
+        }
         private void cmbPerfilDos_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recalcular_tarifa();
+            recalcular_tarifa(sender);
         }
-
         private void cmbPerfilTres_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recalcular_tarifa();
+            recalcular_tarifa(sender);
         }
-
         private void cmbPerfilCuatro_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recalcular_tarifa();
+            recalcular_tarifa(sender);
         }
-
         private void cmbPerfilCinco_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recalcular_tarifa();
+            recalcular_tarifa(sender);
         }
-
         private void cmbPerfilSeis_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recalcular_tarifa();
+            recalcular_tarifa(sender);
         }
 
         private void cmbCantUno_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recalcular_tarifa();
+            recalcular_tarifa(sender);
         }
-
         private void cmbCantDos_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recalcular_tarifa();
+            recalcular_tarifa(sender);
         }
-
         private void cmbCantTres_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recalcular_tarifa();
+            recalcular_tarifa(sender);
         }
-
         private void cmbCantCuatro_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recalcular_tarifa();
+            recalcular_tarifa(sender);
         }
-
         private void cmbCantCinco_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recalcular_tarifa();
+            recalcular_tarifa(sender);
         }
-
         private void cmbCantSeis_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recalcular_tarifa();
+            recalcular_tarifa(sender);
         }
 
         private void cmbLugarOrigen_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recalcular_tarifa();
+            recalcular_tarifa(sender);
         }
-
         private void cmbLugarDestino_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            recalcular_tarifa();
+            recalcular_tarifa(sender);
         }
         #endregion
 
@@ -1129,20 +1387,26 @@ namespace TestMdfEntityFramework.Views
                     //puertoSerie1.Dispose();
                     //open_serial_port();
 
-                    solicitar_status_alcancia();
+                    //solicitar_status_alcancia();
+                    solicitar_status_alcancia_commando_05();
 
-                    string RecievedData;
+                    //string RecievedData;
                     timerWait.IsEnabled = true;
 
                     // delay para esperar 8 de respuesta
                     // 30 funciona en debug de visual studio
                     // 100 para app instalada en raspberry
-                    Task.WaitAll(new Task[] { Task.Delay(500) });
+                    Task.WaitAll(new Task[] { Task.Delay(30) });
 
-                    RecievedData = puertoSerie1.ReadExisting();
+                    //RecievedData = puertoSerie1.ReadExisting();
 
-                    int status = Convert.ToInt32(RecievedData[5]);
+                    puertoSerie1.Read(RecievedDataGlobal, 0, 32);
+
+                    int status = Convert.ToInt32(RecievedDataGlobal[5]);
                     ESTATUS = status.ToString();
+
+                    uint monto_ingresado = obtenerMontoIngresadoActual(RecievedDataGlobal); //PENDIENTE
+                    MONTO_INGRESADO = (monto_ingresado / 100).ToString();
 
                 }
                 //open_serial_port();
@@ -1173,7 +1437,13 @@ namespace TestMdfEntityFramework.Views
                 //actualizaTxtStatus();
                 delegado_actualiza_txt_status();
 
+                //Actualiza Monto Ingresado
+                delegado_actualiza_lbl_monto_ingresado();
+
                 detiene_timers();
+
+                //INSERTAR BOLETO EN LA BASE DE DATOS LOCAL
+                InsertarBoleto();
 
                 LimpiarCamposDespuesDeVentaBoleto();
             }
@@ -1181,6 +1451,9 @@ namespace TestMdfEntityFramework.Views
             {
                 //actualizaTxtStatus();
                 delegado_actualiza_txt_status();
+
+                //Actualiza Monto Ingresado
+                delegado_actualiza_lbl_monto_ingresado();
 
                 bloqueaCamposMientrasIngresaMonedas();
             }
@@ -1200,6 +1473,13 @@ namespace TestMdfEntityFramework.Views
                 BufferSendData[i] = 0;
             }
         }
+        void ClearBufferRecievedDataGlobal()
+        {
+            for (int i = 0; i < RecievedDataGlobal.Length; i++)
+            {
+                RecievedDataGlobal[i] = 0;
+            }
+        }
         #endregion
 
         #region METODOS - ALCANCIA
@@ -1207,8 +1487,53 @@ namespace TestMdfEntityFramework.Views
         {
             //timerPoll.Enabled = false;
             string BufferSendData = "\x0001" + "\x0002" + "\x0001" + "\x0001" + "\x0000" + "\x0041" + "\x0042";
-            puertoSerie1.WriteLine(BufferSendData);
+            puertoSerie1.Write(BufferSendData);
             //timerWait.Enabled = true;
+        }
+        private void solicitar_status_alcancia_commando_05()
+        {
+            const byte ByteInicio = 1;
+            const byte AddressConsola = 1;
+            const byte AddressAlcancia = 2;
+            const byte cantidadDatos = 1;
+            const byte numeroComando = 5;
+            const byte crc1 = 41;
+            const byte crc2 = 42;
+
+            //timerPoll.Enabled = false;
+            byte[] BufferSendData = new byte[7];
+            BufferSendData[0] = ByteInicio;
+            BufferSendData[1] = AddressConsola;
+            BufferSendData[2] = AddressAlcancia;
+            BufferSendData[3] = cantidadDatos;
+            BufferSendData[4] = numeroComando;
+            BufferSendData[5] = crc1;
+            BufferSendData[6] = crc2;
+
+            puertoSerie1.Write(BufferSendData,0,7);
+            //timerWait.Enabled = true;
+        }
+        private void solicitar_total_cobrado_ultima_venta_commando_02()
+        {
+            const byte ByteInicio = 1;
+            const byte AddressConsola = 1;
+            const byte AddressAlcancia = 2;
+            const byte cantidadDatos = 1;
+            const byte numeroComando = 2;
+            const byte crc1 = 41;
+            const byte crc2 = 42;
+
+            //timerPoll.Enabled = false;
+            byte[] BufferSendData = new byte[7];
+            BufferSendData[0] = ByteInicio;
+            BufferSendData[1] = AddressConsola;
+            BufferSendData[2] = AddressAlcancia;
+            BufferSendData[3] = cantidadDatos;
+            BufferSendData[4] = numeroComando;
+            BufferSendData[5] = crc1;
+            BufferSendData[6] = crc2;
+
+            puertoSerie1.Write(BufferSendData, 0, 7);
         }
 
         #endregion
@@ -1231,12 +1556,36 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[IndiceBuffer + 2] = (byte)(Var32 >> 16);
             BufferSendData[IndiceBuffer + 3] = (byte)(Var32 >> 24);
         }
+        private uint VarByteToUInteger32(Int32 IndiceBuffer)
+        {
+            uint varFolioTemporal = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                varFolioTemporal <<= 8;
+                varFolioTemporal |= RecievedDataGlobal[IndiceBuffer--];
+            }
+            return varFolioTemporal;
+        }
+        private uint VarByteToUInteger32_comand_05(byte[] RecievedDataGlobal)
+        {
+            uint varCantTemp = 0;
+            for (int i = 9; i >= 6; i--) // para iterar por las posiciones de ReceivedData, donde sabemos viene el monto actual ingresado.
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            return varCantTemp;
+        }
         #endregion
 
         #region METODOS - DELEGADOS
         private void actualizaTxtStatus()
         {
             txtStatus.Text = ESTATUS;
+        }
+        private void actualizalblMontoIngresado()
+        {
+            lblMontoIngresado.Text = MONTO_INGRESADO;
         }
 
         #endregion

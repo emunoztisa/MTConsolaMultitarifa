@@ -15,12 +15,15 @@ namespace TestMdfEntityFramework
     public partial class sy_boletos_detalle
     {
         public long pkBoletoDetalle { get; set; }
+        public Nullable<long> pkBoletoDetalleTISA { get; set; }
         public Nullable<long> fkBoleto { get; set; }
-        public Nullable<int> fkPerfil { get; set; }
-        public Nullable<int> fkTarifa { get; set; }
-        public Nullable<int> fkStatus { get; set; }
+        public Nullable<long> fkPerfil { get; set; }
+        public Nullable<long> fkTarifa { get; set; }
+        public Nullable<long> fkStatus { get; set; }
         public Nullable<int> cantidad { get; set; }
-        public string subtotal { get; set; }
+        public Nullable<decimal> subtotal { get; set; }
+        public Nullable<int> enviado { get; set; }
+        public Nullable<int> confirmadoTISA { get; set; }
         public string created_at { get; set; }
         public string updated_at { get; set; }
         public string deleted_at { get; set; }

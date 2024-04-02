@@ -17,8 +17,6 @@
         <EntityTypeShape EntityType="databaseModel.ct_consolas" Width="1.5" PointX="9" PointY="3.375" />
         <EntityTypeShape EntityType="databaseModel.ct_taquillas" Width="1.5" PointX="7.375" PointY="3.375" />
         <EntityTypeShape EntityType="databaseModel.ct_tarifas_montos_fijos" Width="1.875" PointX="9" PointY="6.125" />
-        <EntityTypeShape EntityType="databaseModel.sy_boletos" Width="1.5" PointX="2.125" PointY="6" />
-        <EntityTypeShape EntityType="databaseModel.sy_boletos_detalle" Width="1.75" PointX="3.75" PointY="6.125" />
         <EntityTypeShape EntityType="databaseModel.ct_corredores" Width="1.5" PointX="7" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.ct_empresas" Width="1.5" PointX="5.375" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.ct_lugares" Width="1.5" PointX="8.625" PointY="0.5" />
@@ -28,6 +26,8 @@
         <EntityTypeShape EntityType="databaseModel.ct_rutas" Width="1.5" PointX="0.5" PointY="3.375" />
         <EntityTypeShape EntityType="databaseModel.sy_status" Width="1.5" PointX="10.625" PointY="3.375" />
         <EntityTypeShape EntityType="databaseModel.sy_asignaciones" Width="1.5" PointX="13.5" PointY="4" />
+        <EntityTypeShape EntityType="databaseModel.sy_boletos" Width="1.5" PointX="2.25" PointY="6" />
+        <EntityTypeShape EntityType="databaseModel.sy_boletos_detalle" Width="1.5" PointX="4" PointY="6" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

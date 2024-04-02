@@ -61,5 +61,18 @@ namespace TestMdfEntityFramework.EntityServices
                 em.SaveChanges();
             }
         }
+
+        public sy_boletos addEntityReturnPkInserted(sy_boletos entity)
+        {
+            em.sy_boletos.Add(entity);
+            em.SaveChanges();
+
+            return entity;
+        }
+
+        public sy_boletos getEntityLast()
+        {
+            return em.sy_boletos.LastOrDefault<sy_boletos>();
+        }
     }
 }
