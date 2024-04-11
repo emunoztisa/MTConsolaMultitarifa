@@ -12,16 +12,20 @@ namespace TestMdfEntityFramework
     using System;
     using System.Collections.Generic;
     
-    public partial class sy_boletos_detalle
+    public partial class sy_cortes
     {
-        public long pkBoletoDetalle { get; set; }
-        public Nullable<long> pkBoletoDetalleTISA { get; set; }
-        public Nullable<long> fkBoleto { get; set; }
-        public Nullable<long> fkPerfil { get; set; }
-        public Nullable<long> fkTarifa { get; set; }
+        public long pkCorte { get; set; }
+        public Nullable<long> pkCorteTISA { get; set; }
+        public Nullable<long> fkAsignacion { get; set; }
+        public Nullable<long> fkLugarOrigen { get; set; }
+        public Nullable<long> fkLugarDestino { get; set; }
         public Nullable<long> fkStatus { get; set; }
-        public Nullable<int> cantidad { get; set; }
-        public Nullable<decimal> subtotal { get; set; }
+        public string folio { get; set; }
+        public string fecha { get; set; }
+        public string hora { get; set; }
+        public Nullable<decimal> total_efectivo_acumulado { get; set; }
+        public Nullable<decimal> total_tarifas { get; set; }
+        public Nullable<decimal> total_efectivo_rst { get; set; }
         public Nullable<int> enviado { get; set; }
         public Nullable<int> confirmadoTISA { get; set; }
         public string modo { get; set; }

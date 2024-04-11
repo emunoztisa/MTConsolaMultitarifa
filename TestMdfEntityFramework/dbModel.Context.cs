@@ -42,11 +42,12 @@ namespace TestMdfEntityFramework
         public virtual DbSet<ct_lugares> ct_lugares { get; set; }
         public virtual DbSet<ct_operadores> ct_operadores { get; set; }
         public virtual DbSet<ct_perfiles> ct_perfiles { get; set; }
-        public virtual DbSet<ct_unidades> ct_unidades { get; set; }
         public virtual DbSet<ct_rutas> ct_rutas { get; set; }
         public virtual DbSet<sy_status> sy_status { get; set; }
         public virtual DbSet<sy_asignaciones> sy_asignaciones { get; set; }
+        public virtual DbSet<ct_unidades> ct_unidades { get; set; }
         public virtual DbSet<sy_boletos> sy_boletos { get; set; }
         public virtual DbSet<sy_boletos_detalle> sy_boletos_detalle { get; set; }
+        public virtual DbSet<sy_cortes> sy_cortes { get; set; }
     }
 }

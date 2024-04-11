@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>false</MapFileExtensions>
-    <ApplicationRevision>23</ApplicationRevision>
+    <ApplicationRevision>24</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -116,6 +116,7 @@
       <DependentUpon>dbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Clases\ConfigPort.cs" />
+    <Compile Include="Clases\SincronizacionTISA.cs" />
     <Compile Include="Clases\TipoTarifa.cs" />
     <Compile Include="Clases\User.cs" />
     <Compile Include="config_varios.cs">
@@ -123,7 +124,10 @@
     </Compile>
     <Compile Include="Controllers\AndadoresController.cs" />
     <Compile Include="Controllers\AsignacionesController.cs" />
+    <Compile Include="Controllers\BoletosController.cs" />
+    <Compile Include="Controllers\BoletosDetalleController.cs" />
     <Compile Include="Controllers\CorredoresController.cs" />
+    <Compile Include="Controllers\CortesController.cs" />
     <Compile Include="Controllers\EmpresaCorredorOperadorController.cs" />
     <Compile Include="Controllers\EmpresasController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -184,6 +188,7 @@
     <Compile Include="EntityServices\ServiceConfigVarios.cs" />
     <Compile Include="EntityServices\ServiceConsolas.cs" />
     <Compile Include="EntityServices\ServiceCorredores.cs" />
+    <Compile Include="EntityServices\ServiceCortes.cs" />
     <Compile Include="EntityServices\ServiceEmpresaCorredorOperador.cs" />
     <Compile Include="EntityServices\ServiceEmpresas.cs" />
     <Compile Include="EntityServices\ServiceLugares.cs" />
@@ -204,10 +209,20 @@
     <Compile Include="Principal.xaml.cs">
       <DependentUpon>Principal.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Requests\ReqBoletos.cs" />
+    <Compile Include="Requests\ReqBoletosDetalle.cs" />
+    <Compile Include="Requests\ReqCortes.cs" />
     <Compile Include="Requests\ReqLogin.cs" />
+    <Compile Include="Requests\ReqUnidades.cs" />
     <Compile Include="Responses\ResAndadores.cs" />
     <Compile Include="Responses\ResAsignaciones.cs" />
+    <Compile Include="Responses\ResBoletos.cs" />
+    <Compile Include="Responses\ResBoletosDetalle.cs" />
+    <Compile Include="Responses\ResBoletosDetalle_Insert.cs" />
+    <Compile Include="Responses\ResBoletos_Insert.cs" />
     <Compile Include="Responses\ResCorredores.cs" />
+    <Compile Include="Responses\ResCortes.cs" />
+    <Compile Include="Responses\ResCortes_Insert.cs" />
     <Compile Include="Responses\ResEmpresaCorredorOperador.cs" />
     <Compile Include="Responses\ResEmpresas.cs" />
     <Compile Include="Responses\ResLogin.cs" />
@@ -228,6 +243,9 @@
     <Compile Include="sy_boletos_detalle.cs">
       <DependentUpon>dbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="sy_cortes.cs">
+      <DependentUpon>dbModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="sy_empresa_corredor_operador.cs">
       <DependentUpon>dbModel.tt</DependentUpon>
     </Compile>
@@ -246,6 +264,9 @@
     <Compile Include="Utils\AbstractService.cs" />
     <Compile Include="Utils\Api.cs" />
     <Compile Include="Utils\Comun.cs" />
+    <Compile Include="Views\AcercaDe.xaml.cs">
+      <DependentUpon>AcercaDe.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CobroMultitarifaV1.xaml.cs">
       <DependentUpon>CobroMultitarifaV1.xaml</DependentUpon>
     </Compile>
@@ -272,6 +293,9 @@
     </Compile>
     <Compile Include="Views\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MiCuenta.xaml.cs">
+      <DependentUpon>MiCuenta.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Reportes.xaml.cs">
       <DependentUpon>Reportes.xaml</DependentUpon>
@@ -309,6 +333,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\AcercaDe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CobroMultitarifaV1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -344,6 +372,10 @@
     <Page Include="Views\Home.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MiCuenta.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Reportes.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -400,6 +432,7 @@
       <DependentUpon>dbModel.edmx</DependentUpon>
       <LastGenOutput>dbModel.cs</LastGenOutput>
     </Content>
+    <Resource Include="SCS\IMG\corte_caja.png" />
     <Resource Include="SCS\IMG\save_disckete.png" />
     <Resource Include="SCS\IMG\asignacion.png" />
     <Resource Include="SCS\IMG\palomita_verde.png" />

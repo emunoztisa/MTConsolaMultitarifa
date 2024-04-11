@@ -48,12 +48,16 @@ namespace TestMdfEntityFramework.EntityServices
             }
             else
             {
+                it.pkBoletoTISA = entity.pkBoletoTISA;
                 it.fkAsignacion = entity.fkAsignacion;
                 it.fkLugarOrigen = entity.fkLugarOrigen;
                 it.fkLugarDestino = entity.fkLugarDestino;
                 it.fkStatus = entity.fkStatus;
                 it.folio = entity.folio;
                 it.total = entity.total;
+                it.enviado = entity.enviado;
+                it.confirmadoTISA = entity.confirmadoTISA;
+                it.modo = entity.modo;
                 it.created_at = entity.created_at;
                 it.updated_at = entity.updated_at;
                 it.deleted_at = entity.deleted_at;
@@ -62,17 +66,36 @@ namespace TestMdfEntityFramework.EntityServices
             }
         }
 
-        public sy_boletos addEntityReturnPkInserted(sy_boletos entity)
+        public Int64 addEntityReturnPkInserted(sy_boletos entity)
         {
             em.sy_boletos.Add(entity);
             em.SaveChanges();
 
-            return entity;
+            return entity.pkBoleto;
         }
 
         public sy_boletos getEntityLast()
         {
-            return em.sy_boletos.LastOrDefault<sy_boletos>();
+            return em.sy_boletos.OrderByDescending(q => q.pkBoleto).FirstOrDefault();
+
+
+            //return em.sy_boletos.LastOrDefault<sy_boletos>();
+
+            //return from e in em.sy_boletos.AsEnumerable()
+            //       let last = from f in em.sy_boletos
+            //                  select new sy_boletos
+            //                  {
+            //                      pkBoleto = f.pkBoleto
+            //                  }
+        }
+
+        public List<sy_boletos> getEntitiesByEnviados()
+        {
+            return em.sy_boletos.Where(q => q.enviado == 0).ToList<sy_boletos>();
+        }
+        public List<sy_boletos> getEntitiesByConfirmadosTISA()
+        {
+            return em.sy_boletos.Where(q => q.confirmadoTISA == 0).ToList<sy_boletos>();
         }
     }
 }

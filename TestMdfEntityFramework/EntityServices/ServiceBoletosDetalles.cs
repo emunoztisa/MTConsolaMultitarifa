@@ -48,18 +48,36 @@ namespace TestMdfEntityFramework.EntityServices
             }
             else
             {
+                it.pkBoletoDetalleTISA = entity.pkBoletoDetalleTISA;
                 it.fkBoleto = entity.fkBoleto;
                 it.fkPerfil = entity.fkPerfil;
                 it.fkTarifa = entity.fkTarifa;
                 it.fkStatus = entity.fkStatus;
                 it.cantidad = entity.cantidad;
                 it.subtotal = entity.subtotal;
+                it.enviado = entity.enviado;
+                it.confirmadoTISA = entity.confirmadoTISA;
+                it.modo = entity.modo;
                 it.created_at = entity.created_at;
                 it.updated_at = entity.updated_at;
                 it.deleted_at = entity.deleted_at;
 
                 em.SaveChanges();
             }
+        }
+
+        public List<sy_boletos_detalle> getEntitiesByEnviados()
+        {
+            return em.sy_boletos_detalle.Where(q => q.enviado == 0).ToList<sy_boletos_detalle>();
+        }
+        public List<sy_boletos_detalle> getEntitiesByConfirmadosTISA()
+        {
+            return em.sy_boletos_detalle.Where(q => q.confirmadoTISA == 0).ToList<sy_boletos_detalle>();
+        }
+
+        internal List<sy_boletos_detalle> getEntitiesByFkBoleto(long pk)
+        {
+            return em.sy_boletos_detalle.Where(q => q.fkBoleto == pk).ToList<sy_boletos_detalle>();
         }
     }
 }

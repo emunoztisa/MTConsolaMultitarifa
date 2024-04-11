@@ -20,7 +20,7 @@ namespace TestMdfEntityFramework
         public string nombre { get; set; }
         public string noSerieAVL { get; set; }
         public string economico { get; set; }
-        public Nullable<byte> capacidad { get; set; }
+        public Nullable<int> capacidad { get; set; }
         public Nullable<int> validador { get; set; }
         public Nullable<int> status { get; set; }
         public string created_at { get; set; }

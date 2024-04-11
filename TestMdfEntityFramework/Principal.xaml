@@ -170,7 +170,7 @@
                                VerticalAlignment="Center" Margin="15,5,5,5"
                                />
                     <!-- #ENDREGION-->
-                    
+
                     <!--#region HOME -->
                     <Button x:Name="btnInicio" Grid.Column="1" 
                             Background="Transparent" 
@@ -264,7 +264,7 @@
                         </Grid>
                     </Button>
                     <!--#endregion-->
-                    
+
                     <!--#region MINIMIZAR-->
                     <Button x:Name="btnMinimizar" Grid.Column="3" 
                             Background="Transparent" 
@@ -294,11 +294,12 @@
                   VerticalAlignment="Center" HorizontalAlignment="Right"
                   Height="509" Width="670" PreviewMouseLeftButtonDown="PreviewMouseLeftBottonDownBG" >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="156*"/>
-                    <ColumnDefinition Width="515*"/>
+                    <ColumnDefinition Width="78*"/>
+                    <ColumnDefinition Width="202*"/>
+                    <ColumnDefinition Width="55*"/>
                 </Grid.ColumnDefinitions>
 
-                <Border CornerRadius="0,0,0,0" Grid.ColumnSpan="2">
+                <Border CornerRadius="0,0,0,0" Grid.ColumnSpan="3">
                     <Border.Background>
                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                             <GradientStop Color="Black" Offset="0"/>
@@ -307,7 +308,7 @@
                     </Border.Background>
                 </Border>
 
-                <ContentControl Content="{Binding}" Grid.ColumnSpan="2"/>
+                <ContentControl Content="{Binding}" Grid.ColumnSpan="3"/>
 
             </Grid>
             <!--#endregion-->
@@ -496,12 +497,14 @@
                         <ColumnDefinition Width="720" />
                     </Grid.ColumnDefinitions>
                     <!-- #REGION VERSION-->
-                    <TextBlock Text="VERSION: 1.0.0" Grid.Column="0" 
+                    <TextBlock x:Name="txtVersion"
+                        Text="" Grid.Column="0" 
                                Foreground="White" HorizontalAlignment="Left" 
                                VerticalAlignment="Center" Margin="5,5,5,5" />
                     <!-- #ENDREGION-->
                     <!-- #REGION COPYRIGHT-->
-                    <TextBlock Text="© 2024 Tarjetas Integrales SA de CV" Grid.Column="0" 
+                    <TextBlock x:Name="txtCopyright"
+                        Text="" Grid.Column="0" 
                                Foreground="White" HorizontalAlignment="Right" 
                                VerticalAlignment="Center" Margin="5,5,5,5" />
                     <!-- #ENDREGION-->

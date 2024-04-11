@@ -288,7 +288,7 @@
             <!--#endregion-->
 
             <!--#region CONF IMPRESORA -->
-            <TextBlock Grid.Row="1" Grid.Column="4"
+            <!--<TextBlock Grid.Row="1" Grid.Column="4"
                        Grid.ColumnSpan="3"
                        Text="IMPRESORA" 
                        Foreground="Cyan" 
@@ -302,9 +302,25 @@
                       BorderBrush="White" FontSize="20" 
                       Margin="10,10,10,10"
                       Style="{DynamicResource COMBOSTYLE}">
-            </ComboBox>
-          
+            </ComboBox>-->
+            <!--#endregion-->
 
+            <!--#region CONF MODO APLICACION -->
+            <TextBlock Grid.Row="1" Grid.Column="4"
+                       Grid.ColumnSpan="3"
+                       Text="MODO" 
+                       Foreground="Cyan" 
+                       FontSize="20" 
+                       FontWeight="Bold" 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"/>
+            <ComboBox x:Name="cmbModoApp"
+                Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2"
+                      Background="Transparent"
+                      BorderBrush="White" FontSize="20" 
+                      Margin="10,10,10,10"
+                      Style="{DynamicResource COMBOSTYLE}">
+            </ComboBox>
             <!--#endregion-->
 
             <!--#region CONF TIPO TARIFA COBRAR -->
@@ -325,10 +341,64 @@
                 
             </ComboBox>
             <!--#endregion-->
+            
+            <!--#region CONF EMPRESA -->
+            <TextBlock Grid.Row="6" 
+                       Grid.Column="4"
+                       Text="EMPRESA" 
+                       Foreground="Cyan" 
+                       FontSize="20" 
+                       FontWeight="Bold" 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"/>
+            <ComboBox x:Name="cmbEmpresa"
+                      Grid.Row="6" Grid.Column="5"
+                      Background="Transparent"
+                      BorderBrush="White" FontSize="20" 
+                      Margin="10,10,10,10"
+                      Style="{DynamicResource COMBOSTYLE}">
+            </ComboBox>
+            <!--#endregion-->
+
+            <!--#region CONF CORREDOR -->
+            <TextBlock Grid.Row="7" 
+                       Grid.Column="4"
+                       Text="CORREDOR" 
+                       Foreground="Cyan" 
+                       FontSize="20" 
+                       FontWeight="Bold" 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"/>
+            <ComboBox x:Name="cmbCorredor"
+                      Grid.Row="7" Grid.Column="5"
+                      Background="Transparent"
+                      BorderBrush="White" FontSize="20" 
+                      Margin="10,10,10,10"
+                      Style="{DynamicResource COMBOSTYLE}">
+            </ComboBox>
+            <!--#endregion-->
+
+            <!--#region CONF RUTA -->
+            <TextBlock Grid.Row="8" 
+                       Grid.Column="4"
+                       Text="RUTA" 
+                       Foreground="Cyan" 
+                       FontSize="20" 
+                       FontWeight="Bold" 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"/>
+            <ComboBox x:Name="cmbRuta"
+                      Grid.Row="8" Grid.Column="5"
+                      Background="Transparent"
+                      BorderBrush="White" FontSize="20" 
+                      Margin="10,10,10,10"
+                      Style="{DynamicResource COMBOSTYLE}">
+            </ComboBox>
+            <!--#endregion-->
 
             <!--#region CONF UNIDAD -->
-            <TextBlock Grid.Row="5" Grid.Column="4"
-                       Grid.ColumnSpan="3"
+            <TextBlock Grid.Row="9" 
+                       Grid.Column="4"
                        Text="UNIDAD" 
                        Foreground="Cyan" 
                        FontSize="20" 
@@ -336,7 +406,7 @@
                        VerticalAlignment="Center" 
                        HorizontalAlignment="Center"/>
             <ComboBox x:Name="cmbUnidad"
-                Grid.Row="6" Grid.Column="4" Grid.ColumnSpan="2"
+                Grid.Row="9" Grid.Column="5"
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
                       Margin="10,10,10,10"
@@ -346,7 +416,7 @@
 
             <!--#region BOTONES -->
             <Button x:Name="btnGuardarConfiguracion" 
-                    Grid.Column="4" Grid.Row="9"
+                    Grid.Column="4" Grid.Row="10"
                     Grid.ColumnSpan="2" Grid.RowSpan="2"
                     Width="200" Height="50" 
                     VerticalAlignment="Center"

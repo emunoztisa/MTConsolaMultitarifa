@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Forms.Design.Behavior;
 using System.Windows.Input;
+using TestMdfEntityFramework.Clases;
 using TestMdfEntityFramework.Controllers;
 using TestMdfEntityFramework.EntityServices;
 using TestMdfEntityFramework.Views;
@@ -22,6 +23,20 @@ namespace TestMdfEntityFramework
         private void Principal_OnLoad(object sender, RoutedEventArgs e)
         {
             SincronizarCatalogos();
+            SetearVersionYCopyright();
+            SincronizaOperacionConsola();
+
+            ////////////////////////////////////////////////////////////////////////
+            // ESTAS TAREAS SE EJECUTARAN EN SEGUNDO PLANO EN HILOS INDEPENDIENTES
+            //SincronizacionTISA sTISA = new SincronizacionTISA();
+            //sTISA.Task_Sincroniza_Boletos_y_BoletosDetalle_START();
+
+            /*
+                sTISA.Task_Sincroniza_Boletos_START();
+                sTISA.Task_Sincroniza_BoletosDetalle_START();
+            */
+
+            ////////////////////////////////////////////////////////////////////////
         }
 
         private void SincronizarCatalogos()
@@ -38,9 +53,27 @@ namespace TestMdfEntityFramework
             Sincroniza_LugarRuta();
             Sincroniza_EmpresaCorredorOperador();
             Sincroniza_Asignaciones();
-            
+
         }
 
+        private void SincronizaOperacionConsola()
+        {
+            SincronizacionTISA.SincronizaBoletosYBoletosDetalle();
+        }
+
+        private void SetearVersionYCopyright()
+        {
+            ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
+
+            config_varios cv_version = serv_conf_varios.getEntityByClave("VERSION");
+            string version = cv_version.valor;
+            
+            config_varios cv_copy = serv_conf_varios.getEntityByClave("COPYRIGHT");
+            string copyright = cv_copy.valor;
+
+            txtVersion.Text = version;
+            txtCopyright.Text = copyright;
+        }
         private void Sincroniza_Empresas()
         {
             //Se obtienen las unidades del endpoint
@@ -235,7 +268,7 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
-            
+
         }
         private void Sincroniza_LugarRuta()
         {
@@ -283,9 +316,9 @@ namespace TestMdfEntityFramework
             ServiceConfigVarios scv = new ServiceConfigVarios();
             config_varios cv_numero_unidad = scv.getEntityByClave("NUMERO_UNIDAD");
 
-            if(cv_numero_unidad != null && cv_numero_unidad.valor != null)
+            if (cv_numero_unidad != null && cv_numero_unidad.valor != null)
             {
-                if(cv_numero_unidad.valor != "")
+                if (cv_numero_unidad.valor != "")
                 {
                     //Se obtiene el pkUnidad desde el Numero de Unidad, configurado para esta consola.
                     ServiceUnidades suni = new ServiceUnidades();
@@ -314,7 +347,16 @@ namespace TestMdfEntityFramework
 
         private void Principal_OnUnLoad(object sender, RoutedEventArgs e)
         {
+            ////////////////////////////////////////////////////////////////////////
+            // ESTAS TAREAS SE DETENDRAN AL SALIR DEL FORMULARIO.
+            //SincronizacionTISA sTISA = new SincronizacionTISA();
+            //sTISA.Task_Sincroniza_Boletos_y_BoletosDetalle_DISPOSE();
 
+            /*
+                sTISA.Task_Sincroniza_Boletos_DISPOSE();
+                sTISA.Task_Sincroniza_BoletosDetalle_DISPOSE();
+            */
+            ////////////////////////////////////////////////////////////////////////
         }
         private void Principal_Closing(object sender, CancelEventArgs e)
         {
@@ -373,7 +415,7 @@ namespace TestMdfEntityFramework
                 }
             }
         }
-        
+
         private void btnReportes_Click(object sender, RoutedEventArgs e)
         {
             DataContext = new Reportes();
@@ -381,33 +423,28 @@ namespace TestMdfEntityFramework
         private void btnLogout_Click(object sender, RoutedEventArgs e)
         {
             //Hacer una funcion para hacer Logout a los servicios de TISA.
-            
+
             //Cerrar la ventana.
             Close();
         }
-
-
-
 
 
         private void btnAsignacion_Click(object sender, RoutedEventArgs e)
         {
             DataContext = new vwAsignaciones();
         }
-
         private void btnAcercaDe_Click(object sender, RoutedEventArgs e)
         {
-
+            DataContext = new AcercaDe();
         }
-
         private void btnCuenta_Click(object sender, RoutedEventArgs e)
         {
-
+            DataContext = new MiCuenta();
         }
 
-        
+
     }
 
 
-    
+
 }

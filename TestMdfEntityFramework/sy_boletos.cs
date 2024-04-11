@@ -24,6 +24,7 @@ namespace TestMdfEntityFramework
         public Nullable<decimal> total { get; set; }
         public Nullable<int> enviado { get; set; }
         public Nullable<int> confirmadoTISA { get; set; }
+        public string modo { get; set; }
         public string created_at { get; set; }
         public string updated_at { get; set; }
         public string deleted_at { get; set; }

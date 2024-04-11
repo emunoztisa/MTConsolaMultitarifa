@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TestMdfEntityFramework.Clases;
+using TestMdfEntityFramework.Controllers;
 using TestMdfEntityFramework.EntityServices;
 
 namespace TestMdfEntityFramework.Views
@@ -77,6 +78,7 @@ namespace TestMdfEntityFramework.Views
             llenaComboTipoTarifa();
             llenaComboImpresoras();
             llenaComboUnidades();
+            llenaComboModos();
         }
 
         public void SeteaValoresEnCombosConValoresDBLocal()
@@ -107,6 +109,15 @@ namespace TestMdfEntityFramework.Views
                 if (cmbUnidad.Items[i].ToString() == config_numero_unidad.valor)
                 {
                     cmbUnidad.SelectedValue = config_numero_unidad.valor;
+                }
+            }
+
+            config_varios config_modo = scv.getEntityByClave("MODO");
+            for (int i = 0; i < cmbModoApp.Items.Count; i++)
+            {
+                if (cmbModoApp.Items[i].ToString() == config_modo.valor)
+                {
+                    cmbModoApp.SelectedValue = config_modo.valor;
                 }
             }
             //foreach (var item in cmbUnidad.Items)
@@ -247,7 +258,15 @@ namespace TestMdfEntityFramework.Views
                 cmbUnidad.Items.Add(li);
             }
         }
-        
+
+        public void llenaComboModos()
+        {
+            List<string> list = getCatalogo_Modos_BaseLocal();
+            foreach (var port in list)
+            {
+                cmbModoApp.Items.Add(port);
+            }
+        }
 
         /// <summary>
         /// ////////////////////////////////////////
@@ -349,13 +368,24 @@ namespace TestMdfEntityFramework.Views
             }
             return list2;
         }
+        private List<string> getCatalogo_Modos_BaseLocal()
+        {
+            ServiceOpcionesGenerales sog = new ServiceOpcionesGenerales();
+            List<opciones_generales> list = sog.getEntitiesByAgrupador("MODO");
+            List<string> list2 = new List<string>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                list2.Add(list[i].opcion_general);
+            }
+            return list2;
+        }
 
         private void btnGuardarConfiguracion_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 //CONFIGURACION DE PUERTO SERIE
-                string fecha_actual = DateTime.Now.ToShortDateString();
+                string fecha_actual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
                 string port_name = cmbComPorts.Text;
                 string baud_rate = cmbBausRate.Text;
@@ -367,8 +397,16 @@ namespace TestMdfEntityFramework.Views
                 string impresora = cmbImpresoras.Text;
                 string tipo_tarifa = cmbTipoTarifa.Text;
                 string numero_unidad = cmbUnidad.Text;
+                string modo = cmbModoApp.Text;
+
+
 
                 ServiceConfigVarios scv = new ServiceConfigVarios();
+                
+                //valor de unidad antes de ser cambiada
+                config_varios cv_num_unidad_antes_cambio = scv.getEntityByClave("NUMERO_UNIDAD");
+                string unidad_antes_cambio = cv_num_unidad_antes_cambio.valor;
+                
                 config_varios cv = new config_varios();
 
                 #region guardar config serial port
@@ -409,12 +447,67 @@ namespace TestMdfEntityFramework.Views
                 cv.valor = impresora;
                 scv.updEntityByClave(cv);
 
+                cv.clave = "MODO";
+                cv.valor = modo;
+                scv.updEntityByClave(cv);
+
                 cv.clave = "NUMERO_UNIDAD";
                 cv.valor = numero_unidad;
                 scv.updEntityByClave(cv);
 
+                
+
                 #endregion
 
+                #region Cambiar status en DB TISA
+                /*
+                 1 = DISPONIBLE PARA ASIGNAR A ALGUNA UNIDAD
+                 2 = ASIGNADA YA A ALGUNA UNIDAD
+                */
+
+                // Para Cambiar de status a 1 la unidad que sera liberada en el catalogo de TISA.
+                ServiceUnidades serv_unidades_cambio_status_1 = new ServiceUnidades();
+                ct_unidades unidad_1 = serv_unidades_cambio_status_1.getEntityByName(unidad_antes_cambio);
+
+                ct_unidades cu_1 = new ct_unidades();
+                cu_1.pkUnidad = unidad_1.pkUnidad;
+                cu_1.fkEmpresa = unidad_1.fkEmpresa;
+                cu_1.fkCorredor = unidad_1.fkCorredor;
+                cu_1.nombre = unidad_1.nombre;
+                cu_1.noSerieAVL = unidad_1.noSerieAVL;
+                cu_1.economico = unidad_1.economico;
+                cu_1.capacidad = unidad_1.capacidad;
+                cu_1.validador = unidad_1.validador;
+                cu_1.status = 1;
+                cu_1.created_at = unidad_1.created_at;
+                cu_1.updated_at = fecha_actual;
+                cu_1.deleted_at = unidad_1.deleted_at;
+
+                UnidadesController uc_1 = new UnidadesController();
+                uc_1.UpdateUnidad(cu_1);
+
+                //Para Cambiar de status a 2 la unidad que sera asignada a la consola.
+                ServiceUnidades serv_unidades_cambio_status_2 = new ServiceUnidades();
+                ct_unidades unidad_2 = serv_unidades_cambio_status_2.getEntityByName(cv.valor);
+
+                ct_unidades cu_2 = new ct_unidades();
+                cu_2.pkUnidad = unidad_2.pkUnidad;
+                cu_2.fkEmpresa = unidad_2.fkEmpresa;
+                cu_2.fkCorredor = unidad_2.fkCorredor;
+                cu_2.nombre = unidad_2.nombre;
+                cu_2.noSerieAVL = unidad_2.noSerieAVL;
+                cu_2.economico = unidad_2.economico;
+                cu_2.capacidad = unidad_2.capacidad;
+                cu_2.validador = unidad_2.validador;
+                cu_2.status = 2;
+                cu_2.created_at = unidad_2.created_at;
+                cu_2.updated_at = fecha_actual;
+                cu_2.deleted_at = unidad_2.deleted_at;
+
+                UnidadesController uc_2 = new UnidadesController();
+                uc_2.UpdateUnidad(cu_2);
+
+                #endregion
 
                 #region antes
                 /*
