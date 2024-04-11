@@ -46,7 +46,9 @@ namespace TestMdfEntityFramework.Controller
                 reg.fkLugarDestino = item.fkLugarDestino;
                 reg.fkStatus = item.fkStatus;
                 reg.folio = item.folio;
-                reg.total = item.total;
+                reg.totalCobrado = item.totalCobrado;
+                reg.totalPagado = item.totalPagado;
+                reg.fechaHoraCancelacion = item.fechaHoraCancelacion;
                 reg.enviado = item.enviado;
                 reg.confirmadoTISA = item.confirmadoTISA;
                 reg.created_at = item.created_at;
@@ -88,8 +90,9 @@ namespace TestMdfEntityFramework.Controller
                 reg.fkLugarOrigen = item.fkLugarOrigen;
                 reg.fkLugarDestino = item.fkLugarDestino;
                 reg.fkStatus = item.fkStatus;
-                reg.folio = item.folio;
-                reg.total = item.total;
+                reg.totalCobrado = item.totalCobrado;
+                reg.totalPagado = item.totalPagado;
+                reg.fechaHoraCancelacion = item.fechaHoraCancelacion;
                 reg.enviado = item.enviado;
                 reg.confirmadoTISA = item.confirmadoTISA;
                 reg.created_at = item.created_at;
@@ -120,7 +123,9 @@ namespace TestMdfEntityFramework.Controller
             req.fkLugarDestino = obj_boleto.fkLugarDestino;
             req.fkStatus = obj_boleto.fkStatus;
             req.folio = obj_boleto.folio;
-            req.total = obj_boleto.total.ToString();
+            req.totalCobrado = obj_boleto.totalCobrado.ToString();
+            req.totalPagado = obj_boleto.totalPagado.ToString();
+            req.fechaHoraCancelacion = obj_boleto.fechaHoraCancelacion;
             req.enviado = (int)obj_boleto.enviado;
             req.confirmadoTISA = (int)obj_boleto.confirmadoTISA;
             req.modo = obj_boleto.modo;
@@ -158,7 +163,9 @@ namespace TestMdfEntityFramework.Controller
             req.fkLugarDestino = (long)obj_boleto.fkLugarDestino;
             req.fkStatus = (long)obj_boleto.fkStatus;
             req.folio = obj_boleto.folio;
-            req.total = obj_boleto.total.ToString();
+            req.totalCobrado = obj_boleto.totalCobrado.ToString();
+            req.totalPagado = obj_boleto.totalPagado.ToString();
+            req.fechaHoraCancelacion = obj_boleto.fechaHoraCancelacion;
             req.enviado = (int)obj_boleto.enviado;
             req.confirmadoTISA = (int)obj_boleto.confirmadoTISA;
             req.created_at = obj_boleto.created_at;
@@ -194,7 +201,9 @@ namespace TestMdfEntityFramework.Controller
             req.fkLugarDestino = (long)obj_boleto.fkLugarDestino;
             req.fkStatus = (long)obj_boleto.fkStatus;
             req.folio = obj_boleto.folio;
-            req.total = obj_boleto.total.ToString();
+            req.totalCobrado = obj_boleto.totalCobrado.ToString();
+            req.totalPagado = obj_boleto.totalPagado.ToString();
+            req.fechaHoraCancelacion = obj_boleto.fechaHoraCancelacion;
             req.enviado = (int)obj_boleto.enviado;
             req.confirmadoTISA = (int)obj_boleto.confirmadoTISA;
             req.created_at = obj_boleto.created_at;

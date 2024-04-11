@@ -58,5 +58,10 @@ namespace TestMdfEntityFramework.EntityServices
                 em.SaveChanges();
             }
         }
+
+        public List<ct_rutas> getEntityPorFkCorredor(object fkCorredor)
+        {
+            return em.ct_rutas.Where(q => q.fkCorredor == (Int64)fkCorredor).ToList<ct_rutas>();
+        }
     }
 }

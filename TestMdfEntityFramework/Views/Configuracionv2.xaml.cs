@@ -10,6 +10,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -25,9 +26,25 @@ namespace TestMdfEntityFramework.Views
     public partial class Configuracionv2 : UserControl
     {
 
+        //SERIAL PORT
+        System.IO.Ports.SerialPort puertoSerie1 = new System.IO.Ports.SerialPort();
+        String[] listado_puerto = System.IO.Ports.SerialPort.GetPortNames();
+
+        //BUFFERS SEND AND RECIEVED
+        byte[] BufferSendData = new byte[80];
+        byte[] RecievedDataGlobal = new byte[80];
+
+        //POPUP OK
+        private double left, top, right, bottom, centerX, centerY;
+        private DoubleAnimation bottomToCenterAnimiation, topToCenterAnimation,
+            leftToCenterAnimation, rightToCenterAnimation;
+        private Storyboard bottomToCenterStoryboard, topToCenterStoryboard,
+            leftToCenterStoryboard, rightToCenterStoryboard;
+
         public Configuracionv2()
         {
             InitializeComponent();
+            configura_puerto_serial();
             llenaCombos();
             Task.WaitAll(new Task[] { Task.Delay(500) });
 
@@ -37,12 +54,19 @@ namespace TestMdfEntityFramework.Views
         {
             //MuestraValoresConfigSerial();
 
-            
+            //EVENTOS PARA POPUP OK
+            SetPopupDlgCenter();
+            InitializeAnimations();
+
             SeteaValoresEnCombosConValoresDBLocal();
         }
 
+        private void Configuracionv2_OnUnload(object sender, RoutedEventArgs e)
+        {
+            close_serial_port();
+        }
 
-        private void MuestraValoresConfigSerial ()
+        private void MuestraValoresConfigSerial()
         {
             //ServiceConfigPort scp = new ServiceConfigPort();
             //config_port conf_port_activo = scp.getEntityByStatus(1);
@@ -75,10 +99,17 @@ namespace TestMdfEntityFramework.Views
             llenaComboStopBits();
             llenaComboParidad();
             llenaComboHandshake();
-            llenaComboTipoTarifa();
-            llenaComboImpresoras();
-            llenaComboUnidades();
+
             llenaComboModos();
+            llenaComboTipoTarifa();
+
+            //llenaComboImpresoras();
+
+            llenaComboEmpresas();
+            //llenaComboCorredores();
+            //llenaComboRutas();
+            //llenaComboUnidades();
+
         }
 
         public void SeteaValoresEnCombosConValoresDBLocal()
@@ -94,23 +125,16 @@ namespace TestMdfEntityFramework.Views
                 }
             }
 
-            config_varios config_impresora = scv.getEntityByClave("IMPRESORA_DEFAULT");
-            for (int i = 0; i < cmbImpresoras.Items.Count; i++)
-            {
-                if (cmbImpresoras.Items[i].ToString() == config_impresora.valor)
-                {
-                    cmbImpresoras.SelectedValue = config_impresora.valor;
-                }
-            }
+            //config_varios config_impresora = scv.getEntityByClave("IMPRESORA_DEFAULT");
+            //for (int i = 0; i < cmbImpresoras.Items.Count; i++)
+            //{
+            //    if (cmbImpresoras.Items[i].ToString() == config_impresora.valor)
+            //    {
+            //        cmbImpresoras.SelectedValue = config_impresora.valor;
+            //    }
+            //}
 
-            config_varios config_numero_unidad = scv.getEntityByClave("NUMERO_UNIDAD");
-            for (int i = 0; i < cmbUnidad.Items.Count; i++)
-            {
-                if (cmbUnidad.Items[i].ToString() == config_numero_unidad.valor)
-                {
-                    cmbUnidad.SelectedValue = config_numero_unidad.valor;
-                }
-            }
+           
 
             config_varios config_modo = scv.getEntityByClave("MODO");
             for (int i = 0; i < cmbModoApp.Items.Count; i++)
@@ -183,6 +207,42 @@ namespace TestMdfEntityFramework.Views
                 }
             }
 
+            config_varios config_empresa = scv.getEntityByClave("EMPRESA");
+            for (int i = 0; i < cmbEmpresa.Items.Count; i++)
+            {
+                if (cmbEmpresa.Items[i].ToString() == config_empresa.valor)
+                {
+                    cmbEmpresa.SelectedValue = config_empresa.valor;
+                }
+            }
+
+            config_varios config_corredor = scv.getEntityByClave("CORREDOR");
+            for (int i = 0; i < cmbCorredor.Items.Count; i++)
+            {
+                if (cmbCorredor.Items[i].ToString() == config_corredor.valor)
+                {
+                    cmbCorredor.SelectedValue = config_corredor.valor;
+                }
+            }
+
+            config_varios config_ruta = scv.getEntityByClave("RUTA");
+            for (int i = 0; i < cmbRuta.Items.Count; i++)
+            {
+                if (cmbRuta.Items[i].ToString() == config_ruta.valor)
+                {
+                    cmbRuta.SelectedValue = config_ruta.valor;
+                }
+            }
+
+            config_varios config_numero_unidad = scv.getEntityByClave("NUMERO_UNIDAD");
+            for (int i = 0; i < cmbUnidad.Items.Count; i++)
+            {
+                if (cmbUnidad.Items[i].ToString() == config_numero_unidad.valor)
+                {
+                    cmbUnidad.SelectedValue = config_numero_unidad.valor;
+                }
+            }
+
         }
 
         public void llenaComboComPorts()
@@ -233,7 +293,7 @@ namespace TestMdfEntityFramework.Views
                 cmbHandShake.Items.Add(port);
             }
         }
-        
+
         public void llenaComboTipoTarifa()
         {
             List<string> list = getCatalogo_TipoTarifa_BaseLocal();
@@ -242,12 +302,38 @@ namespace TestMdfEntityFramework.Views
                 cmbTipoTarifa.Items.Add(port);
             }
         }
-        public void llenaComboImpresoras()
+
+        //public void llenaComboImpresoras()
+        //{
+        //    List<string> list = getPrinterDevices();
+        //    foreach (var imp in list)
+        //    {
+        //        cmbImpresoras.Items.Add(imp);
+        //    }
+        //}
+
+        public void llenaComboEmpresas()
         {
-            List<string> list = getPrinterDevices();
-            foreach (var imp in list)
+            List<string> list = getCatalogo_Empresas_BaseLocal();
+            foreach (var li in list)
             {
-                cmbImpresoras.Items.Add(imp);
+                cmbEmpresa.Items.Add(li);
+            }
+        }
+        public void llenaComboCorredores()
+        {
+            List<string> list = getCatalogo_Corredores_BaseLocal();
+            foreach (var li in list)
+            {
+                cmbCorredor.Items.Add(li);
+            }
+        }
+        public void llenaComboRutas()
+        {
+            List<string> list = getCatalogo_Rutas_BaseLocal();
+            foreach (var li in list)
+            {
+                cmbRuta.Items.Add(li);
             }
         }
         public void llenaComboUnidades()
@@ -357,6 +443,40 @@ namespace TestMdfEntityFramework.Views
             }
             return listado_impresoras;
         }
+
+        private List<string> getCatalogo_Empresas_BaseLocal()
+        {
+            ServiceEmpresas serv = new ServiceEmpresas();
+            List<ct_empresas> list = serv.getEntities();
+            List<string> list2 = new List<string>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                list2.Add(list[i].nombre);
+            }
+            return list2;
+        }
+        private List<string> getCatalogo_Corredores_BaseLocal()
+        {
+            ServiceCorredores serv = new ServiceCorredores();
+            List<ct_corredores> list = serv.getEntities();
+            List<string> list2 = new List<string>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                list2.Add(list[i].nombre);
+            }
+            return list2;
+        }
+        private List<string> getCatalogo_Rutas_BaseLocal()
+        {
+            ServiceRutas serv = new ServiceRutas();
+            List<ct_rutas> list = serv.getEntities();
+            List<string> list2 = new List<string>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                list2.Add(list[i].nombre);
+            }
+            return list2;
+        }
         private List<string> getCatalogo_Unidades_BaseLocal()
         {
             ServiceUnidades su = new ServiceUnidades();
@@ -394,19 +514,21 @@ namespace TestMdfEntityFramework.Views
                 string paridad = cmbParity.Text;
                 string handshake = cmbHandShake.Text;
 
-                string impresora = cmbImpresoras.Text;
-                string tipo_tarifa = cmbTipoTarifa.Text;
-                string numero_unidad = cmbUnidad.Text;
+                //string impresora = cmbImpresoras.Text;
                 string modo = cmbModoApp.Text;
+                string tipo_tarifa = cmbTipoTarifa.Text;
 
-
+                string empresa = cmbEmpresa.Text;
+                string corredor = cmbCorredor.Text;
+                string ruta = cmbRuta.Text;
+                string numero_unidad = cmbUnidad.Text;
 
                 ServiceConfigVarios scv = new ServiceConfigVarios();
-                
+
                 //valor de unidad antes de ser cambiada
                 config_varios cv_num_unidad_antes_cambio = scv.getEntityByClave("NUMERO_UNIDAD");
                 string unidad_antes_cambio = cv_num_unidad_antes_cambio.valor;
-                
+
                 config_varios cv = new config_varios();
 
                 #region guardar config serial port
@@ -443,19 +565,33 @@ namespace TestMdfEntityFramework.Views
                 cv.valor = tipo_tarifa;
                 scv.updEntityByClave(cv);
 
-                cv.clave = "IMPRESORA_DEFAULT";
-                cv.valor = impresora;
-                scv.updEntityByClave(cv);
-
                 cv.clave = "MODO";
                 cv.valor = modo;
                 scv.updEntityByClave(cv);
 
+                //cv.clave = "IMPRESORA_DEFAULT";
+                //cv.valor = impresora;
+                //scv.updEntityByClave(cv);
+
+                cv.clave = "EMPRESA";
+                cv.valor = empresa;
+                scv.updEntityByClave(cv);
+
+                cv.clave = "CORREDOR";
+                cv.valor = corredor;
+                scv.updEntityByClave(cv);
+
+                cv.clave = "RUTA";
+                cv.valor = ruta;
+                scv.updEntityByClave(cv);
+                ejecutar_commando_86_ruta(ruta);
+
                 cv.clave = "NUMERO_UNIDAD";
                 cv.valor = numero_unidad;
                 scv.updEntityByClave(cv);
+                ejecutar_commando_86_unidad(numero_unidad);
 
-                
+
 
                 #endregion
 
@@ -508,6 +644,8 @@ namespace TestMdfEntityFramework.Views
                 uc_2.UpdateUnidad(cu_2);
 
                 #endregion
+
+
 
                 #region antes
                 /*
@@ -571,7 +709,11 @@ namespace TestMdfEntityFramework.Views
 
 
 
-                MessageBox.Show("Configuracion Guardada con Exito", "INFO", MessageBoxButton.OK, MessageBoxImage.Information);
+                //MessageBox.Show("Configuracion Guardada con Exito", "INFO", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                txtMensajePopup.Text = "CONFIGURACION EXITOSA";
+                mostrarPopupOk();
+
             }
             catch (Exception ex)
             {
@@ -580,6 +722,406 @@ namespace TestMdfEntityFramework.Views
 
         }
 
+        string nombre_combo_cambiado_actualmente = "";
+        private void cmbEmpresa_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            nombre_combo_cambiado_actualmente = "cmbEmpresa";
 
+            string nombreCombo = ((ComboBox)sender).Name;
+            if (nombreCombo == "cmbEmpresa")
+            {
+                cmbCorredor.Items.Clear();
+
+                var currentSelectedIndex = ((ComboBox)sender).SelectedIndex;
+                string textSelected = ((ComboBox)sender).Items[currentSelectedIndex].ToString();
+                
+                //obtener el pkEmpresa de la seleccion en el combo empresa
+                ServiceEmpresas serv_empresas = new ServiceEmpresas();
+                ct_empresas obj_empresa_selected = serv_empresas.getEntityPorNombreEmpresa(textSelected);
+
+                //obtener los corredores por fkEmpresa
+                ServiceCorredores serv_corredores = new ServiceCorredores();
+                List<ct_corredores> list_corredores = serv_corredores.getEntityPorFkEmpresa(obj_empresa_selected.pkEmpresa);
+
+                List<string> list2 = new List<string>();
+                for (int i = 0; i < list_corredores.Count; i++)
+                {
+                    list2.Add(list_corredores[i].nombre);
+                }
+                foreach (var li in list2)
+                {
+                    cmbCorredor.Items.Add(li);
+                }
+            }
+        }
+
+        private void cmbCorredor_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                string nombreCombo = ((ComboBox)sender).Name;
+                //if (nombreCombo == "cmbCorredor" && nombre_combo_cambiado_actualmente == "")
+                //{
+                    var currentSelectedIndex = ((ComboBox)sender).SelectedIndex;
+                    string textSelected = ((ComboBox)sender).Items[currentSelectedIndex].ToString();
+
+
+                    //obtener el pkCorredor de la seleccion en el combo corredor
+                    ServiceCorredores serv_corredor = new ServiceCorredores();
+                    ct_corredores obj_corredor_selected = serv_corredor.getEntityPorNombreCorredor(textSelected);
+
+                    //obtener los rutas por fkCorredor
+                    cmbRuta.Items.Clear();
+
+                    ServiceRutas serv_rutas = new ServiceRutas();
+                    List<ct_rutas> list_rutas = serv_rutas.getEntityPorFkCorredor(obj_corredor_selected.pkCorredor);
+
+                    List<string> list2 = new List<string>();
+                    for (int i = 0; i < list_rutas.Count; i++)
+                    {
+                        list2.Add(list_rutas[i].nombre);
+                    }
+                    foreach (var li in list2)
+                    {
+                        cmbRuta.Items.Add(li);
+                    }
+
+                    //obtener las unidades por fkCorredor
+                    cmbUnidad.Items.Clear();
+
+                    ServiceUnidades serv_unidades = new ServiceUnidades();
+                    List<ct_unidades> list_unidades = serv_unidades.getEntityPorFkCorredor(obj_corredor_selected.pkCorredor);
+
+                    List<string> list3 = new List<string>();
+                    for (int i = 0; i < list_unidades.Count; i++)
+                    {
+                        list3.Add(list_unidades[i].nombre);
+                    }
+                    foreach (var li in list3)
+                    {
+                        cmbUnidad.Items.Add(li);
+                    }
+                //}
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("!!!!!", "ATENCION !!!");
+            }
+            
+        }
+
+        void ClearBufferSendData()
+        {
+            for (int i = 0; i < BufferSendData.Length; i++)
+            {
+                BufferSendData[i] = 0;
+            }
+        }
+        public void configura_puerto_serial()
+        {
+            try
+            {
+                ServiceConfigVarios scv = new ServiceConfigVarios();
+                config_varios cv_port_name = scv.getEntityByClave("PORT_NAME");
+                config_varios cv_baud_rate = scv.getEntityByClave("BAUD_RATE");
+                config_varios cv_paridad = scv.getEntityByClave("PARIDAD");
+                config_varios cv_data_bits = scv.getEntityByClave("DATA_BITS");
+                config_varios cv_stop_bits = scv.getEntityByClave("STOP_BITS");
+                config_varios cv_handshake = scv.getEntityByClave("HANDSHAKE");
+
+                this.puertoSerie1 = new System.IO.Ports.SerialPort
+                    ("" + cv_port_name.valor
+                    , Convert.ToInt32(cv_baud_rate.valor)
+                    , cv_paridad.valor == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                    , Convert.ToInt32(cv_data_bits.valor)
+                    , Convert.ToInt32(cv_stop_bits.valor) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                    );
+                puertoSerie1.Handshake = cv_handshake.valor == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+            }
+            catch
+            {
+                MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
+            }
+
+        }
+        private void open_serial_port()
+        {
+            if (puertoSerie1.IsOpen == false)
+            {
+                puertoSerie1.Open();
+            }
+        }
+        private void close_serial_port()
+        {
+            if (puertoSerie1.IsOpen == true)
+            {
+                puertoSerie1.Close();
+            }
+        }
+        private void ejecutar_commando_86_ruta(string nombre_ruta)
+        {
+            const decimal ByteInicio = 1;
+            const decimal AddressConsola = 1;
+            const decimal AddressAlcancia = 2;
+            const decimal Comando = 134;
+            const decimal TipoConfig = 0; // RUTA
+
+            const Int32 K_offsetDatos = 4;
+            const Int32 K_CRCs = 2;
+
+            const decimal CRC1 = 193;
+            const decimal CRC2 = 194;
+
+            int CantidadDatos = 16;
+            CantidadDatos = nombre_ruta.Length + 2;
+
+            ClearBufferSendData();
+
+            BufferSendData[0] = decimal.ToByte(ByteInicio);
+            BufferSendData[1] = decimal.ToByte(AddressAlcancia);
+            BufferSendData[2] = decimal.ToByte(AddressConsola);
+            BufferSendData[3] = decimal.ToByte(CantidadDatos);
+            BufferSendData[4] = decimal.ToByte(Comando);
+            BufferSendData[5] = decimal.ToByte(TipoConfig);
+
+            int n = 6;
+            for (int i = 0; i < nombre_ruta.Length; i++)
+            {
+                BufferSendData[n++] = (byte)nombre_ruta[i];
+            }
+
+            BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
+            BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+            open_serial_port();
+            puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
+
+            Task.WaitAll(new Task[] { Task.Delay(200) });
+            puertoSerie1.Read(RecievedDataGlobal, 0, 50);
+
+            if (RecievedDataGlobal[5] == 0)
+            {
+                //MessageBox.Show("Se cambio la Ruta Correctamente", "INFO");
+            }
+            else
+            {
+                MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+            }
+        }
+        private void ejecutar_commando_86_unidad(string nombre_unidad)
+        {
+            const decimal ByteInicio = 1;
+            const decimal AddressConsola = 1;
+            const decimal AddressAlcancia = 2;
+            const decimal Comando = 134;
+            const decimal TipoConfig = 1; // UNIDAD
+
+            const Int32 K_offsetDatos = 4;
+            const Int32 K_CRCs = 2;
+
+            const decimal CRC1 = 193;
+            const decimal CRC2 = 194;
+
+            int CantidadDatos = 16;
+            CantidadDatos = nombre_unidad.Length + 2;
+
+            ClearBufferSendData();
+
+            BufferSendData[0] = decimal.ToByte(ByteInicio);
+            BufferSendData[1] = decimal.ToByte(AddressAlcancia);
+            BufferSendData[2] = decimal.ToByte(AddressConsola);
+            BufferSendData[3] = decimal.ToByte(CantidadDatos);
+            BufferSendData[4] = decimal.ToByte(Comando);
+            BufferSendData[5] = decimal.ToByte(TipoConfig);
+
+            int n = 6;
+            for (int i = 0; i < nombre_unidad.Length; i++)
+            {
+                BufferSendData[n++] = (byte)nombre_unidad[i];
+            }
+
+            BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
+            BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+            open_serial_port();
+            puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
+
+            Task.WaitAll(new Task[] { Task.Delay(200) });
+            puertoSerie1.Read(RecievedDataGlobal, 0, 50);
+
+            if (RecievedDataGlobal[5] == 0)
+            {
+                //MessageBox.Show("Se cambio la Unidad Correctamente", "INFO");
+            }
+            else
+            {
+                MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+            }
+        }
+
+        
+
+        #region METODOS GRID POPUP
+        private void ocultarPopupOk()
+        {
+            try
+            {
+                SetPopupDlgCenter();
+                bottomToCenterAnimiation.From = bottom;
+                bottomToCenterAnimiation.To = centerY;
+
+                Canvas.SetTop(popupBd, bottom);
+
+                popupGrid.Visibility = Visibility.Hidden;
+
+                bottomToCenterStoryboard.Begin();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private void mostrarPopupOk()
+        {
+            try
+            {
+                SetPopupDlgCenter();
+                bottomToCenterAnimiation.From = bottom;
+                bottomToCenterAnimiation.To = centerY;
+
+                Canvas.SetTop(popupBd, bottom);
+
+                popupGrid.Visibility = Visibility.Visible;
+
+                bottomToCenterStoryboard.Begin();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private void SetPopupDlgCenter()
+        {
+            try
+            {
+                left = -(popupBd.ActualWidth);
+                top = -(popupBd.ActualHeight);
+                right = (popupGrid.ActualWidth);
+                bottom = (popupGrid.ActualHeight);
+
+                centerX = (popupGrid.ActualWidth / 2) - popupBd.ActualWidth / 2;
+                centerY = (popupGrid.ActualHeight / 2) - popupBd.ActualHeight / 2;
+
+                Canvas.SetLeft(popupBd, centerX);
+                Canvas.SetTop(popupBd, centerY);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        private void InitializeAnimations()
+        {
+            try
+            {
+                #region bottom to center animation
+                bottomToCenterAnimiation = new DoubleAnimation()
+                {
+                    From = bottom,
+                    To = centerY,
+                    Duration = TimeSpan.FromMilliseconds(250),
+                    FillBehavior = FillBehavior.Stop,
+                };
+
+                Storyboard.SetTarget(bottomToCenterAnimiation, popupBd);
+                Storyboard.SetTargetProperty(bottomToCenterAnimiation, new PropertyPath(Canvas.TopProperty));
+
+                bottomToCenterStoryboard = new Storyboard();
+                bottomToCenterStoryboard.Children.Add(bottomToCenterAnimiation);
+
+                bottomToCenterStoryboard.Completed += OnStoryboardCompleted;
+                #endregion
+
+                #region top to center animation 
+                topToCenterAnimation = new DoubleAnimation()
+                {
+                    From = top,
+                    To = centerY,
+                    Duration = TimeSpan.FromMilliseconds(250),
+                    FillBehavior = FillBehavior.Stop,
+                };
+
+                Storyboard.SetTarget(topToCenterAnimation, popupBd);
+                Storyboard.SetTargetProperty(topToCenterAnimation, new PropertyPath(Canvas.TopProperty));
+
+                topToCenterStoryboard = new Storyboard();
+                topToCenterStoryboard.Children.Add(topToCenterAnimation);
+
+                topToCenterStoryboard.Completed += OnStoryboardCompleted;
+                #endregion
+
+                #region left to center animation
+                leftToCenterAnimation = new DoubleAnimation()
+                {
+                    From = left,
+                    To = centerX,
+                    Duration = TimeSpan.FromMilliseconds(250),
+                    FillBehavior = FillBehavior.Stop,
+                };
+
+                Storyboard.SetTarget(leftToCenterAnimation, popupBd);
+                Storyboard.SetTargetProperty(leftToCenterAnimation, new PropertyPath(Canvas.LeftProperty));
+
+                leftToCenterStoryboard = new Storyboard();
+                leftToCenterStoryboard.Children.Add(leftToCenterAnimation);
+
+                leftToCenterStoryboard.Completed += OnStoryboardCompleted;
+                #endregion
+
+                #region right to center animation
+                rightToCenterAnimation = new DoubleAnimation()
+                {
+                    From = right,
+                    To = centerX,
+                    Duration = TimeSpan.FromMilliseconds(250),
+                    FillBehavior = FillBehavior.Stop,
+                };
+
+                Storyboard.SetTarget(rightToCenterAnimation, popupBd);
+                Storyboard.SetTargetProperty(rightToCenterAnimation, new PropertyPath(Canvas.LeftProperty));
+
+                rightToCenterStoryboard = new Storyboard();
+                rightToCenterStoryboard.Children.Add(rightToCenterAnimation);
+
+                rightToCenterStoryboard.Completed += OnStoryboardCompleted;
+
+                #endregion
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        private void OnStoryboardCompleted(object sender, EventArgs e)
+        {
+            Canvas.SetLeft(popupBd, centerX);
+            Canvas.SetTop(popupBd, centerY);
+        }
+        #endregion
+
+        private void popupGrid_LostFocus(object sender, RoutedEventArgs e)
+        {
+            ocultarPopupOk();
+        }
+        private void popupGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            ocultarPopupOk();
+        }
+        private void popupGrid_TouchDown(object sender, TouchEventArgs e)
+        {
+            ocultarPopupOk();
+        }
     }
 }

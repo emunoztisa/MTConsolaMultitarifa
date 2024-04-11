@@ -15,7 +15,9 @@ namespace TestMdfEntityFramework.Requests
         public Nullable<long> fkLugarDestino { get; set; }
         public Nullable<long> fkStatus { get; set; }
         public string folio { get; set; }
-        public string total { get; set; }
+        public string totalCobrado { get; set; }
+        public string totalPagado { get; set; }
+        public string fechaHoraCancelacion { get; set; }
         public int enviado { get; set; }
         public int confirmadoTISA { get; set; }
         public string modo { get; set; }
@@ -29,7 +31,7 @@ namespace TestMdfEntityFramework.Requests
         }
         public ReqBoletos(
             long pkBoleto, long pkBoletoTISA, long fkAsignacion, long fkLugarOrigen, long fkLugarDestino, long fkStatus
-            ,string folio, string total, int enviado, int confirmadoTISA, string modo, string created_at, string updated_at, string deleted_at)
+            ,string folio, string totalCobrado, string totalPagado, string fechaHoraCancelacion, int enviado, int confirmadoTISA, string modo, string created_at, string updated_at, string deleted_at)
         {
             this.pkBoleto = pkBoleto;
             this.pkBoletoTISA = pkBoletoTISA;
@@ -38,7 +40,9 @@ namespace TestMdfEntityFramework.Requests
             this.fkLugarDestino = fkLugarDestino;
             this.fkStatus = fkStatus;
             this.folio = folio;
-            this.total = total;
+            this.totalCobrado = totalCobrado;
+            this.totalPagado = totalPagado;
+            this.fechaHoraCancelacion = fechaHoraCancelacion;
             this.enviado = enviado;
             this.confirmadoTISA = confirmadoTISA;
             this.modo = modo;

@@ -59,6 +59,7 @@ namespace TestMdfEntityFramework
         private void SincronizaOperacionConsola()
         {
             SincronizacionTISA.SincronizaBoletosYBoletosDetalle();
+            SincronizacionTISA.SincronizaCortes();
         }
 
         private void SetearVersionYCopyright()

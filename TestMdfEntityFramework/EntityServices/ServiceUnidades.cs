@@ -68,5 +68,10 @@ namespace TestMdfEntityFramework.EntityServices
         {
             return em.ct_unidades.Where(q => q.nombre == (string)nombre_unidad).FirstOrDefault<ct_unidades>();
         }
+
+        public List<ct_unidades> getEntityPorFkCorredor(object fkCorredor)
+        {
+            return em.ct_unidades.Where(q => q.fkCorredor == (Int64)fkCorredor).ToList<ct_unidades>();
+        }
     }
 }

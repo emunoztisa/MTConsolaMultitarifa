@@ -57,5 +57,10 @@ namespace TestMdfEntityFramework.EntityServices
                 em.SaveChanges();
             }
         }
+
+        public ct_empresas getEntityPorNombreEmpresa(string nombre_empresa)
+        {
+            return em.ct_empresas.Where(q => q.nombre == nombre_empresa).FirstOrDefault<ct_empresas>();
+        }
     }
 }

@@ -26,9 +26,9 @@
         <EntityTypeShape EntityType="databaseModel.sy_status" Width="1.5" PointX="10.625" PointY="3.375" />
         <EntityTypeShape EntityType="databaseModel.sy_asignaciones" Width="1.5" PointX="13.5" PointY="4" />
         <EntityTypeShape EntityType="databaseModel.ct_unidades" Width="1.5" PointX="13.5" PointY="0.5" />
-        <EntityTypeShape EntityType="databaseModel.sy_boletos" Width="1.5" PointX="2.25" PointY="6.125" />
         <EntityTypeShape EntityType="databaseModel.sy_boletos_detalle" Width="1.5" PointX="3.875" PointY="6.125" />
         <EntityTypeShape EntityType="databaseModel.sy_cortes" Width="1.5" PointX="11.125" PointY="6.125" />
+        <EntityTypeShape EntityType="databaseModel.sy_boletos" Width="1.5" PointX="2.125" PointY="6" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

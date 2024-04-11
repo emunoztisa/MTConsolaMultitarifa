@@ -54,7 +54,9 @@ namespace TestMdfEntityFramework.EntityServices
                 it.fkLugarDestino = entity.fkLugarDestino;
                 it.fkStatus = entity.fkStatus;
                 it.folio = entity.folio;
-                it.total = entity.total;
+                it.totalCobrado = entity.totalCobrado;
+                it.totalPagado = entity.totalPagado;
+                it.fechaHoraCancelacion = entity.fechaHoraCancelacion;
                 it.enviado = entity.enviado;
                 it.confirmadoTISA = entity.confirmadoTISA;
                 it.modo = entity.modo;

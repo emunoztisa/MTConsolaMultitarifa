@@ -114,6 +114,26 @@ namespace TestMdfEntityFramework.Clases
 
             }
         }
+        public static void SincronizaCortes()
+        {
+            ServiceCortes serv_cortes = new ServiceCortes();
+            List<sy_cortes> list = serv_cortes.getEntitiesByEnviados();
+
+            CortesController bc = new CortesController();
+            foreach (var item in list)
+            {
+                ResCortes_Insert resCorteInserted = bc.InsertCorte(item);
+                if (resCorteInserted.response == true && resCorteInserted.status == 200)
+                {
+                    // TODO: Actualizar el pkBoletoTISA en la base de datos local
+                    item.pkCorteTISA = resCorteInserted.data.pkCorte;
+                    item.enviado = 1;
+                    item.confirmadoTISA = 1;
+                    serv_cortes.updEntity(item);
+                }
+            }
+        }
+
 
     }
 }

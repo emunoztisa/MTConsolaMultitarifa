@@ -132,6 +132,8 @@ namespace TestMdfEntityFramework.Views
             SetPopupDlgCenter();
             InitializeAnimations();
 
+            btnCancelarVenta.IsEnabled = false;
+
             ////delegado para limpiar los campos
             //delegado_limpiar_campos_despues_de_venta_boleto = new delegate_limpiarCamposDespuesDeVentaBoleto(LimpiarCamposDespuesDeVentaBoleto);
             //delegado_limpiar_campos_despues_de_venta_boleto();
@@ -598,7 +600,7 @@ namespace TestMdfEntityFramework.Views
             return asign_activa;
         }
 
-        private void InsertarBoleto()
+        private void InsertarBoleto(uint total_cobrado, uint total_pagado)
         {
             try
             {
@@ -640,7 +642,9 @@ namespace TestMdfEntityFramework.Views
                         sb.fkLugarDestino = fkLugarDestino.pkLugar;
                         sb.fkStatus = 1;
                         sb.folio = siguienteFolioAInsertar;
-                        sb.total = 0;
+                        sb.totalCobrado = 0;
+                        sb.totalPagado = 0;
+                        sb.fechaHoraCancelacion = null;
                         sb.enviado = 0;
                         sb.confirmadoTISA = 0;
                         sb.modo = MODO_APP;
@@ -805,7 +809,8 @@ namespace TestMdfEntityFramework.Views
                     // Actualizar el campo total del boleto
                     ServiceBoletos serv_boletos_ = new ServiceBoletos();
                     sy_boletos sb_ = serv_boletos_.getEntity(pkLastBoletoInserted);
-                    sb_.total = total;
+                    sb_.totalCobrado = total_cobrado; // total
+                    sb_.totalPagado = total_pagado;
                     serv_boletos_.updEntity(sb_);
 
                 }
@@ -1377,6 +1382,7 @@ namespace TestMdfEntityFramework.Views
             cmbCantSeis.IsEnabled = false;
 
             btnCobrar.IsEnabled = false;
+            btnCancelarVenta.IsEnabled = true;
 
         }
         private void desbloqueaCampos()
@@ -1399,6 +1405,7 @@ namespace TestMdfEntityFramework.Views
             cmbCantSeis.IsEnabled = true;
 
             btnCobrar.IsEnabled = true;
+            btnCancelarVenta.IsEnabled = false;
         }
         private void popupGrid_LostFocus(object sender, RoutedEventArgs e)
         {
@@ -1719,6 +1726,8 @@ namespace TestMdfEntityFramework.Views
             {
 
                 desbloqueaCampos();
+
+                txtMensajePopup.Text = "TARIFA COMPLETADA";
                 mostrarPopupOk();
 
                 //actualizaTxtStatus();
@@ -1733,9 +1742,28 @@ namespace TestMdfEntityFramework.Views
                 Task.WaitAll(new Task[] { Task.Delay(500) });
                 if (CANTIDAD_VECES_INSERTA_BOLETO == 0)
                 {
-                    InsertarBoleto();
+                    uint total_cobrado = 0;
+                    uint total_pagado = 0;
 
-                    CANTIDAD_VECES_INSERTA_BOLETO++;
+                    //Task.WaitAll(new Task[] { Task.Delay(100) });
+                    //puertoSerie1.Read(RecievedDataGlobal, 0, 50);
+
+                    //if (RecievedDataGlobal[5] == 0) // si el comando de tarifa se completo correctamente.
+                    //{
+
+                        // TODO: ejecutar_commando_02_ultima_venta para obtener los totales cobrado y pagado
+                        ejecutar_commando_02_ultima_venta();
+
+                        Task.WaitAll(new Task[] { Task.Delay(100) });
+                        puertoSerie1.Read(RecievedDataGlobal, 0, 50);
+
+                        total_cobrado = getTotalCobradoBoleto();
+                        total_pagado = getTotalPagadoBoleto();
+
+                        InsertarBoleto(total_cobrado, total_pagado);
+                        CANTIDAD_VECES_INSERTA_BOLETO++;
+                    //}
+                    
                 }
 
 
@@ -1882,6 +1910,81 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[20] = cons6;
         }
 
+        private void btnCancelarVenta_Click(object sender, RoutedEventArgs e)
+        {
+            ejecutar_commando_06_cancelar_venta();
+
+            Task.WaitAll(new Task[] { Task.Delay(200) });
+            puertoSerie1.Read(RecievedDataGlobal, 0, 50);
+
+            if (RecievedDataGlobal != null)
+            {
+                insert_boleto_cancelado_en_db_local(RecievedDataGlobal);
+                Task.WaitAll(new Task[] { Task.Delay(100) });
+
+                desbloqueaCampos();
+
+                txtMensajePopup.Text = "VENTA CANCELADA";
+                mostrarPopupOk();
+
+                //actualizaTxtStatus();
+                delegado_actualiza_txt_status();
+
+                //Actualiza Monto Ingresado
+                delegado_actualiza_lbl_monto_ingresado();
+
+                detiene_timers();
+            }
+            else
+            {
+                MessageBox.Show("Algo salio mal", "ERROR");
+            }
+
+        }
+
+        private void ejecutar_commando_06_cancelar_venta()
+        {
+            DateTime varFechaHora = DateTime.Now;
+            byte[] BCDDateTime = ToBCD_DT(varFechaHora);
+
+            const decimal Comando = 6;
+            const decimal CRC1 = 193;
+            const decimal CRC2 = 194;
+
+            int CantidadDatos = 0;
+
+            ClearBufferSendData();
+
+            BufferSendData[0] = decimal.ToByte(ByteInicio);
+            BufferSendData[1] = decimal.ToByte(AddressAlcancia);
+            BufferSendData[2] = decimal.ToByte(AddressConsola);
+
+            BufferSendData[4] = decimal.ToByte(Comando);
+            CantidadDatos += 1;
+
+            // Metodo para consultar el siguiente corte de alcancia a asignar
+            string folio_boleto_actual = obtener_folio_boleto_actual();
+
+            ingresa_folio_boleto_actual_en_buffer_send_data(folio_boleto_actual);
+            CantidadDatos += 17;
+
+            BufferSendData[22] = BCDDateTime[0];
+            BufferSendData[23] = BCDDateTime[1];
+            BufferSendData[24] = BCDDateTime[2];
+            BufferSendData[25] = BCDDateTime[3];
+            BufferSendData[26] = BCDDateTime[4];
+            BufferSendData[27] = BCDDateTime[5];
+            CantidadDatos += 6;
+
+            BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
+            BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+            BufferSendData[K_posicionCantidadDatos] = (byte)(CantidadDatos);
+
+            open_serial_port();
+            puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
+        }
+
         private void agregar_folio_to_buffer_send_data(string folio)
         {
             int n = 5;
@@ -1889,6 +1992,76 @@ namespace TestMdfEntityFramework.Views
             {
                 BufferSendData[n++] = (byte)folio[i];
             }
+        }
+        private string obtener_folio_boleto_actual()
+        {
+            string folio_boleto_actual = "";
+
+            folio_boleto_actual = ObtenerSiguienteFolioAInsertarEnDbLocal();
+            
+            return folio_boleto_actual;
+        }
+        private void ingresa_folio_boleto_actual_en_buffer_send_data(string folio_boleto_actual)
+        {
+            int n = 5;
+            for (int i = 0; i < 17; i++)
+            {
+                BufferSendData[n++] = (byte)folio_boleto_actual[i];
+            }
+        }
+        private string GetFolioBoletoString(byte[] RecievedDataGlobal_local)
+        {
+            string folio = "";
+            int n = 5;
+            for (int i = 0; i < 17; i++)
+            {
+                char varTmp = (char)RecievedDataGlobal_local[n++];
+                folio += varTmp.ToString();
+            }
+            return folio;
+        }
+        private void insert_boleto_cancelado_en_db_local(byte[] RecievedDataGlobal_local)
+        {
+            //obtener el modo de la aplicacion
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_modo = serv_config_varios.getEntityByClave("MODO");
+            string MODO_APP = cv_modo.valor;
+
+            string fecha_actual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            sy_boletos obj_boleto = new sy_boletos();
+
+            obj_boleto.pkBoletoTISA = null;
+            obj_boleto.fkAsignacion = asign_activa.pkAsignacion;
+            obj_boleto.fkLugarOrigen = 0;
+            obj_boleto.fkLugarDestino = 0;
+            obj_boleto.fkStatus = 2; // 2 = Status Cancelado.
+            obj_boleto.enviado = 0;
+            obj_boleto.confirmadoTISA = 0;
+            obj_boleto.modo = MODO_APP;
+            obj_boleto.created_at = fecha_actual;
+            obj_boleto.updated_at = null;
+            obj_boleto.deleted_at = null;
+
+            obj_boleto.folio = GetFolioBoletoString(RecievedDataGlobal_local);
+
+            string varStrFechaHora = StringToBCD(22);
+            string fecha = varStrFechaHora.Substring(4, 2) + '/' + varStrFechaHora.Substring(2, 2) + '/' + "20" + varStrFechaHora.Substring(0, 2);
+            string hora = varStrFechaHora.Substring(6, 2) + ':' + varStrFechaHora.Substring(8, 2) + ':' + varStrFechaHora.Substring(10, 2);
+
+            obj_boleto.fechaHoraCancelacion = fecha + " " + hora;
+            
+            uint varTotalCobrado = VarByteToUInteger32(31);
+            uint varTotalPagado = VarByteToUInteger32(35);
+
+            string strTotalCobrado = varTotalCobrado.ToString();
+            string strTotalPagado = varTotalPagado.ToString();
+
+            obj_boleto.totalCobrado = strTotalCobrado != null && strTotalCobrado != "" ? (varTotalCobrado / 100) : 0;
+            obj_boleto.totalPagado = strTotalPagado != null && strTotalPagado != "" ? (varTotalPagado / 100) : 0;
+
+            ServiceBoletos serv_boletos = new ServiceBoletos();
+            serv_boletos.addEntity(obj_boleto);
         }
 
         #endregion
@@ -2066,5 +2239,50 @@ namespace TestMdfEntityFramework.Views
 
         #endregion
 
+        private void ejecutar_commando_02_ultima_venta()
+        {
+            const decimal Comando = 2;
+            //const byte CantidadTarifas = 1;
+            const decimal CRC1 = 193;
+            const decimal CRC2 = 194;
+
+            int CantidadDatos = 0;
+
+            ClearBufferSendData();
+
+            BufferSendData[0] = decimal.ToByte(ByteInicio);
+            BufferSendData[1] = decimal.ToByte(AddressAlcancia);
+            BufferSendData[2] = decimal.ToByte(AddressConsola);
+
+            BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(Comando);
+            CantidadDatos += 1;
+            BufferSendData[K_posicionCantidadDatos] = (byte)(CantidadDatos);
+
+            BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
+            BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+            open_serial_port();
+            puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
+        }
+        private uint getTotalCobradoBoleto()
+        {
+            uint total_cobrado = 0;
+
+            uint varTotalCobrado = VarByteToUInteger32(31);
+            string strTotalCobrado = varTotalCobrado.ToString();
+            total_cobrado = strTotalCobrado != null && strTotalCobrado != "" ? (varTotalCobrado / 100) : 0;
+
+            return total_cobrado;
+        }
+        private uint getTotalPagadoBoleto()
+        {
+            uint total_pagado = 0;
+
+            uint varTotalPagado = VarByteToUInteger32(35);
+            string strTotalPagado = varTotalPagado.ToString();
+            total_pagado = strTotalPagado != null && strTotalPagado != "" ? (varTotalPagado / 100) : 0;
+
+            return total_pagado;
+        }
     }
 }

@@ -7,7 +7,7 @@
              x:Class="TestMdfEntityFramework.Views.Configuracionv2"
              mc:Ignorable="d" 
              d:DesignHeight="544" d:DesignWidth="670"
-             Background="Transparent" Loaded="Configuracion_OnLoad">
+             Background="Transparent" Loaded="Configuracion_OnLoad" Unloaded="Configuracionv2_OnUnload">
     <UserControl.Resources>
         <!--#region FOCUSVISUAL -->
         <Style x:Key="FocusVisual">
@@ -343,7 +343,7 @@
             <!--#endregion-->
             
             <!--#region CONF EMPRESA -->
-            <TextBlock Grid.Row="6" 
+            <TextBlock Grid.Row="5" 
                        Grid.Column="4"
                        Text="EMPRESA" 
                        Foreground="Cyan" 
@@ -352,16 +352,16 @@
                        VerticalAlignment="Center" 
                        HorizontalAlignment="Center"/>
             <ComboBox x:Name="cmbEmpresa"
-                      Grid.Row="6" Grid.Column="5"
+                      Grid.Row="5" Grid.Column="5"
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
                       Margin="10,10,10,10"
-                      Style="{DynamicResource COMBOSTYLE}">
+                      Style="{DynamicResource COMBOSTYLE}" SelectionChanged="cmbEmpresa_SelectionChanged">
             </ComboBox>
             <!--#endregion-->
 
             <!--#region CONF CORREDOR -->
-            <TextBlock Grid.Row="7" 
+            <TextBlock Grid.Row="6" 
                        Grid.Column="4"
                        Text="CORREDOR" 
                        Foreground="Cyan" 
@@ -370,16 +370,16 @@
                        VerticalAlignment="Center" 
                        HorizontalAlignment="Center"/>
             <ComboBox x:Name="cmbCorredor"
-                      Grid.Row="7" Grid.Column="5"
+                      Grid.Row="6" Grid.Column="5"
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
                       Margin="10,10,10,10"
-                      Style="{DynamicResource COMBOSTYLE}">
+                      Style="{DynamicResource COMBOSTYLE}" SelectionChanged="cmbCorredor_SelectionChanged">
             </ComboBox>
             <!--#endregion-->
 
             <!--#region CONF RUTA -->
-            <TextBlock Grid.Row="8" 
+            <TextBlock Grid.Row="7" 
                        Grid.Column="4"
                        Text="RUTA" 
                        Foreground="Cyan" 
@@ -388,7 +388,7 @@
                        VerticalAlignment="Center" 
                        HorizontalAlignment="Center"/>
             <ComboBox x:Name="cmbRuta"
-                      Grid.Row="8" Grid.Column="5"
+                      Grid.Row="7" Grid.Column="5"
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
                       Margin="10,10,10,10"
@@ -397,7 +397,7 @@
             <!--#endregion-->
 
             <!--#region CONF UNIDAD -->
-            <TextBlock Grid.Row="9" 
+            <TextBlock Grid.Row="8" 
                        Grid.Column="4"
                        Text="UNIDAD" 
                        Foreground="Cyan" 
@@ -406,7 +406,7 @@
                        VerticalAlignment="Center" 
                        HorizontalAlignment="Center"/>
             <ComboBox x:Name="cmbUnidad"
-                Grid.Row="9" Grid.Column="5"
+                Grid.Row="8" Grid.Column="5"
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
                       Margin="10,10,10,10"
@@ -416,7 +416,7 @@
 
             <!--#region BOTONES -->
             <Button x:Name="btnGuardarConfiguracion" 
-                    Grid.Column="4" Grid.Row="10"
+                    Grid.Column="4" Grid.Row="9"
                     Grid.ColumnSpan="2" Grid.RowSpan="2"
                     Width="200" Height="50" 
                     VerticalAlignment="Center"
@@ -442,6 +442,50 @@
 
                 </Grid>
             </Button>
+            <!--#endregion-->
+
+            <!--#region POPUP OK -->
+            <Grid x:Name="popupGrid"
+              Visibility="Hidden"
+              Grid.Row="6" Grid.Column="3" 
+                  LostFocus="popupGrid_LostFocus" 
+                  MouseDown="popupGrid_MouseDown" 
+                  TouchDown="popupGrid_TouchDown">
+                <Grid Background="FloralWhite"
+                  Opacity="0.6"/>
+
+                <Canvas Background="Transparent">
+                    <Border x:Name="popupBd"
+                        Background="White" 
+                        BorderBrush="Gray"
+                        BorderThickness="2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="300">
+                        <Grid Margin="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="" 
+                                       x:Name="txtMensajePopup" 
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5"/>
+                            <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,10,0,0"
+                                    Grid.Row="2">
+                                <Image Source="/SCS/IMG/palomita_verde.png" Width="100" Height="100" />
+
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Canvas>
+            </Grid>
             <!--#endregion-->
 
         </Grid>

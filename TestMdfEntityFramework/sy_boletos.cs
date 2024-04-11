@@ -21,7 +21,9 @@ namespace TestMdfEntityFramework
         public Nullable<long> fkLugarDestino { get; set; }
         public Nullable<long> fkStatus { get; set; }
         public string folio { get; set; }
-        public Nullable<decimal> total { get; set; }
+        public Nullable<decimal> totalCobrado { get; set; }
+        public Nullable<decimal> totalPagado { get; set; }
+        public string fechaHoraCancelacion { get; set; }
         public Nullable<int> enviado { get; set; }
         public Nullable<int> confirmadoTISA { get; set; }
         public string modo { get; set; }

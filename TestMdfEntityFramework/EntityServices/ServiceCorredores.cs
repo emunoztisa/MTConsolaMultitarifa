@@ -58,5 +58,15 @@ namespace TestMdfEntityFramework.EntityServices
                 em.SaveChanges();
             }
         }
+
+        public List<ct_corredores> getEntityPorFkEmpresa(object fkEmpresa)
+        {
+            return em.ct_corredores.Where(q => q.fkEmpresa == (Int64)fkEmpresa).ToList<ct_corredores>();
+        }
+
+        public ct_corredores getEntityPorNombreCorredor(string nombre_corredor)
+        {
+            return em.ct_corredores.Where(q => q.nombre == nombre_corredor).FirstOrDefault<ct_corredores>();
+        }
     }
 }

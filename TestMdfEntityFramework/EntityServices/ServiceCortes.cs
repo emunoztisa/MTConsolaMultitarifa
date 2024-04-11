@@ -73,5 +73,10 @@ namespace TestMdfEntityFramework.EntityServices
         {
             return em.sy_cortes.OrderByDescending(q => q.pkCorte).FirstOrDefault();
         }
+
+        public List<sy_cortes> getEntitiesByEnviados()
+        {
+            return em.sy_cortes.Where(q => q.enviado == 0 || q.enviado == null).ToList<sy_cortes>();
+        }
     }
 }

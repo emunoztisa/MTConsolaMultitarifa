@@ -129,8 +129,8 @@ namespace TestMdfEntityFramework.Controllers
             req.total_efectivo_acumulado = (decimal)obj.total_efectivo_acumulado;
             req.total_tarifas = (decimal)obj.total_tarifas;
             req.total_efectivo_rst = (decimal)obj.total_efectivo_rst;
-            req.enviado = (int)obj.enviado;
-            req.confirmadoTISA = (int)obj.confirmadoTISA;
+            req.enviado = obj.enviado != null ? (int)obj.enviado : 0;
+            req.confirmadoTISA = obj.confirmadoTISA != null ? (int)obj.confirmadoTISA : 0;
             req.created_at = obj.created_at;
             req.updated_at = obj.updated_at;
             req.deleted_at = obj.deleted_at;
