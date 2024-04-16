@@ -20,6 +20,8 @@ namespace TestMdfEntityFramework
             InitializeComponent();
             btnInicio_Click(null, null);
         }
+
+        #region EVENTOS CONTROLES
         private void Principal_OnLoad(object sender, RoutedEventArgs e)
         {
             SincronizarCatalogos();
@@ -38,6 +40,101 @@ namespace TestMdfEntityFramework
 
             ////////////////////////////////////////////////////////////////////////
         }
+        private void Principal_OnUnLoad(object sender, RoutedEventArgs e)
+        {
+            LimpiarUsuarioActualLogueado();
+
+            ////////////////////////////////////////////////////////////////////////
+            // ESTAS TAREAS SE DETENDRAN AL SALIR DEL FORMULARIO.
+            //SincronizacionTISA sTISA = new SincronizacionTISA();
+            //sTISA.Task_Sincroniza_Boletos_y_BoletosDetalle_DISPOSE();
+
+            /*
+                sTISA.Task_Sincroniza_Boletos_DISPOSE();
+                sTISA.Task_Sincroniza_BoletosDetalle_DISPOSE();
+            */
+            ////////////////////////////////////////////////////////////////////////
+        }
+        private void Principal_Closing(object sender, CancelEventArgs e)
+        {
+            Login login = new Login();
+            login.Show();
+        }
+        private void TBShow(object sender, RoutedEventArgs e)
+        {
+            GridContent.Opacity = 0.5;
+        }
+        private void TBHide(object sender, RoutedEventArgs e)
+        {
+            GridContent.Opacity = 1;
+        }
+        private void btnCerrarClick(object sender, RoutedEventArgs e)
+        {
+            LimpiarUsuarioActualLogueado();
+            Close();
+        }
+        private void PreviewMouseLeftBottonDownBG(object sender, MouseButtonEventArgs e)
+        {
+            btnShowHide.IsChecked = false;
+        }
+        private void btnMinimizarClick(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+        private void btnInicio_Click(object sender, RoutedEventArgs e)
+        {
+            DataContext = new Home();
+        }
+        private void btnConfiguraciones_Click(object sender, RoutedEventArgs e)
+        {
+            DataContext = new Configuracionv2();
+        }
+        private void btnCobroTarifa_Click(object sender, RoutedEventArgs e)
+        {
+            ServiceConfigVarios scv = new ServiceConfigVarios();
+            config_varios cv = scv.getEntityByClave("TIPO_TARIFA");
+
+            if (cv != null)
+            {
+                if (cv.valor == "FIJA")
+                {
+                    DataContext = new CobroTarifaFija();
+                }
+                if (cv.valor == "MULTITARIFA")
+                {
+                    DataContext = new CobroMultitarifaV1();
+                }
+            }
+        }
+        private void btnReportes_Click(object sender, RoutedEventArgs e)
+        {
+            DataContext = new Reportes();
+        }
+        private void btnLogout_Click(object sender, RoutedEventArgs e)
+        {
+            //Hacer una funcion para hacer Logout a los servicios de TISA.
+            LimpiarUsuarioActualLogueado();
+
+            //Cerrar la ventana.
+            Close();
+        }
+        private void btnAsignacion_Click(object sender, RoutedEventArgs e)
+        {
+            DataContext = new vwAsignaciones();
+        }
+        private void btnAcercaDe_Click(object sender, RoutedEventArgs e)
+        {
+            DataContext = new AcercaDe();
+        }
+        private void btnCuenta_Click(object sender, RoutedEventArgs e)
+        {
+            DataContext = new MiCuenta();
+        }
+
+
+        #endregion
+
+        #region METODOS SINCRONIZA CATALOGOS TISA -> CONSOLA
 
         private void SincronizarCatalogos()
         {
@@ -56,25 +153,6 @@ namespace TestMdfEntityFramework
 
         }
 
-        private void SincronizaOperacionConsola()
-        {
-            SincronizacionTISA.SincronizaBoletosYBoletosDetalle();
-            SincronizacionTISA.SincronizaCortes();
-        }
-
-        private void SetearVersionYCopyright()
-        {
-            ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
-
-            config_varios cv_version = serv_conf_varios.getEntityByClave("VERSION");
-            string version = cv_version.valor;
-            
-            config_varios cv_copy = serv_conf_varios.getEntityByClave("COPYRIGHT");
-            string copyright = cv_copy.valor;
-
-            txtVersion.Text = version;
-            txtCopyright.Text = copyright;
-        }
         private void Sincroniza_Empresas()
         {
             //Se obtienen las unidades del endpoint
@@ -346,106 +424,47 @@ namespace TestMdfEntityFramework
             }
         }
 
-        private void Principal_OnUnLoad(object sender, RoutedEventArgs e)
-        {
-            ////////////////////////////////////////////////////////////////////////
-            // ESTAS TAREAS SE DETENDRAN AL SALIR DEL FORMULARIO.
-            //SincronizacionTISA sTISA = new SincronizacionTISA();
-            //sTISA.Task_Sincroniza_Boletos_y_BoletosDetalle_DISPOSE();
-
-            /*
-                sTISA.Task_Sincroniza_Boletos_DISPOSE();
-                sTISA.Task_Sincroniza_BoletosDetalle_DISPOSE();
-            */
-            ////////////////////////////////////////////////////////////////////////
-        }
-        private void Principal_Closing(object sender, CancelEventArgs e)
-        {
-            Login login = new Login();
-            login.Show();
-        }
-
-        private void TBShow(object sender, RoutedEventArgs e)
-        {
-            GridContent.Opacity = 0.5;
-        }
-
-        private void TBHide(object sender, RoutedEventArgs e)
-        {
-            GridContent.Opacity = 1;
-        }
-
-        private void btnCerrarClick(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        private void PreviewMouseLeftBottonDownBG(object sender, MouseButtonEventArgs e)
-        {
-            btnShowHide.IsChecked = false;
-        }
-
-        private void btnMinimizarClick(object sender, RoutedEventArgs e)
-        {
-            this.WindowState = WindowState.Minimized;
-        }
-
-        private void btnInicio_Click(object sender, RoutedEventArgs e)
-        {
-            DataContext = new Home();
-        }
-
-        private void btnConfiguraciones_Click(object sender, RoutedEventArgs e)
-        {
-            DataContext = new Configuracionv2();
-        }
-        private void btnCobroTarifa_Click(object sender, RoutedEventArgs e)
-        {
-            ServiceConfigVarios scv = new ServiceConfigVarios();
-            config_varios cv = scv.getEntityByClave("TIPO_TARIFA");
-
-            if (cv != null)
-            {
-                if (cv.valor == "FIJA")
-                {
-                    DataContext = new CobroTarifaFija();
-                }
-                if (cv.valor == "MULTITARIFA")
-                {
-                    DataContext = new CobroMultitarifaV1();
-                }
-            }
-        }
-
-        private void btnReportes_Click(object sender, RoutedEventArgs e)
-        {
-            DataContext = new Reportes();
-        }
-        private void btnLogout_Click(object sender, RoutedEventArgs e)
-        {
-            //Hacer una funcion para hacer Logout a los servicios de TISA.
-
-            //Cerrar la ventana.
-            Close();
-        }
 
 
-        private void btnAsignacion_Click(object sender, RoutedEventArgs e)
+        #endregion
+
+        #region METODOS SINCRONIZA OPERACION CONSOLA -> TISA
+        private void SincronizaOperacionConsola()
         {
-            DataContext = new vwAsignaciones();
+            SincronizacionTISA.SincronizaBoletosYBoletosDetalle();
+            SincronizacionTISA.SincronizaCortes();
         }
-        private void btnAcercaDe_Click(object sender, RoutedEventArgs e)
+
+        #endregion
+
+        #region METODOS PROPIOS
+        private void SetearVersionYCopyright()
         {
-            DataContext = new AcercaDe();
+            ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
+
+            config_varios cv_version = serv_conf_varios.getEntityByClave("VERSION");
+            string version = cv_version.valor;
+
+            config_varios cv_copy = serv_conf_varios.getEntityByClave("COPYRIGHT");
+            string copyright = cv_copy.valor;
+
+            txtVersion.Text = version;
+            txtCopyright.Text = copyright;
         }
-        private void btnCuenta_Click(object sender, RoutedEventArgs e)
+
+        private void LimpiarUsuarioActualLogueado()
         {
-            DataContext = new MiCuenta();
+            // ACTUALIZAR EN LA BASE DE DATOS CON EL USUARIO ACTUAL CONECTADO
+            ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
+            config_varios cv_usuario_actual = new config_varios();
+            cv_usuario_actual.clave = "USUARIO_ACTUAL";
+            cv_usuario_actual.valor = "NINGUNO";
+            serv_conf_varios.updEntityByClave(cv_usuario_actual);
         }
+
+        #endregion
+
 
 
     }
-
-
-
 }

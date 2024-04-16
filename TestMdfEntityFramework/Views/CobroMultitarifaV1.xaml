@@ -437,7 +437,7 @@
 
                 <Canvas Background="Transparent">
                     <Border x:Name="popupBd"
-                        Background="White" 
+                        Background="CornflowerBlue" 
                         BorderBrush="Gray"
                         BorderThickness="2"
                         HorizontalAlignment="Center"

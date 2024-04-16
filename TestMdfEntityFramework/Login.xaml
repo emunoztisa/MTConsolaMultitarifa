@@ -296,6 +296,48 @@
                 </Grid>
             </Grid>
             <!--#endregion-->
+
+            <!--#region POPUP OK -->
+            <Grid x:Name="popupGrid"
+              Visibility="Hidden"
+              Grid.Row="4" Grid.Column="4" LostFocus="popupGrid_LostFocus" MouseDown="popupGrid_MouseDown" TouchDown="popupGrid_TouchDown">
+                <Grid Background="FloralWhite"
+                  Opacity="0.6"/>
+                <Canvas Background="Transparent">
+                    <Border x:Name="popupBd"
+                        Background="CornflowerBlue" 
+                        BorderBrush="Gray"
+                        BorderThickness="2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="300">
+                        <Grid Margin="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="" 
+                                       x:Name="txtMensajePopup"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5"/>
+                            <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,10,0,0"
+                                    Grid.Row="2">
+                            <Image x:Name="imgPopup" 
+                                   Source="/SCS/IMG/palomita_verde.png" 
+                                   Width="100" Height="100" />
+
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Canvas>
+            </Grid>
+            <!--#endregion-->
         </Grid>
     </Border>
 </Window>

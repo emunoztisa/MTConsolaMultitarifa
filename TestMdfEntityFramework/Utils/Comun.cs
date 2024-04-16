@@ -7,7 +7,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TestMdfEntityFramework.Controllers;
 using TestMdfEntityFramework.EntityServices;
+using TestMdfEntityFramework.Responses;
 
 namespace TestMdfEntityFramework.Utils
 {
@@ -67,14 +69,24 @@ namespace TestMdfEntityFramework.Utils
         public string GetTokenAdmin()
         {
             Comun mc = new Comun();
+            LoginController lc = new LoginController();
+
             string cuenta_admin = mc.obtenerValorDeAppConfig("ADMIN_CONSOLA_ALCANCIA");
             ServiceUsers serviceUsers = new ServiceUsers();
             users user_admin = serviceUsers.getEntityByUser(cuenta_admin);
             string token = user_admin.token != null ? user_admin.token : "";
 
             //Loguearse en servicio, en caso de no haber un token para al administrador.
-
-
+            if(token == "")
+            {
+                string password_desencriptado = mc.DesencriptarCadena(user_admin.contrasena);
+                ResLogin resLogin = lc.login(cuenta_admin, password_desencriptado);
+                if (resLogin.GetToken() != null && resLogin.GetToken() != "")
+                {
+                    user_admin.token = resLogin.token;
+                    token = resLogin.token;
+                }
+            }
 
             return token;
         }

@@ -39,9 +39,9 @@ namespace TestMdfEntityFramework.EntityServices
             return em.users.Where(q => q.pkUser == (int)pk).First<users>();
         }
 
-        public users getEntityByUser(object user)
+        public users getEntityByUser(string user)
         {
-            return em.users.Where(q => q.user == (string)user).FirstOrDefault<users>();
+            return em.users.Where(q => q.user == user).FirstOrDefault<users>();
         }
 
         public override void updEntity(users entity)

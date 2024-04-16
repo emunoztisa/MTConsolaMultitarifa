@@ -137,15 +137,22 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="30"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition />
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+
                 <RowDefinition Height="10"/>
             </Grid.RowDefinitions>
             <!--#endregion-->
@@ -185,7 +192,7 @@
                       Background="Transparent"
                       BorderBrush="White" 
                       FontSize="20" 
-                      Margin="0,10,10,10"
+                      Margin="0,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
             </ComboBox>
             <!--#endregion-->
@@ -201,7 +208,7 @@
             <ComboBox x:Name="cmbBausRate" Grid.Column="2" Grid.Row="3" 
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
-                      Margin="0,10,10,10"
+                      Margin="0,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
                
             </ComboBox>
@@ -222,7 +229,7 @@
             <ComboBox x:Name="cmbDataBits" Grid.Column="2" Grid.Row="4" 
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
-                      Margin="0,10,10,10"
+                      Margin="0,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
                
             </ComboBox>
@@ -239,7 +246,7 @@
             <ComboBox x:Name="cmbStopBits" Grid.Column="2" Grid.Row="5" 
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
-                      Margin="0,10,10,10"
+                      Margin="0,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
                 
             </ComboBox>
@@ -256,7 +263,7 @@
             <ComboBox x:Name="cmbParity" Grid.Column="2" Grid.Row="6" 
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
-                      Margin="0,10,10,10"
+                      Margin="0,5,10,5"
                       >
                 
             </ComboBox>
@@ -273,14 +280,84 @@
             <ComboBox x:Name="cmbHandShake" Grid.Column="2" Grid.Row="7" 
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
-                      Margin="0,10,10,10"
+                      Margin="0,5,10,5"
                       >
 
             </ComboBox>
             <!--#endregion-->
 
+            
+            
+            <TextBlock Grid.Row="8" 
+                       Grid.ColumnSpan="3"
+                       Text="MENSAJE BOLETO" 
+                       Foreground="Cyan" 
+                       FontSize="20" 
+                       FontWeight="Bold" 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"
+                       />
+            <TextBlock Grid.Row="9" 
+                       Grid.Column="1"
+                       Grid.RowSpan="3"
+                       Text="ENCABEZADO" 
+                       Foreground="Black" 
+                       FontSize="20" 
+                       FontWeight="Bold" 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"/>
+            <TextBox x:Name="txtEncabezadoLinea1" 
+                     VerticalAlignment="Top"
+                     Grid.Row="9" Grid.Column="2"  
+                     Margin="2" MaxLines="1" 
+                     MaxLength="32"
+                     Text=" "/>
+            <TextBox x:Name="txtEncabezadoLinea2" 
+                     VerticalAlignment="Center" 
+                     Grid.Row="10" Grid.Column="2"  
+                     Margin="2" MaxLines="1" 
+                     MaxLength="32"
+                     Text=" "/>
+            <TextBox x:Name="txtEncabezadoLinea3" 
+                     VerticalAlignment="Bottom" 
+                     Grid.Row="11" Grid.Column="2"  
+                     Margin="2" MaxLines="1" 
+                     MaxLength="32"
+                     Text=" "/>
+
+           
+
+            <TextBlock Grid.Row="13" 
+                       Grid.Column="1"
+                       Grid.RowSpan="3"
+                       Text="PIE PAGINA" 
+                       Foreground="Black" 
+                       FontSize="20" 
+                       FontWeight="Bold" 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"/>
+            <TextBox x:Name="txtPiePaginaLinea1" 
+                     VerticalAlignment="Top"
+                     Grid.Row="13" Grid.Column="2"  
+                     Margin="2" MaxLines="1"
+                     MaxLength="32"
+                     Text=" "/>
+            <TextBox x:Name="txtPiePaginaLinea2" 
+                     VerticalAlignment="Center" 
+                     Grid.Row="14" Grid.Column="2"  
+                     Margin="2" MaxLines="1"
+                     MaxLength="32"
+                     Text=" "/>
+            <TextBox x:Name="txtPiePaginaLinea3" 
+                     VerticalAlignment="Bottom" 
+                     Grid.Row="15" Grid.Column="2"  
+                     Margin="2" MaxLines="1"
+                     MaxLength="32"
+                     Text=" "/>
+            <!--#endregion-->
+
             <!--#region SEPARADOR -->
-            <Grid Grid.RowSpan="10" Background="DarkGray" 
+            <Grid Grid.RowSpan="16" Background="DarkGray" 
                   Grid.Row="1" Grid.Column="3" ></Grid>
             <!--#endregion-->
 
@@ -318,7 +395,7 @@
                 Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2"
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
-                      Margin="10,10,10,10"
+                      Margin="10,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
             </ComboBox>
             <!--#endregion-->
@@ -336,7 +413,7 @@
                 Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="2"
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
-                      Margin="10,10,10,10"
+                      Margin="10,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
                 
             </ComboBox>
@@ -355,7 +432,7 @@
                       Grid.Row="5" Grid.Column="5"
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
-                      Margin="10,10,10,10"
+                      Margin="10,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}" SelectionChanged="cmbEmpresa_SelectionChanged">
             </ComboBox>
             <!--#endregion-->
@@ -373,7 +450,7 @@
                       Grid.Row="6" Grid.Column="5"
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
-                      Margin="10,10,10,10"
+                      Margin="10,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}" SelectionChanged="cmbCorredor_SelectionChanged">
             </ComboBox>
             <!--#endregion-->
@@ -391,7 +468,7 @@
                       Grid.Row="7" Grid.Column="5"
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
-                      Margin="10,10,10,10"
+                      Margin="10,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
             </ComboBox>
             <!--#endregion-->
@@ -409,16 +486,36 @@
                 Grid.Row="8" Grid.Column="5"
                       Background="Transparent"
                       BorderBrush="White" FontSize="20" 
-                      Margin="10,10,10,10"
+                      Margin="10,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
             </ComboBox>
             <!--#endregion-->
 
+            <!--#region No. Serie Alcancia -->
+            <TextBlock Grid.Row="10" 
+                       Grid.Column="4"
+                       Text="No. Serie Alcancia" 
+                       Foreground="Cyan" 
+                       FontSize="15" 
+                       FontWeight="Bold" 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"/>
+            <TextBlock x:Name="lblNoSerieAlcancia"
+                       Grid.Row="10" 
+                       Grid.Column="5"
+                       Text="ABC" 
+                       Foreground="Black" 
+                       FontSize="15" 
+                       FontWeight="Bold" 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"/>
+            <!--#endregion-->
+
             <!--#region BOTONES -->
             <Button x:Name="btnGuardarConfiguracion" 
-                    Grid.Column="4" Grid.Row="9"
-                    Grid.ColumnSpan="2" Grid.RowSpan="2"
-                    Width="200" Height="50" 
+                    Grid.Column="4" Grid.Row="13"
+                    Grid.ColumnSpan="2" Grid.RowSpan="3"
+                    Width="250" Height="50" 
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
                     Background="GreenYellow"
@@ -427,18 +524,20 @@
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition></ColumnDefinition>
-                        <ColumnDefinition Width="50"></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition ></ColumnDefinition>
+                        <ColumnDefinition Width="20"></ColumnDefinition>
+                        <ColumnDefinition ></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     
-                <TextBlock Grid.Column="0"
+                <TextBlock Grid.Column="1"
                     Text="GUARDAR" Foreground="Black" 
-                    FontSize="15" FontWeight="SemiBold"
+                    FontSize="20" FontWeight="SemiBold"
                            VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Image Grid.Column="1" Width="30" Height="30"
+                <Image Grid.Column="3" Width="30" Height="30"
                     Source="../SCS/IMG/save_disckete.png" 
-                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                       VerticalAlignment="Top" HorizontalAlignment="Center"/>
 
                 </Grid>
             </Button>
@@ -451,17 +550,29 @@
                   LostFocus="popupGrid_LostFocus" 
                   MouseDown="popupGrid_MouseDown" 
                   TouchDown="popupGrid_TouchDown">
+
+               
+
                 <Grid Background="FloralWhite"
                   Opacity="0.6"/>
-
                 <Canvas Background="Transparent">
+                    
+                    <!-- #REGION HEADER--><!--
+                    <Grid Name="Header" Height="35" 
+                      VerticalAlignment="Top" Background="Transparent"
+                      Width="200">
+                        <Border CornerRadius="10,10,0,0" Background="Black"/>
+                    </Grid>
+                    --><!-- #ENDREGION -->
+                    
                     <Border x:Name="popupBd"
-                        Background="White" 
+                        Background="CornflowerBlue" 
                         BorderBrush="Gray"
                         BorderThickness="2"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Width="300">
+
                         <Grid Margin="10">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -484,7 +595,25 @@
                             </StackPanel>
                         </Grid>
                     </Border>
+
+                    <!-- #region FOOTER--><!--
+                    <Grid Name="Footer" Height="35" 
+                      VerticalAlignment="Bottom" 
+                      Background="Transparent"
+                      Width="150">
+                        <Border CornerRadius="0,0,10,10" Background="Black"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition  />
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </Grid>
+                    --><!--#endregion-->
+                    
                 </Canvas>
+
+                
+
             </Grid>
             <!--#endregion-->
 

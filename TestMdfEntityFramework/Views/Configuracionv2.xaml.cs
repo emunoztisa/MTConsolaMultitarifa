@@ -26,6 +26,8 @@ namespace TestMdfEntityFramework.Views
     public partial class Configuracionv2 : UserControl
     {
 
+        #region INICIALIZAR VARIBLES
+
         //SERIAL PORT
         System.IO.Ports.SerialPort puertoSerie1 = new System.IO.Ports.SerialPort();
         String[] listado_puerto = System.IO.Ports.SerialPort.GetPortNames();
@@ -41,55 +43,17 @@ namespace TestMdfEntityFramework.Views
         private Storyboard bottomToCenterStoryboard, topToCenterStoryboard,
             leftToCenterStoryboard, rightToCenterStoryboard;
 
+        #endregion
         public Configuracionv2()
         {
             InitializeComponent();
             configura_puerto_serial();
             llenaCombos();
-            Task.WaitAll(new Task[] { Task.Delay(500) });
+            Task.WaitAll(new Task[] { Task.Delay(300) });
 
         }
 
-        private void Configuracion_OnLoad(object sender, RoutedEventArgs e)
-        {
-            //MuestraValoresConfigSerial();
-
-            //EVENTOS PARA POPUP OK
-            SetPopupDlgCenter();
-            InitializeAnimations();
-
-            SeteaValoresEnCombosConValoresDBLocal();
-        }
-
-        private void Configuracionv2_OnUnload(object sender, RoutedEventArgs e)
-        {
-            close_serial_port();
-        }
-
-        private void MuestraValoresConfigSerial()
-        {
-            //ServiceConfigPort scp = new ServiceConfigPort();
-            //config_port conf_port_activo = scp.getEntityByStatus(1);
-
-            //if (conf_port_activo != null)
-            //{
-            //    string mensaje = "Los datos configurados actualmente para el puerto son: " + System.Environment.NewLine +
-            //     System.Environment.NewLine +
-            //    "port_name: " + conf_port_activo.port_name + System.Environment.NewLine +
-            //    "baud_rate: " + conf_port_activo.baud_rate + System.Environment.NewLine +
-            //    "data_bits: " + conf_port_activo.data_bits.ToString() + System.Environment.NewLine +
-            //    "stop_bits: " + conf_port_activo.stop_bits.ToString() + System.Environment.NewLine +
-            //    "parity: " + conf_port_activo.parity;
-
-            //    MessageBox.Show(mensaje, "CONFIGURACION", MessageBoxButton.OK, MessageBoxImage.Information);
-            //}
-            //else
-            //{
-            //    MessageBox.Show("Aun no se configuran pararametros para el puerto serie", "CONFIGURACION", MessageBoxButton.OK, MessageBoxImage.Information);
-            //}
-
-
-        }
+        #region LLENA COMBOS
 
         public void llenaCombos()
         {
@@ -111,7 +75,6 @@ namespace TestMdfEntityFramework.Views
             //llenaComboUnidades();
 
         }
-
         public void SeteaValoresEnCombosConValoresDBLocal()
         {
             ServiceConfigVarios scv = new ServiceConfigVarios();
@@ -243,6 +206,29 @@ namespace TestMdfEntityFramework.Views
                 }
             }
 
+            #region obtener mensajes configurados en boleto
+            string enc_linea_1 = ejecutar_commando_83_get_mensaje(0);
+            string enc_linea_2 = ejecutar_commando_83_get_mensaje(1);
+            string enc_linea_3 = ejecutar_commando_83_get_mensaje(2);
+
+            txtEncabezadoLinea1.Text = enc_linea_1;
+            txtEncabezadoLinea2.Text = enc_linea_2;
+            txtEncabezadoLinea3.Text = enc_linea_3;
+
+            string pie_linea_1 = ejecutar_commando_83_get_mensaje(3);
+            string pie_linea_2 = ejecutar_commando_83_get_mensaje(4);
+            string pie_linea_3 = ejecutar_commando_83_get_mensaje(5);
+
+            txtPiePaginaLinea1.Text = pie_linea_1;
+            txtPiePaginaLinea2.Text = pie_linea_2;
+            txtPiePaginaLinea3.Text = pie_linea_3;
+            #endregion
+
+            #region obtener No Serie Alcancia
+            string no_serie_alcancia = ejecutar_commando_88_obtener_serie_alcancia();
+            lblNoSerieAlcancia.Text = no_serie_alcancia;
+            #endregion
+
         }
 
         public void llenaComboComPorts()
@@ -354,9 +340,10 @@ namespace TestMdfEntityFramework.Views
             }
         }
 
-        /// <summary>
-        /// ////////////////////////////////////////
-        /// </summary>
+        #endregion
+
+        #region CATALOGOS
+
         public List<string> getCOMports()
         {
             List<string> listado_puertos = new List<string>();
@@ -500,6 +487,23 @@ namespace TestMdfEntityFramework.Views
             return list2;
         }
 
+        #endregion
+
+        #region EVENTOS CONTROLES
+        private void Configuracion_OnLoad(object sender, RoutedEventArgs e)
+        {
+            //MuestraValoresConfigSerial();
+
+            //EVENTOS PARA POPUP OK
+            SetPopupDlgCenter();
+            InitializeAnimations();
+
+            SeteaValoresEnCombosConValoresDBLocal();
+        }
+        private void Configuracionv2_OnUnload(object sender, RoutedEventArgs e)
+        {
+            close_serial_port();
+        }
         private void btnGuardarConfiguracion_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -645,69 +649,15 @@ namespace TestMdfEntityFramework.Views
 
                 #endregion
 
+                #region Setear Mensajes en Boleto
+                ejecutar_commando_82_set_mensaje(0, txtEncabezadoLinea1.Text);
+                ejecutar_commando_82_set_mensaje(1, txtEncabezadoLinea2.Text);
+                ejecutar_commando_82_set_mensaje(2, txtEncabezadoLinea3.Text);
 
-
-                #region antes
-                /*
-                ServiceConfigPort scp = new ServiceConfigPort();
-                List<config_port> list = scp.getEntities();
-
-                config_port cp = new config_port();
-                cp.port_name = port_name;
-                cp.baud_rate = baud_rate;
-                cp.data_bits = Convert.ToInt32(data_bits);
-                cp.stop_bits = Convert.ToInt32(stop_bits);
-                cp.parity = paridad;
-                cp.created_at = fecha_actual;
-                cp.updated_at = fecha_actual;
-
-                if (list.Count > 0)
-                {
-                    for (int i = 0; i < list.Count; i++)
-                    {
-                        if (list[i].port_name == port_name)
-                        {
-                            cp.status = 1;
-                            scp.updEntity(cp);
-                        }
-                        else
-                        {
-                            cp.status = 0;
-                            scp.addEntity(cp);
-                        }
-                    }
-                }
-
-                //CONFIGURACION DE TIPO DE TARIFA
-                string tipo_tarifa = cmbTipoTarifa.Text;
-                ServiceTipoTarifa stt = new ServiceTipoTarifa();
-                List<tipo_tarifa> list_tt = stt.getEntities();
-
-                tipo_tarifa tt = new tipo_tarifa();
-                tt.tipo_tarifa1 = tipo_tarifa;
-                tt.created_at = Convert.ToDateTime(fecha_actual);
-                tt.updated_at = Convert.ToDateTime(fecha_actual);
-
-                if (list_tt.Count > 0)
-                {
-                    for (int i = 0; i < list_tt.Count; i++)
-                    {
-                        if (list_tt[i].tipo_tarifa1 == tipo_tarifa)
-                        {
-                            tt.status = 1;
-                            scp.updEntity(cp);
-                        }
-                        else
-                        {
-                            tt.status = 0;
-                            scp.addEntity(cp);
-                        }
-                    }
-                }
-                */
+                ejecutar_commando_82_set_mensaje(3, txtPiePaginaLinea1.Text);
+                ejecutar_commando_82_set_mensaje(4, txtPiePaginaLinea2.Text);
+                ejecutar_commando_82_set_mensaje(5, txtPiePaginaLinea3.Text);
                 #endregion
-
-
 
                 //MessageBox.Show("Configuracion Guardada con Exito", "INFO", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -721,11 +671,10 @@ namespace TestMdfEntityFramework.Views
             }
 
         }
-
-        string nombre_combo_cambiado_actualmente = "";
+        //string nombre_combo_cambiado_actualmente = "";
         private void cmbEmpresa_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            nombre_combo_cambiado_actualmente = "cmbEmpresa";
+            //nombre_combo_cambiado_actualmente = "cmbEmpresa";
 
             string nombreCombo = ((ComboBox)sender).Name;
             if (nombreCombo == "cmbEmpresa")
@@ -754,7 +703,6 @@ namespace TestMdfEntityFramework.Views
                 }
             }
         }
-
         private void cmbCorredor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
@@ -810,13 +758,9 @@ namespace TestMdfEntityFramework.Views
             
         }
 
-        void ClearBufferSendData()
-        {
-            for (int i = 0; i < BufferSendData.Length; i++)
-            {
-                BufferSendData[i] = 0;
-            }
-        }
+        #endregion
+
+        #region PUERTO SERIAL
         public void configura_puerto_serial()
         {
             try
@@ -856,6 +800,41 @@ namespace TestMdfEntityFramework.Views
             if (puertoSerie1.IsOpen == true)
             {
                 puertoSerie1.Close();
+            }
+        }
+        private void MuestraValoresConfigSerial()
+        {
+            //ServiceConfigPort scp = new ServiceConfigPort();
+            //config_port conf_port_activo = scp.getEntityByStatus(1);
+
+            //if (conf_port_activo != null)
+            //{
+            //    string mensaje = "Los datos configurados actualmente para el puerto son: " + System.Environment.NewLine +
+            //     System.Environment.NewLine +
+            //    "port_name: " + conf_port_activo.port_name + System.Environment.NewLine +
+            //    "baud_rate: " + conf_port_activo.baud_rate + System.Environment.NewLine +
+            //    "data_bits: " + conf_port_activo.data_bits.ToString() + System.Environment.NewLine +
+            //    "stop_bits: " + conf_port_activo.stop_bits.ToString() + System.Environment.NewLine +
+            //    "parity: " + conf_port_activo.parity;
+
+            //    MessageBox.Show(mensaje, "CONFIGURACION", MessageBoxButton.OK, MessageBoxImage.Information);
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Aun no se configuran pararametros para el puerto serie", "CONFIGURACION", MessageBoxButton.OK, MessageBoxImage.Information);
+            //}
+
+
+        }
+
+        #endregion
+
+        #region COMANDOS
+        void ClearBufferSendData()
+        {
+            for (int i = 0; i < BufferSendData.Length; i++)
+            {
+                BufferSendData[i] = 0;
             }
         }
         private void ejecutar_commando_86_ruta(string nombre_ruta)
@@ -959,7 +938,197 @@ namespace TestMdfEntityFramework.Views
             }
         }
 
-        
+
+        private string GetMensajeString(byte[] RecievedDataGlobal_local)
+        {
+            string empty = " ";
+            string cadena = "";
+            int n = 6;
+            for (int i = 0; i < 32; i++)
+            {
+                //if((byte)RecievedDataGlobal_local[i] != 0 && (byte)RecievedDataGlobal_local[i] != 32 && (byte)RecievedDataGlobal_local[i] != (byte)empty[0])
+                //{
+                    char varTmp = (char)RecievedDataGlobal_local[n++];
+                    cadena += varTmp.ToString();
+                //}
+               
+            }
+
+            //cadena = cadena.Substring(0, cadena.Length - 5);
+            return cadena;
+        }
+        private void ejecutar_commando_82_set_mensaje(decimal num_linea, string mensaje)
+        {
+            const decimal ByteInicio = 1;
+            const decimal AddressConsola = 1;
+            const decimal AddressAlcancia = 2;
+            const decimal Comando = 130;
+            decimal numero_linea = num_linea; 
+
+            const Int32 K_offsetDatos = 4;
+            const Int32 K_CRCs = 2;
+
+            const decimal CRC1 = 193;
+            const decimal CRC2 = 194;
+
+            int CantidadDatos = 0;
+            CantidadDatos = 32 + 2;
+
+            ClearBufferSendData();
+
+            BufferSendData[0] = decimal.ToByte(ByteInicio);
+            BufferSendData[1] = decimal.ToByte(AddressAlcancia);
+            BufferSendData[2] = decimal.ToByte(AddressConsola);
+            BufferSendData[3] = decimal.ToByte(CantidadDatos);
+            BufferSendData[4] = decimal.ToByte(Comando);
+            BufferSendData[5] = decimal.ToByte(numero_linea);
+
+            int n = 6;
+            for (int i = 0; i < 32; i++)
+            {
+                if((byte)mensaje[i] != 0)
+                {
+                    BufferSendData[n++] = (byte)mensaje[i];
+                }
+                else
+                {
+                    string empty = " ";
+                    BufferSendData[n++] = (byte)empty[0];
+                }
+            }
+            
+            BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
+            BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+            open_serial_port();
+            puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
+
+            Task.WaitAll(new Task[] { Task.Delay(100) });
+            puertoSerie1.Read(RecievedDataGlobal, 0, 50);
+
+            if (RecievedDataGlobal[5] == 0)
+            {
+                //MessageBox.Show("Se cambio la Ruta Correctamente", "INFO");
+            }
+            else
+            {
+                MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+            }
+        }
+        private string ejecutar_commando_83_get_mensaje(int num_linea)
+        {
+            string mensaje = "";
+            try
+            {
+                const decimal ByteInicio = 1;
+                const decimal AddressConsola = 1;
+                const decimal AddressAlcancia = 2;
+                const decimal Comando = 131;
+                decimal numero_linea = num_linea;
+
+                const Int32 K_offsetDatos = 4;
+                const Int32 K_CRCs = 2;
+
+                const decimal CRC1 = 193;
+                const decimal CRC2 = 194;
+
+                int CantidadDatos = 0;
+                CantidadDatos = 2;
+
+                ClearBufferSendData();
+
+                BufferSendData[0] = decimal.ToByte(ByteInicio);
+                BufferSendData[1] = decimal.ToByte(AddressAlcancia);
+                BufferSendData[2] = decimal.ToByte(AddressConsola);
+                BufferSendData[3] = decimal.ToByte(CantidadDatos);
+                BufferSendData[4] = decimal.ToByte(Comando);
+                BufferSendData[5] = decimal.ToByte(numero_linea);
+
+
+                BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
+                BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+                open_serial_port();
+                puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
+
+                Task.WaitAll(new Task[] { Task.Delay(100) });
+                puertoSerie1.Read(RecievedDataGlobal, 0, 50);
+
+                if (GetMensajeString(RecievedDataGlobal) != "")
+                {
+                    mensaje = GetMensajeString(RecievedDataGlobal);
+                }
+                else
+                {
+                    mensaje = "";
+                }
+            }
+            catch (Exception ex)
+            {
+                mensaje = "";
+                MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+            }
+            
+            return mensaje;
+        }
+
+
+        private string GetNoSerieAlcanciaString(byte[] RecievedDataGlobal_local)
+        {
+            string cadena = "";
+            int n = 5;
+            for (int i = 0; i < 16; i++)
+            {
+                char varTmp = (char)RecievedDataGlobal_local[n++];
+                cadena += varTmp.ToString();
+            }
+            return cadena;
+        }
+        private string ejecutar_commando_88_obtener_serie_alcancia()
+        {
+            string no_serie_alcancia = "";
+
+            const decimal ByteInicio = 1;
+            const decimal AddressConsola = 1;
+            const decimal AddressAlcancia = 2;
+            const decimal Comando = 136;
+
+            const Int32 K_offsetDatos = 4;
+            const Int32 K_CRCs = 2;
+
+            const decimal CRC1 = 193;
+            const decimal CRC2 = 194;
+
+            int CantidadDatos = 1;
+
+            ClearBufferSendData();
+
+            BufferSendData[0] = decimal.ToByte(ByteInicio);
+            BufferSendData[1] = decimal.ToByte(AddressAlcancia);
+            BufferSendData[2] = decimal.ToByte(AddressConsola);
+            BufferSendData[3] = decimal.ToByte(CantidadDatos);
+            BufferSendData[4] = decimal.ToByte(Comando);
+
+            BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
+            BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+            open_serial_port();
+            puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
+
+            Task.WaitAll(new Task[] { Task.Delay(100) });
+            puertoSerie1.Read(RecievedDataGlobal, 0, 50);
+
+            if (RecievedDataGlobal[5].ToString().Length >= 0)
+            {
+                no_serie_alcancia = GetNoSerieAlcanciaString(RecievedDataGlobal);
+            }
+            else
+            {
+                MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+            }
+            return no_serie_alcancia;
+        }
+        #endregion
 
         #region METODOS GRID POPUP
         private void ocultarPopupOk()
@@ -1109,8 +1278,6 @@ namespace TestMdfEntityFramework.Views
             Canvas.SetLeft(popupBd, centerX);
             Canvas.SetTop(popupBd, centerY);
         }
-        #endregion
-
         private void popupGrid_LostFocus(object sender, RoutedEventArgs e)
         {
             ocultarPopupOk();
@@ -1123,5 +1290,7 @@ namespace TestMdfEntityFramework.Views
         {
             ocultarPopupOk();
         }
+        #endregion
+
     }
 }

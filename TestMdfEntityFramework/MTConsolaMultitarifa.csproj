@@ -432,6 +432,7 @@
       <DependentUpon>dbModel.edmx</DependentUpon>
       <LastGenOutput>dbModel.cs</LastGenOutput>
     </Content>
+    <Resource Include="SCS\IMG\equis_roja.png" />
     <Resource Include="SCS\IMG\corte_caja.png" />
     <Resource Include="SCS\IMG\save_disckete.png" />
     <Resource Include="SCS\IMG\asignacion.png" />
