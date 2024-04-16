@@ -1,0 +1,344 @@
+﻿<UserControl x:Class="TestMdfEntityFramework.Views.Mensajes"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TestMdfEntityFramework.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="544" d:DesignWidth="670"
+             Background="Transparent"  
+             Loaded="Mensajes_Load" 
+             Unloaded="Mensajes_Unload">
+    <UserControl.Resources>
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD"/>
+        <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+        <Style x:Key="BTNSTYLE" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border CornerRadius="30" x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Border CornerRadius="0,0,0,0">
+        <Border.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="Black" Offset="0"/>
+                <GradientStop Color="White" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5"></ColumnDefinition>
+                <ColumnDefinition Width="150"></ColumnDefinition>
+                <ColumnDefinition Width="20"></ColumnDefinition>
+                <ColumnDefinition Width="150"></ColumnDefinition>
+                <ColumnDefinition Width="20"></ColumnDefinition>
+                <ColumnDefinition Width="150"></ColumnDefinition>
+                <ColumnDefinition Width="20"></ColumnDefinition>
+                <ColumnDefinition Width="150"></ColumnDefinition>
+                <ColumnDefinition Width="5"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="20"></RowDefinition>
+                <RowDefinition Height="200"></RowDefinition>
+                <RowDefinition Height="10"></RowDefinition>
+                <RowDefinition Height="80"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="100"></RowDefinition>
+                <RowDefinition Height="10"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <!--#region TITULO-->
+            <TextBlock Grid.Row="0"
+                       Grid.ColumnSpan="9"
+                       Text="Mensajes"
+                       Foreground="White"
+                       FontSize="30"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+            <!--#endregion-->
+            
+            <!--#region LISTBOX CON MENSAJES ENVIADOS -->
+            <ListBox x:Name="listbox_mensajes"
+                     Grid.Row="2" Grid.Column="1"
+                     FontSize="25"
+                     FontWeight="Bold"
+                     Grid.ColumnSpan="7">
+                
+            </ListBox>
+            
+            <!--#endregion-->
+
+
+            <!--#region BOTON ENVIAR MENSAJE -->
+            <Button x:Name="btnEnviarMensaje" 
+                    Grid.Column="1" Grid.Row="4"
+                    Grid.ColumnSpan="2"
+                    Width="150" Height="70" 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Left"
+                    Margin="5"
+                    Background="GreenYellow"
+                    Style="{DynamicResource BTNSTYLE}"
+                    Click="btnEnviarMensaje_Click">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition Width="30"></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition Width="80"></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Image Grid.Column="1" Width="30" Height="30"
+                        Source="../SCS/IMG/enviar_mensaje.png" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Column="3"
+                        Width="80"
+                        Height="60"
+                        TextAlignment="Center"
+                        Text="ENVIAR MENSAJE" 
+                        TextWrapping="Wrap"
+                        Foreground="Black" 
+                        FontSize="18" 
+                        FontWeight="SemiBold"
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Right"/>
+
+                </Grid>
+            </Button>
+            <!--#endregion-->
+
+            <!--#region CAMPO DE TEXTO -->
+            <TextBox x:Name="txtMensajes"
+                Grid.Row="4" Grid.Column="3" 
+                     Grid.ColumnSpan="5"
+                     FontSize="20" FontStyle="Normal" FontWeight="Bold"
+                     Text="" MaxLines="3"
+                     Margin="5" />
+
+            <!--#endregion-->
+
+            <!--#region MOSTRAR TECLADO EN PANTALLA -->
+            <Button x:Name="btnMostrarTecladoEnPantalla" 
+                    Visibility="Hidden"
+                    Grid.Column="7" Grid.Row="4"
+                    Width="65" Height="45" 
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right"
+                    Margin="5"
+                    Background="DarkGray"
+                    Style="{DynamicResource BTNSTYLE}"
+                    Click="btnMostrarTeclado_Click">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="1" 
+                        Source="../SCS/IMG/teclado.png" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Left"/>
+                    
+                </Grid>
+            </Button>
+
+            <!--#endregion-->
+
+            <!--#region BOTONES ACCESO RAPIDO Y EMERGENCIA -->
+            <Button x:Name="btnEnviarSOS" 
+                    Grid.Column="5" Grid.Row="6"
+                    Width="100" Height="90" 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="2"
+                    Background="GreenYellow"
+                    Style="{DynamicResource BTNSTYLE}"
+                    Click="btnEnviarSOS_Click">
+                <Grid>
+                    <Image Grid.Column="1" Width="70" Height="70"
+                        Source="../SCS/IMG/sos.png" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Left"/>
+                </Grid>
+            </Button>
+            <Button x:Name="btnEnviarEmergenciaClinica" 
+                    Grid.Column="7" Grid.Row="6"
+                    Width="100" Height="90" 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="2"
+                    Background="GreenYellow"
+                    Style="{DynamicResource BTNSTYLE}"
+                    Click="btnEnviarEmerganciaClinica_Click">
+                <Grid>
+                    <Image Grid.Column="1" Width="70" Height="70"
+                        Source="../SCS/IMG/emergencia_clinica.png" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Left"/>
+                </Grid>
+            </Button>
+            <Button x:Name="btnEnviarAsistenciaMecanica" 
+                    Grid.Column="1" Grid.Row="6"
+                    Width="100" Height="90" 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="2"
+                    Background="GreenYellow"
+                    Style="{DynamicResource BTNSTYLE}"
+                    Click="btnEnviarAsistenciaMecanica_Click">
+                <Grid>
+                    <Image Grid.Column="1" Width="70" Height="70"
+                        Source="../SCS/IMG/asistencia_mecanica.png" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Left"/>
+                </Grid>
+            </Button>
+            <Button x:Name="btnEnviarAsistenciaVial" 
+                    Grid.Column="3" Grid.Row="6"
+                    Width="100" Height="90" 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="2"
+                    Background="GreenYellow"
+                    Style="{DynamicResource BTNSTYLE}"
+                    Click="btnEnviarAsistenciaVial_Click">
+                <Grid>
+                    <Image Grid.Column="1" Width="70" Height="70"
+                        Source="../SCS/IMG/choque_carros.png" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Left"/>
+                </Grid>
+            </Button>
+            <!--#endregion-->
+
+            <!--#region POPUP OK -->
+            <Grid x:Name="popupGrid"
+              Visibility="Hidden"
+              Grid.Row="3" Grid.Column="4" 
+                  LostFocus="popupGrid_LostFocus" 
+                  MouseDown="popupGrid_MouseDown" 
+                  TouchDown="popupGrid_TouchDown">
+                <Grid Background="FloralWhite"
+                  Opacity="0.6"/>
+
+                <Canvas Background="Transparent">
+                    <Border x:Name="popupBd"
+                        Background="CornflowerBlue" 
+                        BorderBrush="Gray"
+                        BorderThickness="2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="300">
+                        <Grid Margin="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="" 
+                                       x:Name="txtMensajePopup" 
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5"/>
+                            <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,10,0,0"
+                                    Grid.Row="2">
+                                <Image Source="/SCS/IMG/palomita_verde.png" Width="100" Height="100" />
+
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Canvas>
+            </Grid>
+            <!--#endregion-->
+
+            <!--#region PANEL TECLADO -->
+
+            <StackPanel x:Name="panel_teclado" 
+                        Grid.Row="6" Grid.Column="1"
+                        Grid.ColumnSpan="7" Grid.RowSpan="3"
+                        Orientation="Vertical" 
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        FlowDirection="LeftToRight"
+                        Width="350" Height="600">
+                <Border CornerRadius="15,15,15,15" Background="White"
+                        Opacity="0.9" HorizontalAlignment="Center"
+                        VerticalAlignment="Top" Height="100" Width="450">
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    </StackPanel>
+                </Border>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Border Background="White" Opacity="0.9" CornerRadius="5">
+                        <StackPanel>
+                            <StackPanel x:Name="keyboardRow1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <StackPanel x:Name="keyboardRow2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <StackPanel x:Name="keyboardRow3" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <StackPanel x:Name="keyboardRow4" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+                        
+            </StackPanel>
+            
+                
+            <!--#endregion-->
+
+        </Grid>
+    </Border>
+</UserControl>

@@ -293,13 +293,18 @@
             <Grid x:Name="GridContent" Background="Transparent" 
                   VerticalAlignment="Center" HorizontalAlignment="Right"
                   Height="509" Width="670" PreviewMouseLeftButtonDown="PreviewMouseLeftBottonDownBG" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="193*"/>
+                    <RowDefinition Height="17*"/>
+                    <RowDefinition Height="299*"/>
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="78*"/>
                     <ColumnDefinition Width="202*"/>
                     <ColumnDefinition Width="55*"/>
                 </Grid.ColumnDefinitions>
 
-                <Border CornerRadius="0,0,0,0" Grid.ColumnSpan="3">
+                <Border CornerRadius="0,0,0,0" Grid.ColumnSpan="3" Grid.RowSpan="3">
                     <Border.Background>
                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                             <GradientStop Color="Black" Offset="0"/>
@@ -308,7 +313,7 @@
                     </Border.Background>
                 </Border>
 
-                <ContentControl Content="{Binding}" Grid.ColumnSpan="3"/>
+                <ContentControl Content="{Binding}" Grid.ColumnSpan="3" Grid.RowSpan="3"/>
 
             </Grid>
             <!--#endregion-->
@@ -389,29 +394,7 @@
                             </Button>
                         </ListViewItem>-->
                         <!--#endregion-->
-                        <!--#region CONFIGURACIONES-->
-                        <ListViewItem Height="70" Margin="-15,0,0,0"  >
-                            <Button x:Name="btnConfiguraciones" Height="70" Width="200" 
-                                    HorizontalAlignment="Left" 
-                                      Cursor="Hand" Background="Transparent" 
-                                      BorderBrush="Transparent" 
-                                    Style="{DynamicResource BtnListaStyle}" Click="btnConfiguraciones_Click">
-                                <Grid Width="200" >
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="60"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
 
-                                    <Image Grid.Column="0" HorizontalAlignment="Center" 
-                                           Width="30" Source="SCS/IMG/settings2.png"/>
-                                    <TextBlock Grid.Column="1" Foreground="White" 
-                                               Text="Configuraciones" FontWeight="SemiBold" 
-                                               FontSize="15" HorizontalAlignment="Center" 
-                                               VerticalAlignment="Center" />
-                                </Grid>
-                            </Button>
-                        </ListViewItem>
-                        <!--#endregion-->
                         <!--#region COBROTRARIFA-->
                         <ListViewItem Height="70" Margin="-15,0,0,0"  >
                             <Button x:Name="btnCobroTarifa" Height="70" Width="200" 
@@ -450,7 +433,7 @@
 
                                     <Image Grid.Column="0" HorizontalAlignment="Center" 
                                            Width="30" Source="SCS/IMG/reportes.png"/>
-                                    <TextBlock Grid.Column="1" Foreground="White" 
+                                    <TextBlock Grid.Column="2" Foreground="White" 
                                                Text="Reportes" FontWeight="SemiBold" 
                                                FontSize="15" HorizontalAlignment="Center" 
                                                VerticalAlignment="Center" />
@@ -458,6 +441,56 @@
                             </Button>
                         </ListViewItem>
                         <!--#endregion-->
+                        <!--#region MENSAJES -->
+                        <ListViewItem Height="70" Margin="-15,0,0,0"  >
+                            <Button x:Name="btnMensajes" Height="70" Width="200" 
+                                    HorizontalAlignment="Left" 
+                                      Cursor="Hand" Background="Transparent" 
+                                      BorderBrush="Transparent" 
+                                    Style="{DynamicResource BtnListaStyle}" Click="btnMensajes_Click">
+                                <Grid Width="200" >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Image x:Name="imgOpcionMensajes" Grid.Column="0" HorizontalAlignment="Center" 
+                                           Width="30" Source="SCS/IMG/mensajes.png"/>
+
+                                    <TextBlock Grid.Column="2" Foreground="White" 
+                                               Text="Mensajes" FontWeight="SemiBold" 
+                                               FontSize="15" HorizontalAlignment="Center" 
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </Button>
+                        </ListViewItem>
+
+                        <!--#endregion-->
+
+                        <!--#region CONFIGURACIONES-->
+                        <ListViewItem Height="70" Margin="-15,0,0,0"  >
+                            <Button x:Name="btnConfiguraciones" Height="70" Width="200" 
+                                    HorizontalAlignment="Left" 
+                                      Cursor="Hand" Background="Transparent" 
+                                      BorderBrush="Transparent" 
+                                    Style="{DynamicResource BtnListaStyle}" Click="btnConfiguraciones_Click">
+                                <Grid Width="200" >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Image Grid.Column="0" HorizontalAlignment="Center" 
+                                           Width="30" Source="SCS/IMG/settings2.png"/>
+                                    <TextBlock Grid.Column="1" Foreground="White" 
+                                               Text="Configuraciones" FontWeight="SemiBold" 
+                                               FontSize="15" HorizontalAlignment="Center" 
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </Button>
+                        </ListViewItem>
+                        <!--#endregion-->
+
                         <!--#region LOGOUT-->
                         <ListViewItem Height="70" Margin="-15,0,0,0"  >
                             <Button x:Name="btnLogout" Height="70" Width="200" 
@@ -500,6 +533,14 @@
                     <TextBlock x:Name="txtVersion"
                         Text="" Grid.Column="0" 
                                Foreground="White" HorizontalAlignment="Left" 
+                               VerticalAlignment="Center" Margin="5,5,5,5" />
+                    <!-- #ENDREGION-->
+                    <!-- #REGION RELOJ-->
+                    <TextBlock x:Name="lblReloj"
+                        Text="" Grid.Column="0" 
+                               FontSize="30"
+                               Foreground="White" 
+                               HorizontalAlignment="Center" 
                                VerticalAlignment="Center" Margin="5,5,5,5" />
                     <!-- #ENDREGION-->
                     <!-- #REGION COPYRIGHT-->

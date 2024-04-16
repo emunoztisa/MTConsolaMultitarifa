@@ -313,6 +313,24 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_tarif
           <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
           <Property Name="created_at" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="sy_mensajes">
+          <Key>
+            <PropertyRef Name="pkMensaje" />
+          </Key>
+          <Property Name="pkMensaje" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="fkAsignacion" Type="bigint" />
+          <Property Name="fkStatus" Type="bigint" />
+          <Property Name="mensaje" Type="nvarchar" MaxLength="200" />
+          <Property Name="enviado" Type="int" />
+          <Property Name="confirmadoTISA" Type="int" />
+          <Property Name="modo" Type="nvarchar" MaxLength="50" />
+          <Property Name="dispositivo_origen" Type="int" />
+          <Property Name="dispositivo_destino" Type="int" />
+          <Property Name="reproducido" Type="int" />
+          <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+          <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+          <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+        </EntityType>
         <!--Errores durante la generación:
 advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_status' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="sy_status">
@@ -370,6 +388,7 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="sy_cortes" EntityType="Self.sy_cortes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_empresa_corredor_operador" EntityType="Self.sy_empresa_corredor_operador" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_lugar_ruta" EntityType="Self.sy_lugar_ruta" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sy_mensajes" EntityType="Self.sy_mensajes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_tarifas" EntityType="Self.sy_tarifas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="users" EntityType="Self.users" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ct_alcancias" EntityType="Self.ct_alcancias" store:Type="Tables" store:Schema="dbo">
@@ -482,6 +501,7 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="sy_boletos_detalle" EntityType="databaseModel.sy_boletos_detalle" />
           <EntitySet Name="sy_cortes" EntityType="databaseModel.sy_cortes" />
           <EntitySet Name="sy_boletos" EntityType="databaseModel.sy_boletos" />
+          <EntitySet Name="sy_mensajes" EntityType="databaseModel.sy_mensajes" />
         </EntityContainer>
         <EntityType Name="config_varios">
           <Key>
@@ -791,6 +811,24 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="enviado" Type="Int32" />
           <Property Name="confirmadoTISA" Type="Int32" />
           <Property Name="modo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="sy_mensajes">
+          <Key>
+            <PropertyRef Name="pkMensaje" />
+          </Key>
+          <Property Name="pkMensaje" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="fkAsignacion" Type="Int64" />
+          <Property Name="fkStatus" Type="Int64" />
+          <Property Name="mensaje" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="enviado" Type="Int32" />
+          <Property Name="confirmadoTISA" Type="Int32" />
+          <Property Name="modo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="dispositivo_origen" Type="Int32" />
+          <Property Name="dispositivo_destino" Type="Int32" />
+          <Property Name="reproducido" Type="Int32" />
           <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1154,6 +1192,25 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
                 <ScalarProperty Name="fkAsignacion" ColumnName="fkAsignacion" />
                 <ScalarProperty Name="pkBoletoTISA" ColumnName="pkBoletoTISA" />
                 <ScalarProperty Name="pkBoleto" ColumnName="pkBoleto" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sy_mensajes">
+            <EntityTypeMapping TypeName="databaseModel.sy_mensajes">
+              <MappingFragment StoreEntitySet="sy_mensajes">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="reproducido" ColumnName="reproducido" />
+                <ScalarProperty Name="dispositivo_destino" ColumnName="dispositivo_destino" />
+                <ScalarProperty Name="dispositivo_origen" ColumnName="dispositivo_origen" />
+                <ScalarProperty Name="modo" ColumnName="modo" />
+                <ScalarProperty Name="confirmadoTISA" ColumnName="confirmadoTISA" />
+                <ScalarProperty Name="enviado" ColumnName="enviado" />
+                <ScalarProperty Name="mensaje" ColumnName="mensaje" />
+                <ScalarProperty Name="fkStatus" ColumnName="fkStatus" />
+                <ScalarProperty Name="fkAsignacion" ColumnName="fkAsignacion" />
+                <ScalarProperty Name="pkMensaje" ColumnName="pkMensaje" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

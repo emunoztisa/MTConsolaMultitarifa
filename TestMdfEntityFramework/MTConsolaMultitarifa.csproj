@@ -92,6 +92,7 @@
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Speech" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -193,6 +194,7 @@
     <Compile Include="EntityServices\ServiceEmpresas.cs" />
     <Compile Include="EntityServices\ServiceLugares.cs" />
     <Compile Include="EntityServices\ServiceLugarRuta.cs" />
+    <Compile Include="EntityServices\ServiceMensajes.cs" />
     <Compile Include="EntityServices\ServiceOpcionesGenerales.cs" />
     <Compile Include="EntityServices\ServiceOperadores.cs" />
     <Compile Include="EntityServices\ServicePerfiles.cs" />
@@ -252,6 +254,9 @@
     <Compile Include="sy_lugar_ruta.cs">
       <DependentUpon>dbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="sy_mensajes.cs">
+      <DependentUpon>dbModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="sy_status.cs">
       <DependentUpon>dbModel.tt</DependentUpon>
     </Compile>
@@ -294,8 +299,14 @@
     <Compile Include="Views\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Mensajes.xaml.cs">
+      <DependentUpon>Mensajes.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MiCuenta.xaml.cs">
       <DependentUpon>MiCuenta.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PanelTeclado.xaml.cs">
+      <DependentUpon>PanelTeclado.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Reportes.xaml.cs">
       <DependentUpon>Reportes.xaml</DependentUpon>
@@ -373,7 +384,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Mensajes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MiCuenta.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PanelTeclado.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -432,6 +451,15 @@
       <DependentUpon>dbModel.edmx</DependentUpon>
       <LastGenOutput>dbModel.cs</LastGenOutput>
     </Content>
+    <Resource Include="SCS\IMG\mensajes_rojo.png" />
+    <Resource Include="SCS\IMG\asalto_vehiculo.png" />
+    <Resource Include="SCS\IMG\asistencia_mecanica.png" />
+    <Resource Include="SCS\IMG\choque_carros.png" />
+    <Resource Include="SCS\IMG\teclado.png" />
+    <Resource Include="SCS\IMG\emergencia_clinica.png" />
+    <Resource Include="SCS\IMG\sos.png" />
+    <Resource Include="SCS\IMG\enviar_mensaje.png" />
+    <Resource Include="SCS\IMG\mensajes.png" />
     <Resource Include="SCS\IMG\equis_roja.png" />
     <Resource Include="SCS\IMG\corte_caja.png" />
     <Resource Include="SCS\IMG\save_disckete.png" />

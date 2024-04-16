@@ -511,6 +511,25 @@
                        HorizontalAlignment="Center"/>
             <!--#endregion-->
 
+            <!--#region CONF VOZ -->
+            <TextBlock Grid.Row="11" 
+                       Grid.Column="4"
+                       Text="VOZ" 
+                       Foreground="Cyan" 
+                       FontSize="15" 
+                       FontWeight="Bold" 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"/>
+            <ComboBox x:Name="cmbVoces"
+                Grid.Row="11" Grid.Column="5"
+                      Background="Transparent"
+                      BorderBrush="White" FontSize="10" 
+                      Margin="1"
+                      Style="{DynamicResource COMBOSTYLE}">
+            </ComboBox>
+            <!--#endregion-->
+
+
             <!--#region BOTONES -->
             <Button x:Name="btnGuardarConfiguracion" 
                     Grid.Column="4" Grid.Row="13"

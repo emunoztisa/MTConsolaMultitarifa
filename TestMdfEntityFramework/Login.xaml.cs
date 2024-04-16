@@ -38,7 +38,8 @@ namespace TestMdfEntityFramework
         public Login()
         {
             InitializeComponent();
-            SettearValoresProduccion();
+            //SettearValoresProduccion();
+            SettearValoresPruebas();
         }
 
         #region METODOS y FUNCIONES

@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Forms.Design.Behavior;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using TestMdfEntityFramework.Clases;
 using TestMdfEntityFramework.Controllers;
 using TestMdfEntityFramework.EntityServices;
@@ -15,6 +18,9 @@ namespace TestMdfEntityFramework
     /// </summary>
     public partial class Principal : Window
     {
+        DispatcherTimer timerReloj = new DispatcherTimer();
+        DispatcherTimer timerEvaluaMensajes = new DispatcherTimer();
+
         public Principal()
         {
             InitializeComponent();
@@ -24,9 +30,14 @@ namespace TestMdfEntityFramework
         #region EVENTOS CONTROLES
         private void Principal_OnLoad(object sender, RoutedEventArgs e)
         {
+            inicializa_timer_reloj();
+            inicializa_timer_evalua_mensajes();
+
             SincronizarCatalogos();
             SetearVersionYCopyright();
             SincronizaOperacionConsola();
+
+            
 
             ////////////////////////////////////////////////////////////////////////
             // ESTAS TAREAS SE EJECUTARAN EN SEGUNDO PLANO EN HILOS INDEPENDIENTES
@@ -44,6 +55,8 @@ namespace TestMdfEntityFramework
         {
             LimpiarUsuarioActualLogueado();
 
+            detiene_timers();
+
             ////////////////////////////////////////////////////////////////////////
             // ESTAS TAREAS SE DETENDRAN AL SALIR DEL FORMULARIO.
             //SincronizacionTISA sTISA = new SincronizacionTISA();
@@ -54,6 +67,60 @@ namespace TestMdfEntityFramework
                 sTISA.Task_Sincroniza_BoletosDetalle_DISPOSE();
             */
             ////////////////////////////////////////////////////////////////////////
+        }
+
+        private void inicializa_timer_reloj()
+        {
+            // INICIA TIMER QUE ESTARA ACTUALIZANDO EL VALOR DE ESTATUS
+            timerReloj.Tick += new EventHandler(dispatcherTimerReloj_Tick);
+            timerReloj.Interval = new TimeSpan(0, 0, 1);
+            timerReloj.Start();
+        }
+
+        private void inicializa_timer_evalua_mensajes()
+        {
+            // INICIA TIMER QUE ESTARA ACTUALIZANDO EL VALOR DE ESTATUS
+            timerEvaluaMensajes.Tick += new EventHandler(dispatcherTimerEvaluaMensajes_Tick);
+            timerEvaluaMensajes.Interval = new TimeSpan(0, 0, 15);
+            timerEvaluaMensajes.Start();
+        }
+        private void dispatcherTimerReloj_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                lblReloj.Text = DateTime.Now.ToString("hh:mm:ss tt");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "EXCEPTION !!!");
+            }
+        }
+        private void dispatcherTimerEvaluaMensajes_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                ServiceMensajes serv_mensajes = new ServiceMensajes();
+                List<sy_mensajes> list_msn_no_reproducidos = serv_mensajes.getEntityNoReproducidos();
+
+                if(list_msn_no_reproducidos.Count > 0)
+                {
+                    imgOpcionMensajes.Source = new BitmapImage(new Uri(@"/SCS/IMG/mensajes_rojo.png", UriKind.Relative));
+                }
+                else
+                {
+                    imgOpcionMensajes.Source = new BitmapImage(new Uri(@"/SCS/IMG/mensajes.png", UriKind.Relative));
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "EXCEPTION !!!");
+            }
+        }
+        private void detiene_timers()
+        {
+            timerReloj.IsEnabled = false;
+            timerEvaluaMensajes.IsEnabled = false;
         }
         private void Principal_Closing(object sender, CancelEventArgs e)
         {
@@ -130,7 +197,10 @@ namespace TestMdfEntityFramework
         {
             DataContext = new MiCuenta();
         }
-
+        private void btnMensajes_Click(object sender, RoutedEventArgs e)
+        {
+            DataContext = new Mensajes();
+        }
 
         #endregion
 
@@ -462,9 +532,10 @@ namespace TestMdfEntityFramework
             serv_conf_varios.updEntityByClave(cv_usuario_actual);
         }
 
+
+
         #endregion
 
-
-
+        
     }
 }

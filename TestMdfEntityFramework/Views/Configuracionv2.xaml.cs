@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing.Printing;
 using System.Linq;
+using System.Speech.Synthesis;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,6 +28,10 @@ namespace TestMdfEntityFramework.Views
     {
 
         #region INICIALIZAR VARIBLES
+
+        //PARA REPRODUCIR TEXTO A VOZ
+        SpeechSynthesizer synthesizer = new SpeechSynthesizer();
+        List<VoiceInfo> vocesInfo = new List<VoiceInfo>();
 
         //SERIAL PORT
         System.IO.Ports.SerialPort puertoSerie1 = new System.IO.Ports.SerialPort();
@@ -73,6 +78,8 @@ namespace TestMdfEntityFramework.Views
             //llenaComboCorredores();
             //llenaComboRutas();
             //llenaComboUnidades();
+
+            LlenarVocesEnCombo();
 
         }
         public void SeteaValoresEnCombosConValoresDBLocal()
@@ -203,6 +210,15 @@ namespace TestMdfEntityFramework.Views
                 if (cmbUnidad.Items[i].ToString() == config_numero_unidad.valor)
                 {
                     cmbUnidad.SelectedValue = config_numero_unidad.valor;
+                }
+            }
+
+            config_varios config_voz = scv.getEntityByClave("VOZ");
+            for (int i = 0; i < cmbVoces.Items.Count; i++)
+            {
+                if (cmbVoces.Items[i].ToString() == config_voz.valor)
+                {
+                    cmbVoces.SelectedValue = config_voz.valor;
                 }
             }
 
@@ -338,6 +354,16 @@ namespace TestMdfEntityFramework.Views
             {
                 cmbModoApp.Items.Add(port);
             }
+        }
+
+        private void LlenarVocesEnCombo()
+        {
+            foreach (InstalledVoice voice in synthesizer.GetInstalledVoices())
+            {
+                vocesInfo.Add(voice.VoiceInfo);
+                cmbVoces.Items.Add(voice.VoiceInfo.Name);
+            }
+            cmbVoces.SelectedIndex = 0;
         }
 
         #endregion
@@ -527,6 +553,13 @@ namespace TestMdfEntityFramework.Views
                 string ruta = cmbRuta.Text;
                 string numero_unidad = cmbUnidad.Text;
 
+
+                // VOZ
+                int indice;
+                indice = cmbVoces.SelectedIndex;
+                string nombre = vocesInfo.ElementAt(indice).Name;
+                string voz = nombre;
+
                 ServiceConfigVarios scv = new ServiceConfigVarios();
 
                 //valor de unidad antes de ser cambiada
@@ -583,6 +616,10 @@ namespace TestMdfEntityFramework.Views
 
                 cv.clave = "CORREDOR";
                 cv.valor = corredor;
+                scv.updEntityByClave(cv);
+
+                cv.clave = "VOZ";
+                cv.valor = voz;
                 scv.updEntityByClave(cv);
 
                 cv.clave = "RUTA";
