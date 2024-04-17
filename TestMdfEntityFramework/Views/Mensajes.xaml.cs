@@ -15,16 +15,15 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TestMdfEntityFramework.Controllers;
 using TestMdfEntityFramework.EntityServices;
+using TestMdfEntityFramework.Responses;
+
+
 
 namespace TestMdfEntityFramework.Views
 {
     //Obtener la ubicacion y enviarla
-
-    //Popup de notificacion de mensaje enviado
-
-    //Mensaje recibidos que se escuchen por voz
-
 
     public partial class Mensajes : UserControl
     {
@@ -313,7 +312,7 @@ namespace TestMdfEntityFramework.Views
             msn.fkAsignacion = FK_ASIGNACION_ACTIVA;
             msn.fkStatus = 1;
             msn.mensaje = mensaje;
-            msn.enviado = 1;
+            msn.enviado = 0;
             msn.confirmadoTISA = 0;
             msn.modo = MODO_APP;
             msn.dispositivo_origen = 1;
@@ -325,6 +324,30 @@ namespace TestMdfEntityFramework.Views
 
             serv_mensajes.addEntity(msn);
         }
+
+        //private void Sincronizar_Mensajes()
+        //{
+        //    // 1 = UNIDAD
+        //    // 2 = TISA
+
+        //    string fecha_actual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+        //    MensajesController mensajes_controller = new MensajesController();
+            
+        //    ServiceMensajes serv_mensajes = new ServiceMensajes();
+        //    List<sy_mensajes> list_mensaje = serv_mensajes.getEntityNoEnviados();
+
+        //    foreach (var item in list_mensaje)
+        //    {
+        //        ResMensajes_Insert resMensajes_insert = mensajes_controller.InsertMensaje(item);
+        //        if(resMensajes_insert.response == true && resMensajes_insert.status == 200)
+        //        {
+        //            item.confirmadoTISA = 1;
+        //            serv_mensajes.updEntity(item);
+        //        }
+        //    }
+
+        //}
 
         private void Hablar(string texto)
         {
@@ -504,9 +527,6 @@ namespace TestMdfEntityFramework.Views
             Canvas.SetLeft(popupBd, centerX);
             Canvas.SetTop(popupBd, centerY);
         }
-        #endregion
-
-
         private void popupGrid_LostFocus(object sender, RoutedEventArgs e)
         {
             ocultarPopupOk();
@@ -519,10 +539,7 @@ namespace TestMdfEntityFramework.Views
         {
             ocultarPopupOk();
         }
+        #endregion
 
-        private void cmbVoces_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
     }
 }

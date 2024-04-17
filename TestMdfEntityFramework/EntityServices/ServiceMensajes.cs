@@ -70,5 +70,9 @@ namespace TestMdfEntityFramework.EntityServices
         {
             return em.sy_mensajes.Where(q => (q.reproducido == null || q.reproducido == 0) && q.dispositivo_destino == 1).ToList<sy_mensajes>();
         }
+        public List<sy_mensajes> getEntityNoEnviados()
+        {
+            return em.sy_mensajes.Where(q => (q.enviado == null || q.enviado == 0) && q.dispositivo_destino == 2).ToList<sy_mensajes>();
+        }
     }
 }

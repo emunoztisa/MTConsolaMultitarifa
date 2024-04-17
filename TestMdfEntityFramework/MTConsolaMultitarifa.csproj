@@ -86,6 +86,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
+    <Reference Include="System.Device" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Common, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Drawing.Common.8.0.3\lib\net462\System.Drawing.Common.dll</HintPath>
@@ -116,6 +117,7 @@
     <Compile Include="boletos_tarifa_fija.cs">
       <DependentUpon>dbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Clases\CLocation.cs" />
     <Compile Include="Clases\ConfigPort.cs" />
     <Compile Include="Clases\SincronizacionTISA.cs" />
     <Compile Include="Clases\TipoTarifa.cs" />
@@ -134,10 +136,12 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\LugaresController.cs" />
     <Compile Include="Controllers\LugarRutaController.cs" />
+    <Compile Include="Controllers\MensajesController.cs" />
     <Compile Include="Controllers\OperadoresController.cs" />
     <Compile Include="Controllers\PerfilesController.cs" />
     <Compile Include="Controllers\RutasController.cs" />
     <Compile Include="Controllers\TarifasController.cs" />
+    <Compile Include="Controllers\UbicacionController.cs" />
     <Compile Include="Controllers\UnidadesController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="ct_alcancias.cs">
@@ -200,6 +204,7 @@
     <Compile Include="EntityServices\ServicePerfiles.cs" />
     <Compile Include="EntityServices\ServiceRutas.cs" />
     <Compile Include="EntityServices\ServiceTarifas.cs" />
+    <Compile Include="EntityServices\ServiceUbicacion.cs" />
     <Compile Include="EntityServices\ServiceUnidades.cs" />
     <Compile Include="EntityServices\ServiceUsers.cs" />
     <Compile Include="Login.xaml.cs">
@@ -215,6 +220,8 @@
     <Compile Include="Requests\ReqBoletosDetalle.cs" />
     <Compile Include="Requests\ReqCortes.cs" />
     <Compile Include="Requests\ReqLogin.cs" />
+    <Compile Include="Requests\ReqMensajes.cs" />
+    <Compile Include="Requests\ReqUbicacion.cs" />
     <Compile Include="Requests\ReqUnidades.cs" />
     <Compile Include="Responses\ResAndadores.cs" />
     <Compile Include="Responses\ResAsignaciones.cs" />
@@ -230,10 +237,13 @@
     <Compile Include="Responses\ResLogin.cs" />
     <Compile Include="Responses\ResLugares.cs" />
     <Compile Include="Responses\ResLugarRuta.cs" />
+    <Compile Include="Responses\ResMensajes.cs" />
+    <Compile Include="Responses\ResMensajes_Insert.cs" />
     <Compile Include="Responses\ResOperadores.cs" />
     <Compile Include="Responses\ResPerfiles.cs" />
     <Compile Include="Responses\ResRutas.cs" />
     <Compile Include="Responses\ResTarifas.cs" />
+    <Compile Include="Responses\ResUbicacion.cs" />
     <Compile Include="Responses\ResUnidades.cs" />
     <Compile Include="Responses\ResUsers.cs" />
     <Compile Include="sy_asignaciones.cs">
@@ -261,6 +271,9 @@
       <DependentUpon>dbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="sy_tarifas.cs">
+      <DependentUpon>dbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sy_ubicacion.cs">
       <DependentUpon>dbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="users.cs">

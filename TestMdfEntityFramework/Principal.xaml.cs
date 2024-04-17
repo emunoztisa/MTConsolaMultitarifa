@@ -9,7 +9,10 @@ using System.Windows.Threading;
 using TestMdfEntityFramework.Clases;
 using TestMdfEntityFramework.Controllers;
 using TestMdfEntityFramework.EntityServices;
+using TestMdfEntityFramework.Responses;
 using TestMdfEntityFramework.Views;
+using System.Device.Location;
+using System.Threading.Tasks;
 
 namespace TestMdfEntityFramework
 {
@@ -18,6 +21,10 @@ namespace TestMdfEntityFramework
     /// </summary>
     public partial class Principal : Window
     {
+        string ASIGNACION_ACTIVA = "";
+        long FK_ASIGNACION_ACTIVA = 0;
+        string MODO_APP = "";
+
         DispatcherTimer timerReloj = new DispatcherTimer();
         DispatcherTimer timerEvaluaMensajes = new DispatcherTimer();
 
@@ -27,48 +34,7 @@ namespace TestMdfEntityFramework
             btnInicio_Click(null, null);
         }
 
-        #region EVENTOS CONTROLES
-        private void Principal_OnLoad(object sender, RoutedEventArgs e)
-        {
-            inicializa_timer_reloj();
-            inicializa_timer_evalua_mensajes();
-
-            SincronizarCatalogos();
-            SetearVersionYCopyright();
-            SincronizaOperacionConsola();
-
-            
-
-            ////////////////////////////////////////////////////////////////////////
-            // ESTAS TAREAS SE EJECUTARAN EN SEGUNDO PLANO EN HILOS INDEPENDIENTES
-            //SincronizacionTISA sTISA = new SincronizacionTISA();
-            //sTISA.Task_Sincroniza_Boletos_y_BoletosDetalle_START();
-
-            /*
-                sTISA.Task_Sincroniza_Boletos_START();
-                sTISA.Task_Sincroniza_BoletosDetalle_START();
-            */
-
-            ////////////////////////////////////////////////////////////////////////
-        }
-        private void Principal_OnUnLoad(object sender, RoutedEventArgs e)
-        {
-            LimpiarUsuarioActualLogueado();
-
-            detiene_timers();
-
-            ////////////////////////////////////////////////////////////////////////
-            // ESTAS TAREAS SE DETENDRAN AL SALIR DEL FORMULARIO.
-            //SincronizacionTISA sTISA = new SincronizacionTISA();
-            //sTISA.Task_Sincroniza_Boletos_y_BoletosDetalle_DISPOSE();
-
-            /*
-                sTISA.Task_Sincroniza_Boletos_DISPOSE();
-                sTISA.Task_Sincroniza_BoletosDetalle_DISPOSE();
-            */
-            ////////////////////////////////////////////////////////////////////////
-        }
-
+        #region TIMERS
         private void inicializa_timer_reloj()
         {
             // INICIA TIMER QUE ESTARA ACTUALIZANDO EL VALOR DE ESTATUS
@@ -76,12 +42,11 @@ namespace TestMdfEntityFramework
             timerReloj.Interval = new TimeSpan(0, 0, 1);
             timerReloj.Start();
         }
-
         private void inicializa_timer_evalua_mensajes()
         {
             // INICIA TIMER QUE ESTARA ACTUALIZANDO EL VALOR DE ESTATUS
             timerEvaluaMensajes.Tick += new EventHandler(dispatcherTimerEvaluaMensajes_Tick);
-            timerEvaluaMensajes.Interval = new TimeSpan(0, 0, 15);
+            timerEvaluaMensajes.Interval = new TimeSpan(0, 0, 10);
             timerEvaluaMensajes.Start();
         }
         private void dispatcherTimerReloj_Tick(object sender, EventArgs e)
@@ -99,18 +64,14 @@ namespace TestMdfEntityFramework
         {
             try
             {
-                ServiceMensajes serv_mensajes = new ServiceMensajes();
-                List<sy_mensajes> list_msn_no_reproducidos = serv_mensajes.getEntityNoReproducidos();
+                //Envio los mensajes a TISA
+                Sincronizar_Mensajes();
 
-                if(list_msn_no_reproducidos.Count > 0)
-                {
-                    imgOpcionMensajes.Source = new BitmapImage(new Uri(@"/SCS/IMG/mensajes_rojo.png", UriKind.Relative));
-                }
-                else
-                {
-                    imgOpcionMensajes.Source = new BitmapImage(new Uri(@"/SCS/IMG/mensajes.png", UriKind.Relative));
-                }
-                
+                //Cambia la imagen de mensajes en la menubar de principal, segun si hay o no mensajes pendientes de reproducir.
+                Cambia_Imagen_Mensajes();
+
+                //Envio de la ubicacion actual de la unidad en latitud y longitud
+                //Sincronizar_Ubicacion();
             }
             catch (Exception ex)
             {
@@ -121,6 +82,49 @@ namespace TestMdfEntityFramework
         {
             timerReloj.IsEnabled = false;
             timerEvaluaMensajes.IsEnabled = false;
+        }
+
+        #endregion
+
+        #region EVENTOS CONTROLES
+        private void Principal_OnLoad(object sender, RoutedEventArgs e)
+        {
+            inicializa_timer_reloj();
+            inicializa_timer_evalua_mensajes();
+
+            SincronizarCatalogos();
+            SetearVersionYCopyright();
+            SincronizaOperacionConsola();
+
+            //OBTENER CONFIGURACIONES VARIAS DEL SISTEMA Y OPERACION ACTUAL
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_asign = serv_config_varios.getEntityByClave("ASIGNACION_ACTIVA");
+            config_varios cv_modo = serv_config_varios.getEntityByClave("MODO");
+
+            ServiceAsignaciones serv_asign = new ServiceAsignaciones();
+            sy_asignaciones asig = serv_asign.getEntityByFolio(cv_asign.valor);
+
+            ASIGNACION_ACTIVA = cv_asign.valor;
+            FK_ASIGNACION_ACTIVA = asig.pkAsignacion;
+            MODO_APP = cv_modo.valor;
+
+        }
+        private void Principal_OnUnLoad(object sender, RoutedEventArgs e)
+        {
+            LimpiarUsuarioActualLogueado();
+
+            detiene_timers();
+
+            ////////////////////////////////////////////////////////////////////////
+            // ESTAS TAREAS SE DETENDRAN AL SALIR DEL FORMULARIO.
+            //SincronizacionTISA sTISA = new SincronizacionTISA();
+            //sTISA.Task_Sincroniza_Boletos_y_BoletosDetalle_DISPOSE();
+
+            /*
+                sTISA.Task_Sincroniza_Boletos_DISPOSE();
+                sTISA.Task_Sincroniza_BoletosDetalle_DISPOSE();
+            */
+            ////////////////////////////////////////////////////////////////////////
         }
         private void Principal_Closing(object sender, CancelEventArgs e)
         {
@@ -521,7 +525,6 @@ namespace TestMdfEntityFramework
             txtVersion.Text = version;
             txtCopyright.Text = copyright;
         }
-
         private void LimpiarUsuarioActualLogueado()
         {
             // ACTUALIZAR EN LA BASE DE DATOS CON EL USUARIO ACTUAL CONECTADO
@@ -531,11 +534,98 @@ namespace TestMdfEntityFramework
             cv_usuario_actual.valor = "NINGUNO";
             serv_conf_varios.updEntityByClave(cv_usuario_actual);
         }
+        private void Sincronizar_Mensajes()
+        {
+            // DISPOSITIVOS
+            // 1 = UNIDAD
+            // 2 = TISA
 
+            string fecha_actual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            MensajesController mensajes_controller = new MensajesController();
+
+            ServiceMensajes serv_mensajes = new ServiceMensajes();
+            
+            //se sincronizan los mensajes desde la unidad hacia TISA
+            List<sy_mensajes> list_mensaje_hacia_tisa = serv_mensajes.getEntityNoEnviados();
+            foreach (var item in list_mensaje_hacia_tisa)
+            {
+                ResMensajes_Insert resMensajes_insert = mensajes_controller.InsertMensaje(item);
+                if (resMensajes_insert.response == true && resMensajes_insert.status == 200)
+                {
+                    item.enviado = 1;
+                    item.confirmadoTISA = 1;
+                    serv_mensajes.updEntity(item);
+                }
+            }
+
+            //se sincronizan los mensajes desde TISA hacia la unidad
+            List<sy_mensajes> list_msn_desde_tisa = mensajes_controller.GetMensajesConsolaDesdeTISA(FK_ASIGNACION_ACTIVA);
+            foreach (var item in list_msn_desde_tisa)
+            {
+                // se pone la bandera de enviado a 1 para que no se vuelva a consultar de nuevo este mensaje desde TISA
+                item.enviado = 1;
+                mensajes_controller.UpdateMensaje(item);
+
+                // insertar en la base de datos local
+                serv_mensajes.addEntity(item);
+            }
+
+        }
+        private void Sincronizar_Ubicacion()
+        {
+            try
+            {
+                //UBICACION ACTUAL DE LA UNIDAD
+                CLocation myLocation = new CLocation();
+                myLocation.GetLocationDataEvent();
+
+                //Task.WaitAll(new Task[] { Task.Delay(1000) });
+                //decimal lat = myLocation.latitud;
+                //decimal lon = myLocation.longitud;
+
+                ////Enviar la Ubicacion a TISA, por medio del servicio
+                //UbicacionController ubi_controller = new UbicacionController();
+                //sy_ubicacion ubi = new sy_ubicacion();
+                //ubi.fkAsignacion = FK_ASIGNACION_ACTIVA;
+                //ubi.latitud = lat;
+                //ubi.longitud = lon;
+                //ubi.enviado = 1;
+                //ubi.confirmadoTISA = 0;
+                //ubi.modo = MODO_APP;
+                //ResUbicacion res_ubicacion = ubi_controller.InsertUbicacion(ubi);
+
+                ////Insertar la ubicacion en la dblocal en caso de que se haya insertado correctamente en TISA.
+                //if (res_ubicacion.response == true && res_ubicacion.status == 200)
+                //{
+                //    ServiceUbicacion serv_ubicacion = new ServiceUbicacion();
+                //    serv_ubicacion.addEntity(ubi);
+                //}
+            }
+            catch (Exception ex)
+            {
+
+                
+            }
+        }
+        private void Cambia_Imagen_Mensajes()
+        {
+            ServiceMensajes serv_mensajes = new ServiceMensajes();
+            List<sy_mensajes> list_msn_no_reproducidos = serv_mensajes.getEntityNoReproducidos();
+
+            if (list_msn_no_reproducidos.Count > 0)
+            {
+                imgOpcionMensajes.Source = new BitmapImage(new Uri(@"/SCS/IMG/mensajes_rojo.png", UriKind.Relative));
+            }
+            else
+            {
+                imgOpcionMensajes.Source = new BitmapImage(new Uri(@"/SCS/IMG/mensajes.png", UriKind.Relative));
+            }
+        }
 
 
         #endregion
 
-        
+
     }
 }
