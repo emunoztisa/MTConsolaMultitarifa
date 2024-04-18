@@ -222,6 +222,31 @@ namespace TestMdfEntityFramework.Views
                 }
             }
 
+            if (isValidComPortAndConnected())
+            {
+                SetearValoresTextoEncabezadosYPiePagina();
+                SetearValoresLblNoSerieAlcancia();
+            }
+
+        }
+
+        private bool isValidComPortAndConnected()
+        {
+            bool isValid;
+            try
+            {
+                open_serial_port();
+                isValid = true;
+            }
+            catch (Exception ex)
+            {
+                isValid = false;
+            }
+            return isValid;
+        }
+
+        private void SetearValoresTextoEncabezadosYPiePagina()
+        {
             #region obtener mensajes configurados en boleto
             string enc_linea_1 = ejecutar_commando_83_get_mensaje(0);
             string enc_linea_2 = ejecutar_commando_83_get_mensaje(1);
@@ -239,12 +264,13 @@ namespace TestMdfEntityFramework.Views
             txtPiePaginaLinea2.Text = pie_linea_2;
             txtPiePaginaLinea3.Text = pie_linea_3;
             #endregion
-
+        }
+        private void SetearValoresLblNoSerieAlcancia()
+        {
             #region obtener No Serie Alcancia
             string no_serie_alcancia = ejecutar_commando_88_obtener_serie_alcancia();
             lblNoSerieAlcancia.Text = no_serie_alcancia;
             #endregion
-
         }
 
         public void llenaComboComPorts()
@@ -524,7 +550,18 @@ namespace TestMdfEntityFramework.Views
             SetPopupDlgCenter();
             InitializeAnimations();
 
-            SeteaValoresEnCombosConValoresDBLocal();
+            try
+            {
+                open_serial_port();
+                SeteaValoresEnCombosConValoresDBLocal();
+            }
+            catch (Exception ex)
+            {
+
+               
+            }
+            
+            
         }
         private void Configuracionv2_OnUnload(object sender, RoutedEventArgs e)
         {

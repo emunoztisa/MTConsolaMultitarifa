@@ -5,7 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TestMdfEntityFramework.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="544" d:DesignWidth="670" Loaded="CobroMultitarifaV1_Load" Unloaded="CobroMultitarifaV1_Unload">
+             d:DesignHeight="550" 
+             d:DesignWidth="950" 
+             Loaded="CobroMultitarifaV1_Load" 
+             Unloaded="CobroMultitarifaV1_Unload">
     <UserControl.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
@@ -74,11 +77,11 @@
             <!--#region DEFINICION COLS=10 ROWS=16 -->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="350"/>
                 <ColumnDefinition Width="7"/>
                 <ColumnDefinition Width="90"/>
-                <ColumnDefinition Width="7"/>
-                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="350"/>
                 <ColumnDefinition Width="7"/>
                 <ColumnDefinition Width="90"/>
                 <ColumnDefinition Width="7"/>
@@ -89,25 +92,24 @@
                 <RowDefinition Height="40" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="50" />
-                <RowDefinition Height="5"/>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="5"/>
+                <RowDefinition Height="7"/>
+                <RowDefinition Height="30" />
+                <RowDefinition Height="7"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="5"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="5"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="5"/>
-                <RowDefinition />
+                <RowDefinition Height="70"/>
                 <RowDefinition Height="5"/>
             </Grid.RowDefinitions>
             <!--#endregion-->
 
             <!--#region TITULO-->
             <TextBlock Grid.Row="0"
-                       Grid.ColumnSpan="10"
+                       Grid.Column="1"
+                       Grid.ColumnSpan="3"
                        Text="Cobro Multitarifa"
                        Foreground="White"
                        FontSize="30"
@@ -125,9 +127,9 @@
 
             <!--#region BOTON CANCELAR VENTA -->
             <Button x:Name="btnCancelarVenta"
-                    Grid.Row="1" 
+                    Grid.Row="0" 
                     Grid.Column="5" 
-                    Grid.ColumnSpan="4"
+                    Grid.ColumnSpan="2"
                     Grid.RowSpan="2"
                     Margin="30,10,30,10"
                     Style="{DynamicResource BTNSTYLE}" 
@@ -140,14 +142,14 @@
                     </LinearGradientBrush>
                 </Button.Background>
                 <TextBlock Text="CANCELAR VENTA" Foreground="White" 
-                           FontSize="20" FontWeight="Bold"/>
+                           FontSize="17" FontWeight="Bold"/>
             </Button>
             <!--#endregion-->
 
             <!--#region LUGAR ORIGEN -->
             <TextBlock Grid.Row="2" 
                        Grid.Column="1"
-                       Grid.ColumnSpan="10"
+                       Grid.ColumnSpan="1"
                        Text="LUGAR ORIGEN" 
                        Foreground="White" 
                        FontSize="20" 
@@ -158,7 +160,7 @@
             <ComboBox x:Name="cmbLugarOrigen" 
                       Grid.Row="3" 
                       Grid.Column="1" 
-                      Grid.ColumnSpan="10"
+                      Grid.ColumnSpan="3"
                       Background="Transparent"
                       BorderBrush="White" 
                       FontSize="30" 
@@ -166,10 +168,10 @@
                       >
             </ComboBox>
             <!--#endregion-->
-            
+
             <!--#region LUGAR DESTINO -->
-            <TextBlock Grid.Row="4" 
-                       Grid.Column="1"
+            <TextBlock Grid.Row="2" 
+                       Grid.Column="5"
                        Grid.ColumnSpan="10"
                        Text="LUGAR DESTINO" 
                        Foreground="White" 
@@ -179,8 +181,8 @@
                        HorizontalAlignment="Left"
                        />
             <ComboBox x:Name="cmbLugarDestino" 
-                      Grid.Row="5" 
-                      Grid.Column="1" 
+                      Grid.Row="3" 
+                      Grid.Column="5" 
                       Grid.ColumnSpan="10"
                       Background="Transparent"
                       BorderBrush="White" 
@@ -193,16 +195,16 @@
             <!--#region PERFILES Y CANTIDAD -->
 
             <!--#region PERFIL CANT PERFIL CANT -->
-            <TextBlock Grid.Row="7" 
+            <TextBlock Grid.Row="3" 
                        Grid.Column="1"
                        Text="PERFIL" 
                        Foreground="White" 
                        FontSize="20" 
                        FontWeight="Bold" 
-                       VerticalAlignment="Center" 
-                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom" 
+                       HorizontalAlignment="Center" Margin="144,0,144,1" Grid.RowSpan="3"
                        />
-            <TextBlock Grid.Row="7" 
+            <TextBlock Grid.Row="5" 
                        Grid.Column="3"
                        Text="CANT" 
                        Foreground="White" 
@@ -211,7 +213,7 @@
                        VerticalAlignment="Center" 
                        HorizontalAlignment="Center"
                        />
-            <TextBlock Grid.Row="7" 
+            <TextBlock Grid.Row="5" 
                        Grid.Column="5"
                        Text="PERFIL" 
                        Foreground="White" 
@@ -220,7 +222,7 @@
                        VerticalAlignment="Center" 
                        HorizontalAlignment="Center"
                        />
-            <TextBlock Grid.Row="7" 
+            <TextBlock Grid.Row="5" 
                        Grid.Column="7"
                        Text="CANT" 
                        Foreground="White" 
@@ -233,7 +235,7 @@
 
             <!--#region PERFIL CANTIDAD UNO -->
             <ComboBox x:Name="cmbPerfilUno" 
-                      Grid.Row="9" 
+                      Grid.Row="7" 
                       Grid.Column="1" 
                       Background="Transparent"
                       BorderBrush="White" 
@@ -242,7 +244,7 @@
                       >
             </ComboBox>
             <ComboBox x:Name="cmbCantUno" 
-                      Grid.Row="9" 
+                      Grid.Row="7" 
                       Grid.Column="3" 
                       Background="Transparent"
                       BorderBrush="White" 
@@ -254,7 +256,7 @@
 
             <!--#region PERFIL CANTIDAD DOS -->
             <ComboBox x:Name="cmbPerfilDos" 
-                      Grid.Row="11" 
+                      Grid.Row="9" 
                       Grid.Column="1" 
                       Background="Transparent"
                       BorderBrush="White" 
@@ -263,7 +265,7 @@
                       >
             </ComboBox>
             <ComboBox x:Name="cmbCantDos"
-                      Grid.Row="11" 
+                      Grid.Row="9" 
                       Grid.Column="3" 
                       Background="Transparent"
                       BorderBrush="White" 
@@ -275,7 +277,7 @@
 
             <!--#region PERFIL CANTIDAD TRES -->
             <ComboBox x:Name="cmbPerfilTres" 
-                      Grid.Row="13" 
+                      Grid.Row="11" 
                       Grid.Column="1" 
                       Background="Transparent"
                       BorderBrush="White" 
@@ -284,7 +286,7 @@
                       >
             </ComboBox>
             <ComboBox x:Name="cmbCantTres"
-                      Grid.Row="13" 
+                      Grid.Row="11" 
                       Grid.Column="3" 
                       Background="Transparent"
                       BorderBrush="White" 
@@ -296,7 +298,7 @@
 
             <!--#region PERFIL CANTIDAD CUATRO -->
             <ComboBox x:Name="cmbPerfilCuatro" 
-                      Grid.Row="9" 
+                      Grid.Row="7" 
                       Grid.Column="5" 
                       Background="Transparent"
                       BorderBrush="White" 
@@ -305,7 +307,7 @@
                       >
             </ComboBox>
             <ComboBox x:Name="cmbCantCuatro" 
-                      Grid.Row="9" 
+                      Grid.Row="7" 
                       Grid.Column="7" 
                       Background="Transparent"
                       BorderBrush="White" 
@@ -317,7 +319,7 @@
 
             <!--#region PERFIL CANTIDAD CINCO -->
             <ComboBox x:Name="cmbPerfilCinco" 
-                      Grid.Row="11" 
+                      Grid.Row="9" 
                       Grid.Column="5" 
                       Background="Transparent"
                       BorderBrush="White" 
@@ -326,7 +328,7 @@
                       >
             </ComboBox>
             <ComboBox x:Name="cmbCantCinco" 
-                      Grid.Row="11" 
+                      Grid.Row="9" 
                       Grid.Column="7" 
                       Background="Transparent"
                       BorderBrush="White" 
@@ -338,7 +340,7 @@
 
             <!--#region PERFIL CANTIDAD SEIS -->
             <ComboBox x:Name="cmbPerfilSeis" 
-                      Grid.Row="13" 
+                      Grid.Row="11" 
                       Grid.Column="5" 
                       Background="Transparent"
                       BorderBrush="White" 
@@ -346,7 +348,7 @@
                       Margin="5,5,5,5" SelectionChanged="cmbPerfilSeis_SelectionChanged">
             </ComboBox>
             <ComboBox x:Name="cmbCantSeis" 
-                      Grid.Row="13" 
+                      Grid.Row="11" 
                       Grid.Column="7" 
                       Background="Transparent"
                       BorderBrush="White" 
@@ -359,7 +361,7 @@
             <!--#endregion-->
 
             <!--#region MONTO CALCULADO -->
-            <TextBlock Grid.Row="15" 
+            <TextBlock Grid.Row="13" 
                        Grid.Column="1"
                        Grid.ColumnSpan="3"
                        Text="$" 
@@ -371,7 +373,7 @@
                        Margin="5,5,5,5"
                        />
             <TextBlock x:Name="lblMontoCalculado" 
-                       Grid.Row="15" 
+                       Grid.Row="13" 
                        Grid.Column="1"
                        Grid.ColumnSpan="3"
                        Text="0" 
@@ -383,7 +385,7 @@
                        Margin="40,5,5,5"
                        />
             <TextBlock  
-                       Grid.Row="15" 
+                       Grid.Row="13" 
                        Grid.Column="1"
                        Grid.ColumnSpan="3"
                        Text="/" 
@@ -395,7 +397,7 @@
                        Margin="40,5,5,5"
                        />
             <TextBlock x:Name="lblMontoIngresado" 
-                       Grid.Row="15" 
+                       Grid.Row="13" 
                        Grid.Column="1"
                        Grid.ColumnSpan="3"
                        Text="0" 
@@ -410,7 +412,7 @@
 
             <!--#region BOTON COBRAR -->
             <Button x:Name="btnCobrar"
-                    Grid.Row="15" Grid.Column="5" 
+                    Grid.Row="13" Grid.Column="5" 
                     Grid.ColumnSpan="4"
                     Margin="30,5,30,5"
                     Style="{DynamicResource BTNSTYLE}" 

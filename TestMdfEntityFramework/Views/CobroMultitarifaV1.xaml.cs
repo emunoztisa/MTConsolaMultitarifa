@@ -1829,8 +1829,8 @@ namespace TestMdfEntityFramework.Views
             //timerPoll.Enabled = false;
             byte[] BufferSendData = new byte[7];
             BufferSendData[0] = ByteInicio;
-            BufferSendData[1] = AddressConsola;
-            BufferSendData[2] = AddressAlcancia;
+            BufferSendData[1] = AddressAlcancia;
+            BufferSendData[2] = AddressConsola;
             BufferSendData[3] = cantidadDatos;
             BufferSendData[4] = numeroComando;
             BufferSendData[5] = crc1;
@@ -1852,8 +1852,8 @@ namespace TestMdfEntityFramework.Views
             //timerPoll.Enabled = false;
             byte[] BufferSendData = new byte[7];
             BufferSendData[0] = ByteInicio;
-            BufferSendData[1] = AddressConsola;
-            BufferSendData[2] = AddressAlcancia;
+            BufferSendData[1] = AddressAlcancia;
+            BufferSendData[2] = AddressConsola;
             BufferSendData[3] = cantidadDatos;
             BufferSendData[4] = numeroComando;
             BufferSendData[5] = crc1;

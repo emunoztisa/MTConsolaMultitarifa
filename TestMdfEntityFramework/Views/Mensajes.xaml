@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TestMdfEntityFramework.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="544" d:DesignWidth="670"
+             d:DesignHeight="544" d:DesignWidth="950"
              Background="Transparent"  
              Loaded="Mensajes_Load" 
              Unloaded="Mensajes_Unload">
@@ -65,6 +65,90 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <SolidColorBrush x:Key="TextBox.Static.Border" Color="#FFABAdB3"/>
+        <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FF7EB4EA"/>
+        <SolidColorBrush x:Key="TextBox.Focus.Border" Color="#FF569DE5"/>
+        <Style x:Key="TEXTBOXSTYLE" TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TextBox.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border CornerRadius="30" x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.Focus.Border}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true"/>
+                        <Condition Property="IsSelectionActive" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+                </MultiTrigger>
+            </Style.Triggers>
+        </Style>
+        <SolidColorBrush x:Key="ListBox.Static.Background" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="ListBox.Static.Border" Color="#FFABADB3"/>
+        <SolidColorBrush x:Key="ListBox.Disabled.Background" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="ListBox.Disabled.Border" Color="#FFD9D9D9"/>
+        <Style x:Key="LISTBOXSTYLE" TargetType="{x:Type ListBox}">
+            <Setter Property="Background" Value="{StaticResource ListBox.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ListBox.Static.Border}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBox}">
+                        <Border CornerRadius="30" x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="1" SnapsToDevicePixels="true">
+                            <ScrollViewer Focusable="false" Padding="{TemplateBinding Padding}">
+                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </ScrollViewer>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource ListBox.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ListBox.Disabled.Border}"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsGrouping" Value="true"/>
+                                    <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <Border CornerRadius="0,0,0,0">
         <Border.Background>
@@ -84,16 +168,21 @@
                 <ColumnDefinition Width="20"></ColumnDefinition>
                 <ColumnDefinition Width="150"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
+                <ColumnDefinition Width="120"></ColumnDefinition>
+                <ColumnDefinition Width="20"></ColumnDefinition>
+                <ColumnDefinition Width="120"></ColumnDefinition>
+                <ColumnDefinition Width="5"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"></RowDefinition>
                 <RowDefinition Height="20"></RowDefinition>
-                <RowDefinition Height="200"></RowDefinition>
+                <RowDefinition Height="90"></RowDefinition>
+                <RowDefinition Height="20"></RowDefinition>
+                <RowDefinition Height="90"></RowDefinition>
                 <RowDefinition Height="10"></RowDefinition>
                 <RowDefinition Height="80"></RowDefinition>
                 <RowDefinition Height="30"></RowDefinition>
-                <RowDefinition Height="100"></RowDefinition>
-                <RowDefinition Height="10"></RowDefinition>
+                
             </Grid.RowDefinitions>
 
             <!--#region TITULO-->
@@ -105,22 +194,25 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
             <!--#endregion-->
-            
+
             <!--#region LISTBOX CON MENSAJES ENVIADOS -->
             <ListBox x:Name="listbox_mensajes"
                      Grid.Row="2" Grid.Column="1"
                      FontSize="25"
                      FontWeight="Bold"
-                     Grid.ColumnSpan="7">
-                
+                     Grid.ColumnSpan="7"
+                     Grid.RowSpan="3"
+                     Margin="0,0,30,0"
+                     Style="{DynamicResource LISTBOXSTYLE}">
+
             </ListBox>
-            
+
             <!--#endregion-->
 
 
             <!--#region BOTON ENVIAR MENSAJE -->
             <Button x:Name="btnEnviarMensaje" 
-                    Grid.Column="1" Grid.Row="4"
+                    Grid.Column="1" Grid.Row="6"
                     Grid.ColumnSpan="2"
                     Width="150" Height="70" 
                     VerticalAlignment="Center"
@@ -137,7 +229,7 @@
                         <ColumnDefinition Width="80"></ColumnDefinition>
                         <ColumnDefinition Width="10"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    
+
                     <Image Grid.Column="1" Width="30" Height="30"
                         Source="../SCS/IMG/enviar_mensaje.png" 
                         VerticalAlignment="Center" 
@@ -160,14 +252,84 @@
 
             <!--#region CAMPO DE TEXTO -->
             <TextBox x:Name="txtMensajes"
-                Grid.Row="4" Grid.Column="3" 
+                Grid.Row="6" Grid.Column="3" 
                      Grid.ColumnSpan="5"
                      FontSize="20" FontStyle="Normal" FontWeight="Bold"
                      Text="" MaxLines="3"
-                     Margin="5" />
+                     Margin="0,0,30,0"
+                     Style="{DynamicResource TEXTBOXSTYLE}" />
 
             <!--#endregion-->
 
+            <!--#region BOTONES ACCESO RAPIDO Y EMERGENCIA -->
+            <Button x:Name="btnEnviarAsistenciaMecanica" 
+                    Grid.Column="9" Grid.Row="2"
+                    Width="100" Height="90" 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="2"
+                    Background="GreenYellow"
+                    Style="{DynamicResource BTNSTYLE}"
+                    Click="btnEnviarAsistenciaMecanica_Click">
+                <Grid>
+                    <Image Grid.Column="1" Width="70" Height="70"
+                        Source="../SCS/IMG/asistencia_mecanica.png" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Left"/>
+                </Grid>
+            </Button>
+            <Button x:Name="btnEnviarAsistenciaVial" 
+                    Grid.Column="11" Grid.Row="2"
+                    Width="100" Height="90" 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="2"
+                    Background="GreenYellow"
+                    Style="{DynamicResource BTNSTYLE}"
+                    Click="btnEnviarAsistenciaVial_Click">
+                <Grid>
+                    <Image Grid.Column="1" Width="70" Height="70"
+                        Source="../SCS/IMG/choque_carros.png" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Left"/>
+                </Grid>
+            </Button>
+            <Button x:Name="btnEnviarSOS" 
+                    Grid.Column="9" Grid.Row="4"
+                    Width="100" Height="90" 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="2"
+                    Background="GreenYellow"
+                    Style="{DynamicResource BTNSTYLE}"
+                    Click="btnEnviarSOS_Click">
+                <Grid>
+                    <Image Grid.Column="1" Width="70" Height="70"
+                        Source="../SCS/IMG/sos.png" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Left"/>
+                </Grid>
+            </Button>
+            <Button x:Name="btnEnviarEmergenciaClinica" 
+                    Grid.Column="11" Grid.Row="4"
+                    Width="100" Height="90" 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="2"
+                    Background="GreenYellow"
+                    Style="{DynamicResource BTNSTYLE}"
+                    Click="btnEnviarEmerganciaClinica_Click">
+                <Grid>
+                    <Image Grid.Column="1" Width="70" Height="70"
+                        Source="../SCS/IMG/emergencia_clinica.png" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Left"/>
+                </Grid>
+            </Button>
+            
+            
+            <!--#endregion-->
+            
             <!--#region MOSTRAR TECLADO EN PANTALLA -->
             <Button x:Name="btnMostrarTecladoEnPantalla" 
                     Visibility="Hidden"
@@ -190,77 +352,10 @@
                         Source="../SCS/IMG/teclado.png" 
                         VerticalAlignment="Center" 
                         HorizontalAlignment="Left"/>
-                    
+
                 </Grid>
             </Button>
 
-            <!--#endregion-->
-
-            <!--#region BOTONES ACCESO RAPIDO Y EMERGENCIA -->
-            <Button x:Name="btnEnviarSOS" 
-                    Grid.Column="5" Grid.Row="6"
-                    Width="100" Height="90" 
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Margin="2"
-                    Background="GreenYellow"
-                    Style="{DynamicResource BTNSTYLE}"
-                    Click="btnEnviarSOS_Click">
-                <Grid>
-                    <Image Grid.Column="1" Width="70" Height="70"
-                        Source="../SCS/IMG/sos.png" 
-                        VerticalAlignment="Center" 
-                        HorizontalAlignment="Left"/>
-                </Grid>
-            </Button>
-            <Button x:Name="btnEnviarEmergenciaClinica" 
-                    Grid.Column="7" Grid.Row="6"
-                    Width="100" Height="90" 
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Margin="2"
-                    Background="GreenYellow"
-                    Style="{DynamicResource BTNSTYLE}"
-                    Click="btnEnviarEmerganciaClinica_Click">
-                <Grid>
-                    <Image Grid.Column="1" Width="70" Height="70"
-                        Source="../SCS/IMG/emergencia_clinica.png" 
-                        VerticalAlignment="Center" 
-                        HorizontalAlignment="Left"/>
-                </Grid>
-            </Button>
-            <Button x:Name="btnEnviarAsistenciaMecanica" 
-                    Grid.Column="1" Grid.Row="6"
-                    Width="100" Height="90" 
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Margin="2"
-                    Background="GreenYellow"
-                    Style="{DynamicResource BTNSTYLE}"
-                    Click="btnEnviarAsistenciaMecanica_Click">
-                <Grid>
-                    <Image Grid.Column="1" Width="70" Height="70"
-                        Source="../SCS/IMG/asistencia_mecanica.png" 
-                        VerticalAlignment="Center" 
-                        HorizontalAlignment="Left"/>
-                </Grid>
-            </Button>
-            <Button x:Name="btnEnviarAsistenciaVial" 
-                    Grid.Column="3" Grid.Row="6"
-                    Width="100" Height="90" 
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Margin="2"
-                    Background="GreenYellow"
-                    Style="{DynamicResource BTNSTYLE}"
-                    Click="btnEnviarAsistenciaVial_Click">
-                <Grid>
-                    <Image Grid.Column="1" Width="70" Height="70"
-                        Source="../SCS/IMG/choque_carros.png" 
-                        VerticalAlignment="Center" 
-                        HorizontalAlignment="Left"/>
-                </Grid>
-            </Button>
             <!--#endregion-->
 
             <!--#region POPUP OK -->
@@ -333,10 +428,10 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                        
+
             </StackPanel>
-            
-                
+
+
             <!--#endregion-->
 
         </Grid>

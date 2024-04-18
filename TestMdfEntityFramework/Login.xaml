@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestMdfEntityFramework"
         mc:Ignorable="d"
-        Title="Login" Height="300" Width="500"
+        Title="Login" Height="550" Width="1000"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -85,7 +85,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border CornerRadius="20" x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                        <Border CornerRadius="50" x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
                             <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -153,42 +153,52 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <Border CornerRadius="10" Background="GhostWhite">
+    <Border CornerRadius="20" Background="GhostWhite">
         <Grid x:Name="VentanaLogin" Background="Transparent" Loaded="Login_OnLoad">
             <!-- #REGION HEADER-->
-            <Grid Name="Header" Height="35" VerticalAlignment="Top" 
+            <Grid Name="Header" Height="65" VerticalAlignment="Top" 
                   Background="Transparent">
                 <Border CornerRadius="10,10,0,0" Background="Black"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="350"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="450"/>
+                        <ColumnDefinition Width="400"/>
+                        <ColumnDefinition Width="150"/>
                     </Grid.ColumnDefinitions>
                     <!-- #REGION TITLE-->
-                    <TextBlock Text="CONSOLA MULTITARIFA" Grid.Column="0" 
-                               FontSize="15" FontWeight="Bold"
-                               Foreground="White" HorizontalAlignment="Left" 
-                               VerticalAlignment="Center" Margin="15,5,5,5"
+                    <TextBlock Text="CONSOLA MULTITARIFA" 
+                               Grid.Column="0" 
+                               FontSize="35" 
+                               FontWeight="Bold"
+                               Foreground="White" 
+                               HorizontalAlignment="Left" 
+                               VerticalAlignment="Center" 
+                               Margin="15,5,5,5"
                                FontFamily="Arial"/>
                     <!-- #ENDREGION-->
                     <!--#region MINIMIZAR-->
-                    <Button x:Name="btnMinimizar" Grid.Column="2" 
+                    <Button x:Name="btnMinimizar" 
+                            Grid.Column="2" 
                             Background="Transparent" 
                             BorderBrush="Transparent"
-                            Height="25" Width="25" HorizontalAlignment="Right" 
-                            VerticalAlignment="top" Margin="0,5,30,0"
-                            
+                            Height="45" Width="45" 
+                            HorizontalAlignment="Left" 
+                            VerticalAlignment="top"
+                            Margin="20,5,30,0"
                             Click="btnMinimizarClick">
-                        <Image Source="/SCS/IMG/minimize2.png" Cursor="Hand" />
+                        <Image Source="/SCS/IMG/minimize2.png" 
+                               Cursor="Hand" />
                     </Button>
                     <!--#endregion-->
                     <!--#region CERRAR-->
-                    <Button x:Name="btnCerrar" Grid.Column="2" Background="Transparent" 
+                    <Button x:Name="btnCerrar" 
+                            Grid.Column="2" 
+                            Background="Transparent" 
                             BorderBrush="Transparent"
-                            Height="25" Width="25" HorizontalAlignment="Right" 
-                            VerticalAlignment="top" Margin="0,5,5,0"
-                            
+                            Height="45" Width="45" 
+                            HorizontalAlignment="Right" 
+                            VerticalAlignment="top" 
+                            Margin="0,5,20,0"
                             Click="btnCerrarClick">
                         <Image Source="/SCS/IMG/close.png" Cursor="Hand" />
                     </Button>
@@ -199,9 +209,12 @@
             <!-- #ENDREGION -->
 
             <!--#region CONTENT-->
-            <Grid x:Name="GridContent" Background="Transparent" 
-                  VerticalAlignment="Center" HorizontalAlignment="Right"
-                  Height="230" Width="500" >
+            <Grid x:Name="GridContent" 
+                  Background="Transparent" 
+                  VerticalAlignment="Top" 
+                  HorizontalAlignment="Center"
+                  Margin="0,65,0,0"
+                  Height="450"  >
                 <Border>
                     <Border.Background>
                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -211,61 +224,78 @@
                     </Border.Background>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="10"/>
+                            
+                            <ColumnDefinition Width="250"/>
+                            <ColumnDefinition Width="250"/>
+                            <ColumnDefinition Width="250"/>
+                            <ColumnDefinition Width="250"/>
+                            
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition />
                             <RowDefinition Height="50" />
+                            <RowDefinition Height="50" />
+                            <RowDefinition Height="50" />
+                            <RowDefinition Height="50" />
+                            <RowDefinition Height="50" />
+                            <RowDefinition Height="50" />
+                            <RowDefinition Height="50" />
+                            <RowDefinition Height="50" />
+                            <RowDefinition Height="35" />
                             <RowDefinition Height="15" />
-                            <RowDefinition Height="50" />
-                            <RowDefinition />
-                            <RowDefinition Height="50" />
-                            <RowDefinition />
                         </Grid.RowDefinitions>
 
                         <!--#region USUARIO -->
-                        <TextBox x:Name="txtUsuario" Grid.Column="2" Grid.Row="1" 
-                                    Grid.ColumnSpan="3"
-                                    TextAlignment="Center" Background="White"
-                                    FontSize="40" 
-                                 Foreground="DarkBlue" BorderBrush="Black"
-                                 MaxLength="12" Margin="10,2,10,2"
+                        <TextBox x:Name="txtUsuario" 
+                                 Grid.Column="1" 
+                                 Grid.Row="1" 
+                                 Grid.ColumnSpan="3"
+                                 Grid.RowSpan="2"
+                                 TextAlignment="Center" 
+                                 Background="White"
+                                 FontSize="75" 
+                                 Foreground="DarkBlue" 
+                                 BorderBrush="Black"
+                                 MaxLength="12" 
+                                 Margin="10,2,10,2"
                                  Style="{DynamicResource TEXTBOXSTYLE}" />
                         <!--#endregion-->
                         
                         <!--#region CONTRASEÑA -->
-                        <PasswordBox Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="3"
-                                     Name="txtContrasena" VerticalAlignment="Center"
-                                     FontSize="40" BorderBrush="Black" HorizontalContentAlignment="Center"
-                                     Background="White" Foreground="DarkBlue" 
+                        <PasswordBox Grid.Column="1" 
+                                     Grid.Row="4" 
+                                     Grid.ColumnSpan="3"
+                                     Grid.RowSpan="2"
+                                     Height="95"
+                                     Name="txtContrasena" 
+                                     VerticalAlignment="Center"
+                                     FontSize="75" 
+                                     BorderBrush="Black" 
+                                     HorizontalContentAlignment="Center"
+                                     Background="White" 
+                                     Foreground="DarkBlue" 
                                      Margin="10,2,10,2"
                                      MaxLength="12" PasswordChar="*" Style="{DynamicResource PASSWORDBOXSTYLE}"  />
                         <!--#endregion-->
 
-                        <Image Grid.Column="1" Grid.Row="1" 
-                               Grid.RowSpan="3" VerticalAlignment="Center"
-                               Width="80" Height="130" 
-                        HorizontalAlignment="Center" 
+                        <Image Grid.Column="0" 
+                               Grid.Row="1" 
+                               Grid.RowSpan="5" 
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center" 
                         Source="SCS/IMG/logo_tisa_consola_multitarifa.png"/>
 
 
                         <!--#region BOTONES -->
                         <Button x:Name="btnEntrar" 
-                            Grid.Column="1" Grid.Row="5"
+                            Grid.Column="0" 
+                            Grid.Row="7"
+                            Grid.RowSpan="2"
                             Grid.ColumnSpan="4"
-                            Height="50" Width="455"
-                            VerticalAlignment="Top"
-                            HorizontalAlignment="Right"
-                                Margin="10,0,10,0"
+                            Margin="10,0,10,0"
                             Background="GreenYellow" 
                                 Click="btnEntrar_Click" Style="{DynamicResource BUTTONSTYLE}"  >
-                            <TextBlock Text="ENTRAR" Foreground="Black" 
-                            FontSize="15" FontWeight="SemiBold"/>
+                            <TextBlock Text="INGRESAR AL SISTEMA" Foreground="Black" 
+                            FontSize="50" FontWeight="SemiBold"/>
                         </Button>
                         <!--#endregion-->
 
@@ -281,17 +311,17 @@
                 <Border CornerRadius="0,0,10,10" Background="Black"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="500" />
+                        <ColumnDefinition Width="1000" />
                     </Grid.ColumnDefinitions>
                     <!-- #REGION VERSION-->
                     <TextBlock Text="VERSION: 1.0.0" Grid.Column="0" 
                                Foreground="White" HorizontalAlignment="Left" 
-                               VerticalAlignment="Center" Margin="5,5,5,5" />
+                               VerticalAlignment="Center" Margin="25,5,5,5" />
                     <!-- #ENDREGION-->
                     <!-- #REGION COPYRIGHT-->
                     <TextBlock Text="© 2024 Tarjetas Integrales SA de CV" Grid.Column="0" 
                                Foreground="White" HorizontalAlignment="Right" 
-                               VerticalAlignment="Center" Margin="5,5,5,5" />
+                               VerticalAlignment="Center" Margin="5,5,25,5" />
                     <!-- #ENDREGION-->
                 </Grid>
             </Grid>

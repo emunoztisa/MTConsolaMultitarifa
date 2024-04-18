@@ -294,8 +294,8 @@ namespace TestMdfEntityFramework.Views
                 ClearBufferSendData();
 
                 BufferSendData[0] = decimal.ToByte(ByteInicio);
-                BufferSendData[1] = decimal.ToByte(AddressConsola);
-                BufferSendData[2] = decimal.ToByte(AddressAlcancia);
+                BufferSendData[1] = decimal.ToByte(AddressAlcancia);
+                BufferSendData[2] = decimal.ToByte(AddressConsola);
 
                 BufferSendData[4] = decimal.ToByte(Comando);
                 CantidadDatos += 1;

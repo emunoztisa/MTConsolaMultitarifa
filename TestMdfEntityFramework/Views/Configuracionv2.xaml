@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:TestMdfEntityFramework.Views"
              x:Class="TestMdfEntityFramework.Views.Configuracionv2"
              mc:Ignorable="d" 
-             d:DesignHeight="544" d:DesignWidth="670"
+             d:DesignHeight="544" d:DesignWidth="970"
              Background="Transparent" Loaded="Configuracion_OnLoad" Unloaded="Configuracionv2_OnUnload">
     <UserControl.Resources>
         <!--#region FOCUSVISUAL -->
@@ -43,7 +43,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border CornerRadius="25" x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                        <Border CornerRadius="20" x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
                             <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -137,18 +137,18 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="30"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
                 
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="20"/>
-                <RowDefinition Height="20"/>
+                <RowDefinition Height="10"/>
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="20"/>
@@ -191,7 +191,7 @@
                       Grid.Column="2" Grid.Row="2" 
                       Background="Transparent"
                       BorderBrush="White" 
-                      FontSize="20" 
+                      FontSize="15" 
                       Margin="0,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
             </ComboBox>
@@ -207,7 +207,7 @@
                        HorizontalAlignment="Center"/>
             <ComboBox x:Name="cmbBausRate" Grid.Column="2" Grid.Row="3" 
                       Background="Transparent"
-                      BorderBrush="White" FontSize="20" 
+                      BorderBrush="White" FontSize="15" 
                       Margin="0,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
                
@@ -228,7 +228,7 @@
                        HorizontalAlignment="Center"/>
             <ComboBox x:Name="cmbDataBits" Grid.Column="2" Grid.Row="4" 
                       Background="Transparent"
-                      BorderBrush="White" FontSize="20" 
+                      BorderBrush="White" FontSize="15" 
                       Margin="0,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
                
@@ -245,7 +245,7 @@
                        HorizontalAlignment="Center"/>
             <ComboBox x:Name="cmbStopBits" Grid.Column="2" Grid.Row="5" 
                       Background="Transparent"
-                      BorderBrush="White" FontSize="20" 
+                      BorderBrush="White" FontSize="15" 
                       Margin="0,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
                 
@@ -262,7 +262,7 @@
                        HorizontalAlignment="Center"/>
             <ComboBox x:Name="cmbParity" Grid.Column="2" Grid.Row="6" 
                       Background="Transparent"
-                      BorderBrush="White" FontSize="20" 
+                      BorderBrush="White" FontSize="15" 
                       Margin="0,5,10,5"
                       >
                 
@@ -279,7 +279,7 @@
                        HorizontalAlignment="Center"/>
             <ComboBox x:Name="cmbHandShake" Grid.Column="2" Grid.Row="7" 
                       Background="Transparent"
-                      BorderBrush="White" FontSize="20" 
+                      BorderBrush="White" FontSize="15" 
                       Margin="0,5,10,5"
                       >
 
@@ -309,19 +309,22 @@
             <TextBox x:Name="txtEncabezadoLinea1" 
                      VerticalAlignment="Top"
                      Grid.Row="9" Grid.Column="2"  
-                     Margin="2" MaxLines="1" 
+                     Margin="0,0,10,0" 
+                     MaxLines="1" 
                      MaxLength="32"
                      Text=" "/>
             <TextBox x:Name="txtEncabezadoLinea2" 
                      VerticalAlignment="Center" 
                      Grid.Row="10" Grid.Column="2"  
-                     Margin="2" MaxLines="1" 
+                     MaxLines="1" 
                      MaxLength="32"
+                     Margin="0,0,10,0"
                      Text=" "/>
             <TextBox x:Name="txtEncabezadoLinea3" 
                      VerticalAlignment="Bottom" 
                      Grid.Row="11" Grid.Column="2"  
-                     Margin="2" MaxLines="1" 
+                     Margin="0,0,10,0" 
+                     MaxLines="1" 
                      MaxLength="32"
                      Text=" "/>
 
@@ -339,19 +342,22 @@
             <TextBox x:Name="txtPiePaginaLinea1" 
                      VerticalAlignment="Top"
                      Grid.Row="13" Grid.Column="2"  
-                     Margin="2" MaxLines="1"
+                     Margin="0,0,10,0" 
+                     MaxLines="1"
                      MaxLength="32"
                      Text=" "/>
             <TextBox x:Name="txtPiePaginaLinea2" 
                      VerticalAlignment="Center" 
                      Grid.Row="14" Grid.Column="2"  
-                     Margin="2" MaxLines="1"
+                     Margin="0,0,10,0" 
+                     MaxLines="1"
                      MaxLength="32"
                      Text=" "/>
             <TextBox x:Name="txtPiePaginaLinea3" 
                      VerticalAlignment="Bottom" 
                      Grid.Row="15" Grid.Column="2"  
-                     Margin="2" MaxLines="1"
+                     Margin="0,0,10,0"
+                     MaxLines="1"
                      MaxLength="32"
                      Text=" "/>
             <!--#endregion-->
@@ -394,7 +400,7 @@
             <ComboBox x:Name="cmbModoApp"
                 Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2"
                       Background="Transparent"
-                      BorderBrush="White" FontSize="20" 
+                      BorderBrush="White" FontSize="15" 
                       Margin="10,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
             </ComboBox>
@@ -412,7 +418,7 @@
             <ComboBox x:Name="cmbTipoTarifa"
                 Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="2"
                       Background="Transparent"
-                      BorderBrush="White" FontSize="20" 
+                      BorderBrush="White" FontSize="15" 
                       Margin="10,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
                 
@@ -431,7 +437,7 @@
             <ComboBox x:Name="cmbEmpresa"
                       Grid.Row="5" Grid.Column="5"
                       Background="Transparent"
-                      BorderBrush="White" FontSize="20" 
+                      BorderBrush="White" FontSize="15" 
                       Margin="10,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}" SelectionChanged="cmbEmpresa_SelectionChanged">
             </ComboBox>
@@ -449,7 +455,7 @@
             <ComboBox x:Name="cmbCorredor"
                       Grid.Row="6" Grid.Column="5"
                       Background="Transparent"
-                      BorderBrush="White" FontSize="20" 
+                      BorderBrush="White" FontSize="15" 
                       Margin="10,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}" SelectionChanged="cmbCorredor_SelectionChanged">
             </ComboBox>
@@ -467,7 +473,7 @@
             <ComboBox x:Name="cmbRuta"
                       Grid.Row="7" Grid.Column="5"
                       Background="Transparent"
-                      BorderBrush="White" FontSize="20" 
+                      BorderBrush="White" FontSize="15" 
                       Margin="10,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
             </ComboBox>
@@ -485,7 +491,7 @@
             <ComboBox x:Name="cmbUnidad"
                 Grid.Row="8" Grid.Column="5"
                       Background="Transparent"
-                      BorderBrush="White" FontSize="20" 
+                      BorderBrush="White" FontSize="15" 
                       Margin="10,5,10,5"
                       Style="{DynamicResource COMBOSTYLE}">
             </ComboBox>
@@ -532,12 +538,13 @@
 
             <!--#region BOTONES -->
             <Button x:Name="btnGuardarConfiguracion" 
-                    Grid.Column="4" Grid.Row="13"
-                    Grid.ColumnSpan="2" Grid.RowSpan="3"
-                    Width="250" Height="50" 
+                    Grid.Column="4" Grid.Row="14"
+                   Grid.ColumnSpan="2" Grid.RowSpan="2"
+                    Width="230" Height="40" 
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
                     Background="GreenYellow"
+                    Margin="0,0,0,0"
                     Style="{DynamicResource BTNSTYLE}" 
                     Click="btnGuardarConfiguracion_Click">
 
@@ -552,8 +559,9 @@
                     
                 <TextBlock Grid.Column="1"
                     Text="GUARDAR" Foreground="Black" 
-                    FontSize="20" FontWeight="SemiBold"
-                           VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    FontSize="18" FontWeight="SemiBold"
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
                 <Image Grid.Column="3" Width="30" Height="30"
                     Source="../SCS/IMG/save_disckete.png" 
                        VerticalAlignment="Top" HorizontalAlignment="Center"/>
