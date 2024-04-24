@@ -51,5 +51,7 @@ namespace TestMdfEntityFramework
         public virtual DbSet<sy_boletos> sy_boletos { get; set; }
         public virtual DbSet<sy_mensajes> sy_mensajes { get; set; }
         public virtual DbSet<sy_ubicacion> sy_ubicacion { get; set; }
+        public virtual DbSet<ct_denominaciones> ct_denominaciones { get; set; }
+        public virtual DbSet<ct_imagenes_subidas> ct_imagenes_subidas { get; set; }
     }
 }

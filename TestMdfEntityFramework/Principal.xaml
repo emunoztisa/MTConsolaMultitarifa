@@ -166,6 +166,20 @@
                         <ColumnDefinition Width="480"/>
                         <ColumnDefinition Width="100"/>
                     </Grid.ColumnDefinitions>
+                    
+                    <!--#region BOTON RESET PORT NAME -->
+                    <Button x:Name="btnResetPortName" 
+                    Grid.Column="0" Grid.Row="0"
+                    Width="15" Height="15" 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Left"
+                    Background="GreenYellow"
+                    Margin="0,0,0,0"
+                    Style="{DynamicResource BTNSTYLE}" 
+                    Click="btnResetPortName_Click">
+                    </Button>
+                    <!--#endregion-->
+                    
                     <!-- #REGION TITLE-->
                     <TextBlock Text="CONSOLA MULTITARIFA" Grid.Column="0" 
                                FontSize="20" FontWeight="Bold"
@@ -545,6 +559,7 @@
                                Foreground="White" HorizontalAlignment="Right" 
                                VerticalAlignment="Center" Margin="5,5,15,5" />
                     <!-- #ENDREGION-->
+                   
                 </Grid>
             </Grid>
             <!--#endregion-->

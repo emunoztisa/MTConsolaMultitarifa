@@ -34,6 +34,17 @@ namespace TestMdfEntityFramework
             btnInicio_Click(null, null);
         }
 
+        private void btnResetPortName_Click(object sender, RoutedEventArgs e)
+        {
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_port_name = serv_config_varios.getEntityByClave("PORT_NAME");
+            if (cv_port_name.valor != null && cv_port_name.valor != "")
+            {
+                cv_port_name.valor = "";
+                serv_config_varios.updEntityByClave(cv_port_name);
+            }
+        }
+
         #region TIMERS
         private void inicializa_timer_reloj()
         {
@@ -89,6 +100,7 @@ namespace TestMdfEntityFramework
         #region EVENTOS CONTROLES
         private void Principal_OnLoad(object sender, RoutedEventArgs e)
         {
+
             inicializa_timer_reloj();
             inicializa_timer_evalua_mensajes();
 
@@ -107,6 +119,7 @@ namespace TestMdfEntityFramework
             ASIGNACION_ACTIVA = cv_asign.valor;
             FK_ASIGNACION_ACTIVA = asig.pkAsignacion;
             MODO_APP = cv_modo.valor;
+
 
         }
         private void Principal_OnUnLoad(object sender, RoutedEventArgs e)

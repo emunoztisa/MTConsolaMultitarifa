@@ -277,7 +277,8 @@
                                      MaxLength="12" PasswordChar="*" Style="{DynamicResource PASSWORDBOXSTYLE}"  />
                         <!--#endregion-->
 
-                        <Image Grid.Column="0" 
+                        <Image x:Name="imgLogoHome"
+                            Grid.Column="0" 
                                Grid.Row="1" 
                                Grid.RowSpan="5" 
                                VerticalAlignment="Center"

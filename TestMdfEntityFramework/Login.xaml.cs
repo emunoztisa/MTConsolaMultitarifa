@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,6 +41,34 @@ namespace TestMdfEntityFramework
             InitializeComponent();
             //SettearValoresProduccion();
             SettearValoresPruebas();
+
+            cargar_logo_home();
+        }
+
+        private void cargar_logo_home()
+        {
+            //Cargar el logo home que se configuro
+            ServiceConfigVarios serv_config_varios_apariencia = new ServiceConfigVarios();
+            config_varios cv_apariencia_logo_home = serv_config_varios_apariencia.getEntityByClave("LOGO_HOME");
+
+            ServiceImagenesSubidas serv_img_subidas = new ServiceImagenesSubidas();
+            ct_imagenes_subidas obj_img_sub = serv_img_subidas.getEntityByName(cv_apariencia_logo_home.valor);
+
+            ImageSource img_src = ByteToImage(obj_img_sub.imagen);
+
+            imgLogoHome.Source = img_src;
+        }
+        public static ImageSource ByteToImage(byte[] imageData)
+        {
+            BitmapImage biImg = new BitmapImage();
+            MemoryStream ms = new MemoryStream(imageData);
+            biImg.BeginInit();
+            biImg.StreamSource = ms;
+            biImg.EndInit();
+
+            ImageSource imgSrc = biImg as ImageSource;
+
+            return imgSrc;
         }
 
         #region METODOS y FUNCIONES

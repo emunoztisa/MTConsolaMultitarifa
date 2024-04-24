@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>false</MapFileExtensions>
-    <ApplicationRevision>32</ApplicationRevision>
+    <ApplicationRevision>40</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -156,7 +156,13 @@
     <Compile Include="ct_corredores.cs">
       <DependentUpon>dbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ct_denominaciones.cs">
+      <DependentUpon>dbModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="ct_empresas.cs">
+      <DependentUpon>dbModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ct_imagenes_subidas.cs">
       <DependentUpon>dbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="ct_lugares.cs">
@@ -194,8 +200,10 @@
     <Compile Include="EntityServices\ServiceConsolas.cs" />
     <Compile Include="EntityServices\ServiceCorredores.cs" />
     <Compile Include="EntityServices\ServiceCortes.cs" />
+    <Compile Include="EntityServices\ServiceDenominaciones.cs" />
     <Compile Include="EntityServices\ServiceEmpresaCorredorOperador.cs" />
     <Compile Include="EntityServices\ServiceEmpresas.cs" />
+    <Compile Include="EntityServices\ServiceImagenesSubidas.cs" />
     <Compile Include="EntityServices\ServiceLugares.cs" />
     <Compile Include="EntityServices\ServiceLugarRuta.cs" />
     <Compile Include="EntityServices\ServiceMensajes.cs" />
@@ -303,6 +311,9 @@
     <Compile Include="Views\Configuracionv2.xaml.cs">
       <DependentUpon>Configuracionv2.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Configuracionv3.xaml.cs">
+      <DependentUpon>Configuracionv3.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ConfImpresora.xaml.cs">
       <DependentUpon>ConfImpresora.xaml</DependentUpon>
     </Compile>
@@ -385,6 +396,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Configuracionv3.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ConfImpresora.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -464,6 +479,26 @@
       <DependentUpon>dbModel.edmx</DependentUpon>
       <LastGenOutput>dbModel.cs</LastGenOutput>
     </Content>
+    <Resource Include="SCS\IMG\upload_images.png" />
+    <Resource Include="SCS\IMG\MONEDAS\10pesos.png" />
+    <Resource Include="SCS\IMG\MONEDAS\1pesos.png" />
+    <Resource Include="SCS\IMG\MONEDAS\2pesos.png" />
+    <Resource Include="SCS\IMG\MONEDAS\5pesos.png" />
+    <Resource Include="SCS\IMG\BILLETES\1000pesos.png" />
+    <Resource Include="SCS\IMG\BILLETES\100pesos.png" />
+    <Resource Include="SCS\IMG\BILLETES\200pesos.png" />
+    <Resource Include="SCS\IMG\BILLETES\20pesos.png" />
+    <Resource Include="SCS\IMG\BILLETES\500pesos.png" />
+    <Resource Include="SCS\IMG\BILLETES\50pesos.png" />
+    <Resource Include="SCS\IMG\audio_video.png" />
+    <Resource Include="SCS\IMG\denominaciones.png" />
+    <Resource Include="SCS\IMG\pruebas_app.png" />
+    <Resource Include="SCS\IMG\audio.png" />
+    <Resource Include="SCS\IMG\gps.png" />
+    <Resource Include="SCS\IMG\temas.png" />
+    <Resource Include="SCS\IMG\video.png" />
+    <Resource Include="SCS\IMG\empresa.png" />
+    <Resource Include="SCS\IMG\boleto.png" />
     <Resource Include="SCS\IMG\mensajes_rojo.png" />
     <Resource Include="SCS\IMG\asalto_vehiculo.png" />
     <Resource Include="SCS\IMG\asistencia_mecanica.png" />
@@ -512,6 +547,8 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="SCS\IMG\IMAGENES_SUBIDAS\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
