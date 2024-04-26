@@ -15,7 +15,8 @@ namespace TestMdfEntityFramework
     public partial class ct_tarifas_montos_fijos
     {
         public long pkTarifaMontoFijo { get; set; }
-        public Nullable<decimal> valor { get; set; }
+        public string valor { get; set; }
+        public string texto { get; set; }
         public string descripcion { get; set; }
         public Nullable<int> orden { get; set; }
         public Nullable<int> status { get; set; }

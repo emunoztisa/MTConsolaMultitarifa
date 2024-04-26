@@ -255,7 +255,7 @@
                                  FontSize="75" 
                                  Foreground="DarkBlue" 
                                  BorderBrush="Black"
-                                 MaxLength="12" 
+                                 MaxLength="25" 
                                  Margin="10,2,10,2"
                                  Style="{DynamicResource TEXTBOXSTYLE}" />
                         <!--#endregion-->
@@ -274,7 +274,9 @@
                                      Background="White" 
                                      Foreground="DarkBlue" 
                                      Margin="10,2,10,2"
-                                     MaxLength="12" PasswordChar="*" Style="{DynamicResource PASSWORDBOXSTYLE}"  />
+                                     MaxLength="25" 
+                                     PasswordChar="*" 
+                                     Style="{DynamicResource PASSWORDBOXSTYLE}"  />
                         <!--#endregion-->
 
                         <Image x:Name="imgLogoHome"

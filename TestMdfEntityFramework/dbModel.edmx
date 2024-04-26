@@ -185,16 +185,14 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_taqui
           <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
           <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_tarifas_montos_fijos' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="ct_tarifas_montos_fijos">
           <Key>
             <PropertyRef Name="pkTarifaMontoFijo" />
-            <PropertyRef Name="descripcion" />
           </Key>
-          <Property Name="pkTarifaMontoFijo" Type="bigint" Nullable="false" />
-          <Property Name="valor" Type="decimal" Precision="18" Scale="0" />
-          <Property Name="descripcion" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="pkTarifaMontoFijo" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="valor" Type="nvarchar" MaxLength="20" />
+          <Property Name="texto" Type="nvarchar" MaxLength="30" />
+          <Property Name="descripcion" Type="nvarchar" MaxLength="100" />
           <Property Name="orden" Type="int" />
           <Property Name="status" Type="int" />
           <Property Name="created_at" Type="nvarchar" MaxLength="50" />
@@ -409,6 +407,7 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="user" Type="nvarchar" MaxLength="100" />
           <Property Name="contrasena" Type="nvarchar" MaxLength="200" />
           <Property Name="token" Type="text" />
+          <Property Name="tipo_usuario" Type="nvarchar" MaxLength="100" />
           <Property Name="created_at" Type="nvarchar" MaxLength="30" />
           <Property Name="updated_at" Type="nvarchar" MaxLength="30" />
           <Property Name="deleted_at" Type="nvarchar" MaxLength="30" />
@@ -425,6 +424,7 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="ct_operadores" EntityType="Self.ct_operadores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ct_perfiles" EntityType="Self.ct_perfiles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ct_rutas" EntityType="Self.ct_rutas" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ct_tarifas_montos_fijos" EntityType="Self.ct_tarifas_montos_fijos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ct_unidades" EntityType="Self.ct_unidades" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="opciones_generales" EntityType="Self.opciones_generales" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_asignaciones" EntityType="Self.sy_asignaciones" Schema="dbo" store:Type="Tables" />
@@ -470,18 +470,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
     [ct_taquillas].[deleted_at] AS [deleted_at]
     FROM [dbo].[ct_taquillas] AS [ct_taquillas]</DefiningQuery>
           </EntitySet>
-          <EntitySet Name="ct_tarifas_montos_fijos" EntityType="Self.ct_tarifas_montos_fijos" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [ct_tarifas_montos_fijos].[pkTarifaMontoFijo] AS [pkTarifaMontoFijo], 
-    [ct_tarifas_montos_fijos].[valor] AS [valor], 
-    [ct_tarifas_montos_fijos].[descripcion] AS [descripcion], 
-    [ct_tarifas_montos_fijos].[orden] AS [orden], 
-    [ct_tarifas_montos_fijos].[status] AS [status], 
-    [ct_tarifas_montos_fijos].[created_at] AS [created_at], 
-    [ct_tarifas_montos_fijos].[updated_at] AS [updated_at], 
-    [ct_tarifas_montos_fijos].[deleted_at] AS [deleted_at]
-    FROM [dbo].[ct_tarifas_montos_fijos] AS [ct_tarifas_montos_fijos]</DefiningQuery>
-          </EntitySet>
           <EntitySet Name="sy_status" EntityType="Self.sy_status" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [sy_status].[pkStatus] AS [pkStatus], 
@@ -510,21 +498,8 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="updated_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="deleted_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="users">
-          <Key>
-            <PropertyRef Name="pkUser" />
-          </Key>
-          <Property Name="pkUser" Type="Int64" Nullable="false" />
-          <Property Name="user" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="contrasena" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="created_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="updated_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="deleted_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityContainer Name="databaseEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="boletos_tarifa_fija" EntityType="Self.boletos_tarifa_fija" />
-          <EntitySet Name="users" EntityType="Self.users" />
           <EntitySet Name="config_varios" EntityType="databaseModel.config_varios" />
           <EntitySet Name="opciones_generales" EntityType="databaseModel.opciones_generales" />
           <EntitySet Name="ct_andadores" EntityType="databaseModel.ct_andadores" />
@@ -534,7 +509,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="ct_alcancias" EntityType="databaseModel.ct_alcancias" />
           <EntitySet Name="ct_consolas" EntityType="databaseModel.ct_consolas" />
           <EntitySet Name="ct_taquillas" EntityType="databaseModel.ct_taquillas" />
-          <EntitySet Name="ct_tarifas_montos_fijos" EntityType="databaseModel.ct_tarifas_montos_fijos" />
           <EntitySet Name="ct_corredores" EntityType="databaseModel.ct_corredores" />
           <EntitySet Name="ct_empresas" EntityType="databaseModel.ct_empresas" />
           <EntitySet Name="ct_lugares" EntityType="databaseModel.ct_lugares" />
@@ -551,6 +525,8 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="sy_ubicacion" EntityType="databaseModel.sy_ubicacion" />
           <EntitySet Name="ct_denominaciones" EntityType="databaseModel.ct_denominaciones" />
           <EntitySet Name="ct_imagenes_subidas" EntityType="databaseModel.ct_imagenes_subidas" />
+          <EntitySet Name="users" EntityType="databaseModel.users" />
+          <EntitySet Name="ct_tarifas_montos_fijos" EntityType="databaseModel.ct_tarifas_montos_fijos" />
         </EntityContainer>
         <EntityType Name="config_varios">
           <Key>
@@ -665,20 +641,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="fkStatus" Type="Int64" />
           <Property Name="nombre" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ubicacion" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="ct_tarifas_montos_fijos">
-          <Key>
-            <PropertyRef Name="pkTarifaMontoFijo" />
-            <PropertyRef Name="descripcion" />
-          </Key>
-          <Property Name="pkTarifaMontoFijo" Type="Int64" Nullable="false" />
-          <Property Name="valor" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="descripcion" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="orden" Type="Int32" />
-          <Property Name="status" Type="Int32" />
           <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -925,6 +887,33 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="users">
+          <Key>
+            <PropertyRef Name="pkUser" />
+          </Key>
+          <Property Name="pkUser" Type="Int64" Nullable="false" />
+          <Property Name="user" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="contrasena" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="tipo_usuario" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="created_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="updated_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="deleted_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ct_tarifas_montos_fijos">
+          <Key>
+            <PropertyRef Name="pkTarifaMontoFijo" />
+          </Key>
+          <Property Name="pkTarifaMontoFijo" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="valor" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="texto" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="descripcion" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="orden" Type="Int32" />
+          <Property Name="status" Type="Int32" />
+          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -939,19 +928,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
                 <ScalarProperty Name="tarifa" ColumnName="tarifa" />
                 <ScalarProperty Name="cant_pasajeros" ColumnName="cant_pasajeros" />
                 <ScalarProperty Name="total" ColumnName="total" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
-                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="users">
-            <EntityTypeMapping TypeName="databaseModel.users">
-              <MappingFragment StoreEntitySet="users">
-                <ScalarProperty Name="pkUser" ColumnName="pkUser" />
-                <ScalarProperty Name="user" ColumnName="user" />
-                <ScalarProperty Name="contrasena" ColumnName="contrasena" />
-                <ScalarProperty Name="token" ColumnName="token" />
                 <ScalarProperty Name="created_at" ColumnName="created_at" />
                 <ScalarProperty Name="updated_at" ColumnName="updated_at" />
                 <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
@@ -1077,20 +1053,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
                 <ScalarProperty Name="nombre" ColumnName="nombre" />
                 <ScalarProperty Name="fkStatus" ColumnName="fkStatus" />
                 <ScalarProperty Name="pkTaquilla" ColumnName="pkTaquilla" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ct_tarifas_montos_fijos">
-            <EntityTypeMapping TypeName="databaseModel.ct_tarifas_montos_fijos">
-              <MappingFragment StoreEntitySet="ct_tarifas_montos_fijos">
-                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="orden" ColumnName="orden" />
-                <ScalarProperty Name="descripcion" ColumnName="descripcion" />
-                <ScalarProperty Name="valor" ColumnName="valor" />
-                <ScalarProperty Name="pkTarifaMontoFijo" ColumnName="pkTarifaMontoFijo" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1349,6 +1311,35 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
                 <ScalarProperty Name="imagen" ColumnName="imagen" />
                 <ScalarProperty Name="nombre" ColumnName="nombre" />
                 <ScalarProperty Name="pkImagenSubida" ColumnName="pkImagenSubida" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="users">
+            <EntityTypeMapping TypeName="databaseModel.users">
+              <MappingFragment StoreEntitySet="users">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="tipo_usuario" ColumnName="tipo_usuario" />
+                <ScalarProperty Name="token" ColumnName="token" />
+                <ScalarProperty Name="contrasena" ColumnName="contrasena" />
+                <ScalarProperty Name="user" ColumnName="user" />
+                <ScalarProperty Name="pkUser" ColumnName="pkUser" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ct_tarifas_montos_fijos">
+            <EntityTypeMapping TypeName="databaseModel.ct_tarifas_montos_fijos">
+              <MappingFragment StoreEntitySet="ct_tarifas_montos_fijos">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="orden" ColumnName="orden" />
+                <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+                <ScalarProperty Name="texto" ColumnName="texto" />
+                <ScalarProperty Name="valor" ColumnName="valor" />
+                <ScalarProperty Name="pkTarifaMontoFijo" ColumnName="pkTarifaMontoFijo" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

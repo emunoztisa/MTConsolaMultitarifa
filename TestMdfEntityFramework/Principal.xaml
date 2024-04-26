@@ -490,7 +490,7 @@
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
 
-                                    <Image Grid.Column="0" HorizontalAlignment="Center" 
+                                    <Image  Grid.Column="0" HorizontalAlignment="Center" 
                                            Width="50" Source="SCS/IMG/settings2.png"/>
                                     <TextBlock Grid.Column="1" Foreground="White" 
                                                Text="Configuraciones" FontWeight="SemiBold" 

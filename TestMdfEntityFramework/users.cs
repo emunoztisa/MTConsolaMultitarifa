@@ -18,6 +18,7 @@ namespace TestMdfEntityFramework
         public string user { get; set; }
         public string contrasena { get; set; }
         public string token { get; set; }
+        public string tipo_usuario { get; set; }
         public string created_at { get; set; }
         public string updated_at { get; set; }
         public string deleted_at { get; set; }

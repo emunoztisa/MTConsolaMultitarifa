@@ -26,7 +26,6 @@ namespace TestMdfEntityFramework
         }
     
         public virtual DbSet<boletos_tarifa_fija> boletos_tarifa_fija { get; set; }
-        public virtual DbSet<users> users { get; set; }
         public virtual DbSet<config_varios> config_varios { get; set; }
         public virtual DbSet<opciones_generales> opciones_generales { get; set; }
         public virtual DbSet<ct_andadores> ct_andadores { get; set; }
@@ -36,7 +35,6 @@ namespace TestMdfEntityFramework
         public virtual DbSet<ct_alcancias> ct_alcancias { get; set; }
         public virtual DbSet<ct_consolas> ct_consolas { get; set; }
         public virtual DbSet<ct_taquillas> ct_taquillas { get; set; }
-        public virtual DbSet<ct_tarifas_montos_fijos> ct_tarifas_montos_fijos { get; set; }
         public virtual DbSet<ct_corredores> ct_corredores { get; set; }
         public virtual DbSet<ct_empresas> ct_empresas { get; set; }
         public virtual DbSet<ct_lugares> ct_lugares { get; set; }
@@ -53,5 +51,7 @@ namespace TestMdfEntityFramework
         public virtual DbSet<sy_ubicacion> sy_ubicacion { get; set; }
         public virtual DbSet<ct_denominaciones> ct_denominaciones { get; set; }
         public virtual DbSet<ct_imagenes_subidas> ct_imagenes_subidas { get; set; }
+        public virtual DbSet<users> users { get; set; }
+        public virtual DbSet<ct_tarifas_montos_fijos> ct_tarifas_montos_fijos { get; set; }
     }
 }

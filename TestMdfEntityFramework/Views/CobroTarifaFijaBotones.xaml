@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TestMdfEntityFramework.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="544" d:DesignWidth="670"
+             d:DesignHeight="550" d:DesignWidth="950"
              Background="Transparent" Loaded="CobroTarifaFijaBotones_OnLoad" Unloaded="CobroTarifaFijaBotones_OnUnload">
     <Border CornerRadius="0,0,0,0">
         <Border.Background>
@@ -14,28 +14,15 @@
                 <GradientStop Color="White" Offset="1"/>
             </LinearGradientBrush>
         </Border.Background>
-        <Grid x:Name="gridBotonesTarifasFijas">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition />
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition />
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition />
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition />
-                <ColumnDefinition Width="30"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
-                <RowDefinition />
-                <RowDefinition Height="20"/>
-                <RowDefinition />
-                <RowDefinition Height="20"/>
-                <RowDefinition />
-                <RowDefinition Height="20"/>
-            </Grid.RowDefinitions>
+        <Grid>
+            <Grid x:Name="grid1" VerticalAlignment="Top">
+            
 
+            </Grid>
+            <Grid x:Name="grid2" VerticalAlignment="Bottom">
+
+
+            </Grid>
         </Grid>
     </Border>
 </UserControl>

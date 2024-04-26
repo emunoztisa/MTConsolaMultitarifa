@@ -695,7 +695,7 @@
                         <!--#region CONF TIPO TARIFA COBRAR -->
                         <TextBlock Grid.Row="1" 
                                    Grid.Column="1"
-                                   Grid.ColumnSpan="2"
+                                   
                            Text="TIPO TARIFA" 
                            Foreground="Cyan" 
                            FontSize="20" 
@@ -703,8 +703,8 @@
                            VerticalAlignment="Center" 
                            HorizontalAlignment="Center"/>
                         <ComboBox x:Name="cmbTipoTarifa"
-                          Grid.Row="1" Grid.Column="4" 
-                                  Grid.ColumnSpan="2"
+                          Grid.Row="1" Grid.Column="2" 
+                                  
                           Background="Transparent"
                           BorderBrush="White" FontSize="15" 
                           Margin="10,5,10,5"
@@ -714,16 +714,16 @@
                         <!--#region CONF CANTIDAD MAX USUARIOS PERFIL -->
                         <TextBlock Grid.Row="2" 
                                    Grid.Column="1"
-                                   Grid.ColumnSpan="2"
-                           Text="CANT. USUARIOS PERFIL" 
+                                   
+                           Text="CANT. MAX USUARIOS PERFIL" 
                            Foreground="Cyan" 
-                           FontSize="20" 
+                           FontSize="15" 
                            FontWeight="Bold" 
                            VerticalAlignment="Center" 
                            HorizontalAlignment="Center"/>
                         <ComboBox x:Name="cmbCantUsuariosPerfil"
-                          Grid.Row="2" Grid.Column="4" 
-                                  Grid.ColumnSpan="2"
+                          Grid.Row="2" Grid.Column="2" 
+                                  
                           Background="Transparent"
                           BorderBrush="White" FontSize="15" 
                           Margin="10,5,10,5"
@@ -734,25 +734,218 @@
                         <!--#region TEXTO DISPLAY ALCANCIA -->
                         <TextBlock Grid.Row="3" 
                             Grid.Column="1"
-                            Grid.ColumnSpan="2"
+                            
                             Text="TEXTO DISPLAY ALCANCIA" 
                             Foreground="Cyan" 
-                            FontSize="20" 
+                            FontSize="15" 
                             FontWeight="Bold" 
                             VerticalAlignment="Center" 
                             HorizontalAlignment="Center"/>
                         <TextBox x:Name="txtTextoDisplayAlcancia" 
                             VerticalAlignment="Top"
-                            Grid.Row="3" Grid.Column="4"  
+                            Grid.Row="3" Grid.Column="2"  
                             Margin="10,0,10,0" 
                             MaxLines="1"
                             MaxLength="32"
                             FontSize="20"
-                            Grid.ColumnSpan="2"
                             Height="30"
                             Text=""/>
 
                         <!--#endregion-->
+
+                        <!--#region Titulo Tarifa Montos FIjos -->
+                        <TextBlock Grid.Row="0" 
+                                   Grid.Column="4"
+                                   Grid.ColumnSpan="2"
+                           Text="TARIFAS MONTOS FIJOS" 
+                           Foreground="White" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+                        <!--#endregion-->
+                        <!--#region VALOR TARIFA MONTO FIJO -->
+                        <TextBlock Grid.Row="1" 
+                                   Grid.Column="4"
+                           Text="VALOR" 
+                           Foreground="Cyan" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+                        <TextBox x:Name="txtValor_TarifaMontoFijo" 
+                            VerticalAlignment="Top"
+                            Grid.Row="1" Grid.Column="5"  
+                            Margin="10,0,10,0" 
+                            MaxLines="1"
+                            MaxLength="32"
+                            FontSize="20"
+                            Height="30"
+                            Text=""
+                            Style="{DynamicResource TEXTBOXSTYLE}"     />
+                        <!--#endregion-->
+                        <!--#region TEXTO TARIFA MONTO FIJO -->
+                        <TextBlock Grid.Row="2" 
+                                   Grid.Column="4"
+                           Text="TEXTO" 
+                           Foreground="Cyan" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+                        <TextBox x:Name="txtTexto_TarifaMontoFijo" 
+                            VerticalAlignment="Top"
+                            Grid.Row="2" Grid.Column="5"  
+                            Margin="10,0,10,0" 
+                            MaxLines="1"
+                            MaxLength="32"
+                            FontSize="20"
+                            Height="30"
+                            Text=""
+                                 Style="{DynamicResource TEXTBOXSTYLE}"/>
+                        <!--#endregion-->
+                        <!--#region DESCRIPCION TARIFA MONTO FIJO -->
+                        <TextBlock Grid.Row="3" 
+                            Grid.Column="4"
+                            Text="DESCRIPCION" 
+                            Foreground="Cyan" 
+                            FontSize="20" 
+                            FontWeight="Bold" 
+                            VerticalAlignment="Center" 
+                            HorizontalAlignment="Center"/>
+                        <TextBox x:Name="txtDescripcion_TarifaMontoFijo" 
+                            VerticalAlignment="Top"
+                            Grid.Row="3" Grid.Column="5"  
+                            Margin="10,0,10,0" 
+                            MaxLines="1"
+                            MaxLength="32"
+                            FontSize="20"
+                            Height="30"
+                            Text=""
+                                 Style="{DynamicResource TEXTBOXSTYLE}"/>
+
+                        <!--#endregion-->
+                        <!--#region ORDEN TARIFA MONTO FIJO -->
+                        <TextBlock Grid.Row="4" 
+                            Grid.Column="4"
+                            Text="ORDEN" 
+                            Foreground="Cyan" 
+                            FontSize="20" 
+                            FontWeight="Bold" 
+                            VerticalAlignment="Center" 
+                            HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="cmbOrden_TarifaMontoFijo"
+                          Grid.Row="4" Grid.Column="5" 
+                          Background="Transparent"
+                          BorderBrush="White" FontSize="15" 
+                          Margin="10,5,10,5"
+                          Style="{DynamicResource COMBOSTYLE}">
+                        </ComboBox>
+                        <!--#endregion-->
+
+                        <!--#region GRID -->
+                        <DataGrid x:Name="dataGridTarifasMontosFijos"
+                                  Grid.Column="4"
+                                  Grid.Row="5" 
+                                  Grid.ColumnSpan="2"
+                                  Grid.RowSpan="4" 
+                                  VerticalAlignment="Center" 
+                                  HorizontalAlignment="Center" 
+                                  Width="450" Height="200" 
+                                  Style="{DynamicResource DATAGRIDSTYLE}">
+
+                            <DataGrid.Columns>
+
+                                <DataGridTemplateColumn Width="75" >
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock  Text="valor"  />
+                                    </DataGridTemplateColumn.Header>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock  x:Name="txtvalor" Text="{Binding valor}"  />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                    <!--<DataGridTemplateColumn.CellEditingTemplate >
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding status, UpdateSourceTrigger=LostFocus}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellEditingTemplate>-->
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Width="100" >
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock  Text="texto" />
+                                    </DataGridTemplateColumn.Header>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock x:Name="txttexto" Text="{Binding texto}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                    <!--<DataGridTemplateColumn.CellEditingTemplate >
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding nombre, UpdateSourceTrigger=LostFocus}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellEditingTemplate>-->
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Width="150">
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock  Text="descripcion" />
+                                    </DataGridTemplateColumn.Header>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock  x:Name="txtdescripcion" Text="{Binding descripcion}"  />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                    <!--<DataGridTemplateColumn.CellEditingTemplate >
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding valor, UpdateSourceTrigger=LostFocus}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellEditingTemplate>-->
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Width="50" >
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock  Text="orden"  />
+                                    </DataGridTemplateColumn.Header>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock  x:Name="txtorden" Text="{Binding orden}"  />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                    <!--<DataGridTemplateColumn.CellEditingTemplate >
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding path_imagen, UpdateSourceTrigger=LostFocus}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellEditingTemplate>-->
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Width="50" >
+                                    <DataGridTemplateColumn.Header>
+                                        <TextBlock  Text="status"  />
+                                    </DataGridTemplateColumn.Header>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock  x:Name="txtstatus" Text="{Binding status}"  />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                    <!--<DataGridTemplateColumn.CellEditingTemplate >
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding status, UpdateSourceTrigger=LostFocus}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellEditingTemplate>-->
+                                </DataGridTemplateColumn>
+
+
+
+
+
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!--#endregion-->
+
+
 
                         <!--#region BOTON GUARDAR -->
                         <Button x:Name="btnGuardarConf_Tarifa" 
@@ -971,6 +1164,8 @@
                             <RowDefinition Height="35"/>
                             <RowDefinition Height="35"/>
                             <RowDefinition Height="35"/>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="35"/>
                             <RowDefinition/>
                             <RowDefinition Height="60"/>
                             <RowDefinition Height="10"/>
@@ -1012,10 +1207,80 @@
                         </ComboBox>
                         <!--#endregion-->
 
+                        <!--#region CONF CAMARA -->
+                        <TextBlock Grid.Row="4" 
+                           Grid.Column="1"
+                           Text="CAMARA" 
+                           Foreground="Cyan" 
+                           FontSize="15" 
+                           FontWeight="Bold" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="cmbCamaras"
+                          Grid.Row="4" Grid.Column="2"
+                          Background="Transparent"
+                          BorderBrush="White" FontSize="15" 
+                          Margin="4"
+                          Style="{DynamicResource COMBOSTYLE}">
+                        </ComboBox>
+                        <!--#endregion-->
+                        <!--#region CONF ACTIVAR CAMARA -->
+                        <TextBlock Grid.Row="5" 
+                           Grid.Column="1"
+                           Text="ACTIVAR CAMARA" 
+                           Foreground="Cyan" 
+                           FontSize="15" 
+                           FontWeight="Bold" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="cmbActivarCamara"
+                          Grid.Row="5" Grid.Column="2"
+                          Background="Transparent"
+                          BorderBrush="White" FontSize="15" 
+                          Margin="4"
+                          Style="{DynamicResource COMBOSTYLE}">
+                        </ComboBox>
+                        <!--#endregion-->
+
+                        <!--#region CONF IMPRESORA -->
+                        <TextBlock Grid.Row="7" 
+                           Grid.Column="1"
+                           Text="IMPRESORA" 
+                           Foreground="Cyan" 
+                           FontSize="15" 
+                           FontWeight="Bold" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="cmbImpresoras"
+                          Grid.Row="7" Grid.Column="2"
+                          Background="Transparent"
+                          BorderBrush="White" FontSize="15" 
+                          Margin="4"
+                          Style="{DynamicResource COMBOSTYLE}">
+                        </ComboBox>
+                        <!--#endregion-->
+                        <!--#region CONF ACTIVAR IMPRESORA -->
+                        <TextBlock Grid.Row="8" 
+                           Grid.Column="1"
+                           Text="ACTIVAR IMPRESORA" 
+                           Foreground="Cyan" 
+                           FontSize="15" 
+                           FontWeight="Bold" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="cmbActivarImpresora"
+                          Grid.Row="8" Grid.Column="2"
+                          Background="Transparent"
+                          BorderBrush="White" FontSize="15" 
+                          Margin="4"
+                          Style="{DynamicResource COMBOSTYLE}">
+                        </ComboBox>
+                        <!--#endregion-->
+
                         <!--#region BOTON GUARDAR -->
                         <Button x:Name="btnGuardarConf_Multimedia" 
                             Grid.Column="5" Grid.Row="9"
-                            Width="210" Height="40" 
+                            Width="210" Height="35" 
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             Background="GreenYellow"
@@ -1055,7 +1320,7 @@
                         </StackPanel>
                     </TabItem.Header>
                     <Grid>
-                        <!--#region COLS ROWS VIDEO-->
+                        <!--#region COLS ROWS MONEDAS Y BILLETES-->
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="10"/>
                             <ColumnDefinition/>

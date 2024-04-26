@@ -121,7 +121,32 @@ namespace TestMdfEntityFramework
             MODO_APP = cv_modo.valor;
 
 
+            //Validar Tipo Usuario Logueado, para mostrar o ocultar la opcion de Configuracion del Menu
+            validar_tipo_usuario();
+
+
         }
+
+        private void validar_tipo_usuario()
+        {
+            ServiceConfigVarios serv_config_varios_user = new ServiceConfigVarios();
+            config_varios cv_user = serv_config_varios_user.getEntityByClave("USUARIO_ACTUAL");
+
+            ServiceUsers serv_users = new ServiceUsers();
+            users obj_user_actual = serv_users.getEntityByUser(cv_user.valor);
+
+            if(obj_user_actual.tipo_usuario == "INSTALL_CONFIG")
+            {
+                btnConfiguraciones.IsEnabled = true;
+                btnConfiguraciones.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                btnConfiguraciones.IsEnabled = false;
+                btnConfiguraciones.Visibility = Visibility.Hidden;
+            }
+        }
+
         private void Principal_OnUnLoad(object sender, RoutedEventArgs e)
         {
             LimpiarUsuarioActualLogueado();
@@ -187,6 +212,10 @@ namespace TestMdfEntityFramework
                 if (cv.valor == "MULTITARIFA")
                 {
                     DataContext = new CobroMultitarifaV1();
+                }
+                if(cv.valor == "FIJA_DINAMICA")
+                {
+                    DataContext = new CobroTarifaFijaBotones();
                 }
             }
         }

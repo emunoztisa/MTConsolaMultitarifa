@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TestMdfEntityFramework.Clases;
 
 namespace TestMdfEntityFramework.Responses
 {
@@ -11,6 +12,7 @@ namespace TestMdfEntityFramework.Responses
         public bool response { get; set; }
         public string street { get; set; }
         public string token { get; set; }
+        public Perfiles[] perfiles { get; set; }
 
 
         public ResLogin()
@@ -18,11 +20,12 @@ namespace TestMdfEntityFramework.Responses
 
         }
 
-        public ResLogin(bool response, string street, string token)
+        public ResLogin(bool response, string street, string token, Perfiles[] perfiles)
         {
             this.response = response;
             this.street = street;
             this.token = token;
+            this.perfiles = perfiles;
         }
 
         public bool GetResponse()
@@ -48,6 +51,15 @@ namespace TestMdfEntityFramework.Responses
         public void SetToken(string val)
         {
             this.token = val;
+        }
+
+        public Perfiles[] GetPerfiles()
+        {
+            return perfiles;
+        }
+        public void SetPerfiles(Perfiles[] val)
+        {
+            this.perfiles = val;
         }
 
 

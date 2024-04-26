@@ -6,7 +6,6 @@
     <edmx:Diagrams>
       <Diagram DiagramId="f4928e5096a6486e8da7751edae7050d" Name="Diagram1">
         <EntityTypeShape EntityType="databaseModel.boletos_tarifa_fija" Width="1.875" PointX="5.375" PointY="3.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="databaseModel.users" Width="1.5" PointX="0.5" PointY="0.5" IsExpanded="true" />
         <EntityTypeShape EntityType="databaseModel.config_varios" Width="1.5" PointX="3.75" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.opciones_generales" Width="1.5" PointX="2.125" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.ct_andadores" Width="1.5" PointX="3.75" PointY="3.375" />
@@ -16,7 +15,6 @@
         <EntityTypeShape EntityType="databaseModel.ct_alcancias" Width="1.5" PointX="2.125" PointY="3.375" />
         <EntityTypeShape EntityType="databaseModel.ct_consolas" Width="1.5" PointX="9" PointY="3.375" />
         <EntityTypeShape EntityType="databaseModel.ct_taquillas" Width="1.5" PointX="7.375" PointY="3.375" />
-        <EntityTypeShape EntityType="databaseModel.ct_tarifas_montos_fijos" Width="1.875" PointX="9" PointY="6.125" />
         <EntityTypeShape EntityType="databaseModel.ct_corredores" Width="1.5" PointX="7" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.ct_empresas" Width="1.5" PointX="5.375" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.ct_lugares" Width="1.5" PointX="8.625" PointY="0.5" />
@@ -33,6 +31,8 @@
         <EntityTypeShape EntityType="databaseModel.sy_ubicacion" Width="1.5" PointX="8.375" PointY="9.75" />
         <EntityTypeShape EntityType="databaseModel.ct_denominaciones" Width="1.5" PointX="0.75" PointY="11.75" />
         <EntityTypeShape EntityType="databaseModel.ct_imagenes_subidas" Width="1.5" PointX="3.375" PointY="11.75" />
+        <EntityTypeShape EntityType="databaseModel.users" Width="1.5" PointX="0.5" PointY="0.5" />
+        <EntityTypeShape EntityType="databaseModel.ct_tarifas_montos_fijos" Width="1.5" PointX="9" PointY="6.125" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

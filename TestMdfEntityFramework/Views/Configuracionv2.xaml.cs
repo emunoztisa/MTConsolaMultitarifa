@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using AForge.Video.DirectShow;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -51,6 +52,11 @@ namespace TestMdfEntityFramework.Views
         private Storyboard bottomToCenterStoryboard, topToCenterStoryboard,
             leftToCenterStoryboard, rightToCenterStoryboard;
 
+        //CAMARA
+        private bool HayDispositivos;
+        private FilterInfoCollection MisDispositivos;
+        private VideoCaptureDevice MiWebCam;
+
         #endregion
         public Configuracionv2()
         {
@@ -65,40 +71,20 @@ namespace TestMdfEntityFramework.Views
 
         }
 
-        #region LLENA COMBOS
-
-        public void llenaCombos()
+        private bool isValidComPortAndConnected()
         {
-            llenaComboComPorts();
-            llenaComboBaudRate();
-            llenaComboDataBits();
-            llenaComboStopBits();
-            llenaComboParidad();
-            llenaComboHandshake();
-
-            llenaComboModos();
-            llenaComboTipoTarifa();
-
-            //llenaComboImpresoras();
-
-            llenaComboEmpresas();
-            //llenaComboCorredores();
-            //llenaComboRutas();
-            //llenaComboUnidades();
-
-            LlenarVocesEnCombo();
-
-            llenarComboActivarUbicacion();
-            llenarComboActivarVoz();
-            llenarComboCantUsuariosPerfiles();
-
-            llenarPosicionesArregloDenominaciones();
-            llenarGridDenominaciones();
-            llenaComboImagenesSubidas();
+            bool isValid;
+            try
+            {
+                open_serial_port();
+                isValid = true;
+            }
+            catch (Exception ex)
+            {
+                isValid = false;
+            }
+            return isValid;
         }
-
-
-
         public void SeteaValoresEnCombosConValoresDBLocal()
         {
             ServiceConfigVarios scv = new ServiceConfigVarios();
@@ -248,6 +234,43 @@ namespace TestMdfEntityFramework.Views
                 }
             }
 
+            config_varios config_camara_default = scv.getEntityByClave("CAMARA_DEFAULT");
+            for (int i = 0; i < cmbCamaras.Items.Count; i++)
+            {
+                if (cmbCamaras.Items[i].ToString() == config_camara_default.valor)
+                {
+                    cmbCamaras.SelectedValue = config_camara_default.valor;
+                }
+            }
+
+            config_varios config_impresora_default = scv.getEntityByClave("IMPRESORA_DEFAULT");
+            for (int i = 0; i < cmbImpresoras.Items.Count; i++)
+            {
+                if (cmbImpresoras.Items[i].ToString() == config_impresora_default.valor)
+                {
+                    cmbImpresoras.SelectedValue = config_impresora_default.valor;
+                }
+            }
+
+
+            config_varios config_camara_activa = scv.getEntityByClave("CAMARA_ACTIVA");
+            for (int i = 0; i < cmbActivarCamara.Items.Count; i++)
+            {
+                if (cmbActivarCamara.Items[i].ToString() == config_camara_activa.valor)
+                {
+                    cmbActivarCamara.SelectedValue = config_camara_activa.valor;
+                }
+            }
+
+            config_varios config_impresora_activa = scv.getEntityByClave("IMPRESORA_ACTIVA");
+            for (int i = 0; i < cmbActivarImpresora.Items.Count; i++)
+            {
+                if (cmbActivarImpresora.Items[i].ToString() == config_impresora_activa.valor)
+                {
+                    cmbActivarImpresora.SelectedValue = config_impresora_activa.valor;
+                }
+            }
+
             config_varios config_ubicacion_activa = scv.getEntityByClave("UBICACION_ACTIVA");
             for (int i = 0; i < cmbActivarUbicacion.Items.Count; i++)
             {
@@ -303,22 +326,6 @@ namespace TestMdfEntityFramework.Views
             }
 
         }
-
-        private bool isValidComPortAndConnected()
-        {
-            bool isValid;
-            try
-            {
-                open_serial_port();
-                isValid = true;
-            }
-            catch (Exception ex)
-            {
-                isValid = false;
-            }
-            return isValid;
-        }
-
         private void SetearValoresTextoEncabezadosYPiePagina()
         {
             #region obtener mensajes configurados en boleto
@@ -354,6 +361,45 @@ namespace TestMdfEntityFramework.Views
             txtTextoDisplayAlcancia.Text = texto_display_alcancia;
 
             #endregion
+        }
+
+
+        #region LLENA COMBOS
+
+        public void llenaCombos()
+        {
+            llenaComboComPorts();
+            llenaComboBaudRate();
+            llenaComboDataBits();
+            llenaComboStopBits();
+            llenaComboParidad();
+            llenaComboHandshake();
+
+            llenaComboModos();
+            llenaComboTipoTarifa();
+
+            //llenaComboImpresoras();
+
+            llenaComboEmpresas();
+            //llenaComboCorredores();
+            //llenaComboRutas();
+            //llenaComboUnidades();
+
+            LlenarVocesEnCombo();
+
+            llenarComboActivarUbicacion();
+            llenarComboActivarVoz();
+            llenarComboCantUsuariosPerfiles();
+
+            llenarPosicionesArregloDenominaciones();
+            llenarGridDenominaciones();
+            llenaComboImagenesSubidas();
+
+            llenaComboCamaras();
+            llenaComboImpresoras();
+
+            llenarComboActivarCamara();
+            llenarComboActivarImpresora();
         }
 
         public void llenaComboComPorts()
@@ -404,7 +450,6 @@ namespace TestMdfEntityFramework.Views
                 cmbHandShake.Items.Add(port);
             }
         }
-
         public void llenaComboTipoTarifa()
         {
             List<string> list = getCatalogo_TipoTarifa_BaseLocal();
@@ -413,16 +458,6 @@ namespace TestMdfEntityFramework.Views
                 cmbTipoTarifa.Items.Add(port);
             }
         }
-
-        //public void llenaComboImpresoras()
-        //{
-        //    List<string> list = getPrinterDevices();
-        //    foreach (var imp in list)
-        //    {
-        //        cmbImpresoras.Items.Add(imp);
-        //    }
-        //}
-
         public void llenaComboEmpresas()
         {
             List<string> list = getCatalogo_Empresas_BaseLocal();
@@ -455,7 +490,6 @@ namespace TestMdfEntityFramework.Views
                 cmbUnidad.Items.Add(li);
             }
         }
-
         public void llenaComboModos()
         {
             List<string> list = getCatalogo_Modos_BaseLocal();
@@ -464,7 +498,6 @@ namespace TestMdfEntityFramework.Views
                 cmbModoApp.Items.Add(port);
             }
         }
-
         private void llenarComboCantUsuariosPerfiles()
         {
             List<string> list = getCatalogo_CantUsuariosPerfil_BaseLocal();
@@ -473,7 +506,6 @@ namespace TestMdfEntityFramework.Views
                 cmbCantUsuariosPerfil.Items.Add(item);
             }
         }
-
         private void llenarComboActivarVoz()
         {
             List<string> list = getCatalogo_ActivarVoz_BaseLocal();
@@ -482,7 +514,6 @@ namespace TestMdfEntityFramework.Views
                 cmbActivarVoz.Items.Add(item);
             }
         }
-
         private void llenarComboActivarUbicacion()
         {
             List<string> list = getCatalogo_ActivarUbicacion_BaseLocal();
@@ -491,7 +522,6 @@ namespace TestMdfEntityFramework.Views
                 cmbActivarUbicacion.Items.Add(item);
             }
         }
-
         private void LlenarVocesEnCombo()
         {
             foreach (InstalledVoice voice in synthesizer.GetInstalledVoices())
@@ -501,7 +531,6 @@ namespace TestMdfEntityFramework.Views
             }
             cmbVoces.SelectedIndex = 0;
         }
-
         private void llenarGridDenominaciones()
         {
             dataGridDenominaciones.Items.Clear();
@@ -512,7 +541,6 @@ namespace TestMdfEntityFramework.Views
                 dataGridDenominaciones.Items.Add(new ct_denominaciones { posicion = item.posicion, nombre = item.nombre, valor = item.valor, path_imagen = item.path_imagen, status = item.status });
             }
         }
-
         private void llenarPosicionesArregloDenominaciones()
         {
             for (int i = 0; i < 30; i++)
@@ -520,13 +548,56 @@ namespace TestMdfEntityFramework.Views
                 cmbPosicionArreglo.Items.Add(i);
             }
         }
-
         public void llenaComboImagenesSubidas()
         {
             List<string> list = getCatalogo_ImagenesSubidas_BaseLocal();
             foreach (var li in list)
             {
                 cmbImagenesSubidas.Items.Add(li);
+            }
+        }
+        public void llenaComboImpresoras()
+        {
+            List<string> list = getPrinterDevices();
+            foreach (var imp in list)
+            {
+                cmbImpresoras.Items.Add(imp);
+            }
+        }
+        public void llenaComboCamaras()
+        {
+            List<string> list = getPrinterDevices();
+            MisDispositivos = new FilterInfoCollection(FilterCategory.VideoInputDevice);
+
+            if (MisDispositivos.Count > 0)
+            {
+                HayDispositivos = true;
+                for (int i = 0; i < MisDispositivos.Count; i++)
+                {
+                    cmbCamaras.Items.Add(MisDispositivos[i].Name.ToString().Trim());
+                }
+
+                cmbCamaras.Text = MisDispositivos[0].Name.ToString();
+            }
+            else
+            {
+                HayDispositivos = false;
+            }
+        }
+        private void llenarComboActivarCamara()
+        {
+            List<string> list = getCatalogo_ActivarCamara_BaseLocal();
+            foreach (var item in list)
+            {
+                cmbActivarCamara.Items.Add(item);
+            }
+        }
+        private void llenarComboActivarImpresora()
+        {
+            List<string> list = getCatalogo_ActivarImpresora_BaseLocal();
+            foreach (var item in list)
+            {
+                cmbActivarImpresora.Items.Add(item);
             }
         }
 
@@ -743,6 +814,30 @@ namespace TestMdfEntityFramework.Views
             return list2;
         }
 
+        private List<string> getCatalogo_ActivarCamara_BaseLocal()
+        {
+            ServiceOpcionesGenerales sog = new ServiceOpcionesGenerales();
+            List<opciones_generales> list = sog.getEntitiesByAgrupador("OPCION");
+            List<string> list2 = new List<string>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                list2.Add(list[i].opcion_general);
+            }
+            return list2;
+        }
+
+        private List<string> getCatalogo_ActivarImpresora_BaseLocal()
+        {
+            ServiceOpcionesGenerales sog = new ServiceOpcionesGenerales();
+            List<opciones_generales> list = sog.getEntitiesByAgrupador("OPCION");
+            List<string> list2 = new List<string>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                list2.Add(list[i].opcion_general);
+            }
+            return list2;
+        }
+
         #endregion
 
         #region EVENTOS CONTROLES
@@ -833,7 +928,12 @@ namespace TestMdfEntityFramework.Views
                 string nombre = vocesInfo.ElementAt(indice).Name;
                 string voz = nombre;
 
+                string camara_default = cmbCamaras.Text;
+                string impresora_default = cmbImpresoras.Text;
+
                 string activar_voz = cmbActivarVoz.Text;
+                string activar_camara = cmbActivarCamara.Text;
+                string activar_impresora = cmbActivarImpresora.Text;
 
                 //APARIENCIA
                 string logo_home = cmbImagenesSubidas.Text;
@@ -1008,16 +1108,41 @@ namespace TestMdfEntityFramework.Views
                 #region MULTIMEDIA
 
                 ServiceConfigVarios serv_conf_varios_multimedia = new ServiceConfigVarios();
-
                 config_varios conf_varios_multimedia = new config_varios();
+
+                // VOZ ACTIVA
                 conf_varios_multimedia.clave = "VOZ_ACTIVA";
                 conf_varios_multimedia.valor = activar_voz;
                 serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
 
-                //config_varios conf_varios_multimedia = new config_varios();
+                // UBICACION ACTIVA
                 conf_varios_multimedia.clave = "UBICACION_ACTIVA";
                 conf_varios_multimedia.valor = activar_ubicacion;
                 serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
+
+
+                // CAMARA ACTIVA
+                conf_varios_multimedia.clave = "CAMARA_ACTIVA";
+                conf_varios_multimedia.valor = activar_camara;
+                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
+
+                // IMPRESORA ACTIVA
+                conf_varios_multimedia.clave = "IMPRESORA_ACTIVA";
+                conf_varios_multimedia.valor = activar_impresora;
+                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
+
+                // CAMARA DEFAULT
+                conf_varios_multimedia.clave = "CAMARA_DEFAULT";
+                conf_varios_multimedia.valor = camara_default;
+                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
+
+                // IMPRESORA DEFAULT
+                conf_varios_multimedia.clave = "IMPRESORA_DEFAULT";
+                conf_varios_multimedia.valor = impresora_default;
+                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
+
+                
+
 
                 #endregion
 
@@ -1048,7 +1173,7 @@ namespace TestMdfEntityFramework.Views
 
 
                 // SE SETEA EN LA ALCANCIA EL MENSAJE A MOSTRAR EN DISPLAY
-                // ejecutar_commando_84_set_mensaje_pantalla_alcancia(conf_varios_tarifa_texto_display.valor);
+                ejecutar_commando_84_set_mensaje_pantalla_alcancia(conf_varios_tarifa_texto_display.valor);
 
 
                 #endregion
@@ -1480,7 +1605,7 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[5] = decimal.ToByte(numero_linea);
 
             int n = 6;
-            for (int i = 0; i < 32; i++)
+            for (int i = 0; i < mensaje.Length; i++)
             {
                 if ((byte)mensaje[i] != 0)
                 {
@@ -1594,7 +1719,7 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[4] = decimal.ToByte(Comando);
 
             int n = 5;
-            for (int i = 0; i < 32; i++)
+            for (int i = 0; i < mensaje.Length; i++)
             {
                 if ((byte)mensaje[i] != 0)
                 {

@@ -40,7 +40,8 @@ namespace TestMdfEntityFramework
         {
             InitializeComponent();
             //SettearValoresProduccion();
-            SettearValoresPruebas();
+            //SettearValoresPruebas();
+            SettearValoresPruebasInstallConfig();
 
             cargar_logo_home();
         }
@@ -159,9 +160,24 @@ namespace TestMdfEntityFramework
                         ResLogin resLogin = lc.login(usuario, password_desencriptado);
                         if (resLogin.GetToken() != null && resLogin.GetToken() != "")
                         {
+                            //validacion si tiene el perfil que se requiere para poder mostrar la opcion de configuracion
+                            int cont = 0;
+                            foreach (var item in resLogin.perfiles)
+                            {
+                                if(item.fkRole == 95 || item.fkRole == 96)
+                                {
+                                    cont++;
+                                }
+                            }
+
+                            if(cont >= 2) { user_actual.tipo_usuario = "INSTALL_CONFIG"; }
+                            else { user_actual.tipo_usuario = "OPERADOR"; }
+
                             user_actual.token = resLogin.token;
                             val = true;
                             serv_users.updEntity(user_actual);
+
+                            
                         }
                     }
                 }
@@ -179,6 +195,12 @@ namespace TestMdfEntityFramework
         {
             txtUsuario.Text = "mt_con_00001";
             txtContrasena.Password = "mt_con_00001";
+            btnEntrar.Focus();
+        }
+        private void SettearValoresPruebasInstallConfig()
+        {
+            txtUsuario.Text = "mt_con_install_config";
+            txtContrasena.Password = "12321";
             btnEntrar.Focus();
         }
 
