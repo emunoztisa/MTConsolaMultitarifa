@@ -49,6 +49,7 @@ namespace TestMdfEntityFramework.EntityServices
             else
             {
                 it.valor = entity.valor;
+                it.texto = entity.texto;
                 it.descripcion = entity.descripcion;
                 it.orden = entity.orden;
                 it.status = entity.status;
@@ -56,6 +57,26 @@ namespace TestMdfEntityFramework.EntityServices
                 it.updated_at = entity.updated_at;
                 it.deleted_at = entity.deleted_at;
 
+                em.SaveChanges();
+            }
+        }
+
+        public ct_tarifas_montos_fijos getEntityByOrden(object orden)
+        {
+            return em.ct_tarifas_montos_fijos.Where(q => (int)q.orden == (int)orden).FirstOrDefault<ct_tarifas_montos_fijos>();
+        }
+
+        public void delEntityByOrden(ct_tarifas_montos_fijos entity)
+        {
+            ct_tarifas_montos_fijos it = em.ct_tarifas_montos_fijos.Where(q => (int)q.orden == (int)entity.orden).First<ct_tarifas_montos_fijos>();
+            if (it == null)
+            {
+                throw new ArgumentException("Tarifa monto fijo no Encontrado");
+            }
+            else
+            {
+                //em.ct_tarifas_montos_fijos.Remove(it);
+                it.deleted_at = entity.deleted_at;
                 em.SaveChanges();
             }
         }

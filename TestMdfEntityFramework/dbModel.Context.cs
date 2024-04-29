@@ -25,7 +25,6 @@ namespace TestMdfEntityFramework
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<boletos_tarifa_fija> boletos_tarifa_fija { get; set; }
         public virtual DbSet<config_varios> config_varios { get; set; }
         public virtual DbSet<opciones_generales> opciones_generales { get; set; }
         public virtual DbSet<ct_andadores> ct_andadores { get; set; }
@@ -53,5 +52,6 @@ namespace TestMdfEntityFramework
         public virtual DbSet<ct_imagenes_subidas> ct_imagenes_subidas { get; set; }
         public virtual DbSet<users> users { get; set; }
         public virtual DbSet<ct_tarifas_montos_fijos> ct_tarifas_montos_fijos { get; set; }
+        public virtual DbSet<sy_boletos_tarifa_fija> sy_boletos_tarifa_fija { get; set; }
     }
 }

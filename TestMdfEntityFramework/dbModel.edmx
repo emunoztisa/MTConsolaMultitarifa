@@ -5,19 +5,6 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="databaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="boletos_tarifa_fija">
-          <Key>
-            <PropertyRef Name="pkBoleto" />
-          </Key>
-          <Property Name="pkBoleto" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="folio" Type="nvarchar" MaxLength="30" Nullable="false" />
-          <Property Name="tarifa" Type="float" />
-          <Property Name="cant_pasajeros" Type="int" />
-          <Property Name="total" Type="float" />
-          <Property Name="created_at" Type="nvarchar" MaxLength="30" />
-          <Property Name="updated_at" Type="nvarchar" MaxLength="30" />
-          <Property Name="deleted_at" Type="nvarchar" MaxLength="30" />
-        </EntityType>
         <EntityType Name="config_varios">
           <Key>
             <PropertyRef Name="pkConfigVarios" />
@@ -290,6 +277,28 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_taqui
           <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
           <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="sy_boletos_tarifa_fija">
+          <Key>
+            <PropertyRef Name="pkBoleto" />
+          </Key>
+          <Property Name="pkBoleto" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="pkBoletoTISA" Type="bigint" />
+          <Property Name="fkAsignacion" Type="bigint" />
+          <Property Name="fkStatus" Type="bigint" />
+          <Property Name="folio" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="tarifa" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="cant_pasajeros" Type="int" />
+          <Property Name="total" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="totalCobrado" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="totalPagado" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="fechaHoraCancelacion" Type="nvarchar" MaxLength="50" />
+          <Property Name="enviado" Type="int" />
+          <Property Name="confirmadoTISA" Type="int" />
+          <Property Name="modo" Type="nvarchar" MaxLength="50" />
+          <Property Name="created_at" Type="nvarchar" MaxLength="30" />
+          <Property Name="updated_at" Type="nvarchar" MaxLength="30" />
+          <Property Name="deleted_at" Type="nvarchar" MaxLength="30" />
+        </EntityType>
         <EntityType Name="sy_cortes">
           <Key>
             <PropertyRef Name="pkCorte" />
@@ -413,7 +422,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="deleted_at" Type="nvarchar" MaxLength="30" />
         </EntityType>
         <EntityContainer Name="databaseModelStoreContainer">
-          <EntitySet Name="boletos_tarifa_fija" EntityType="Self.boletos_tarifa_fija" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="config_varios" EntityType="Self.config_varios" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ct_andadores" EntityType="Self.ct_andadores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ct_corredores" EntityType="Self.ct_corredores" Schema="dbo" store:Type="Tables" />
@@ -430,6 +438,7 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="sy_asignaciones" EntityType="Self.sy_asignaciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_boletos" EntityType="Self.sy_boletos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_boletos_detalle" EntityType="Self.sy_boletos_detalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sy_boletos_tarifa_fija" EntityType="Self.sy_boletos_tarifa_fija" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_cortes" EntityType="Self.sy_cortes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_empresa_corredor_operador" EntityType="Self.sy_empresa_corredor_operador" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_lugar_ruta" EntityType="Self.sy_lugar_ruta" Schema="dbo" store:Type="Tables" />
@@ -485,21 +494,7 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="databaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="boletos_tarifa_fija">
-          <Key>
-            <PropertyRef Name="pkBoleto" />
-          </Key>
-          <Property Name="pkBoleto" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="folio" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="tarifa" Type="Double" />
-          <Property Name="cant_pasajeros" Type="Int32" />
-          <Property Name="total" Type="Double" />
-          <Property Name="created_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="updated_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="deleted_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityContainer Name="databaseEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="boletos_tarifa_fija" EntityType="Self.boletos_tarifa_fija" />
           <EntitySet Name="config_varios" EntityType="databaseModel.config_varios" />
           <EntitySet Name="opciones_generales" EntityType="databaseModel.opciones_generales" />
           <EntitySet Name="ct_andadores" EntityType="databaseModel.ct_andadores" />
@@ -527,6 +522,7 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="ct_imagenes_subidas" EntityType="databaseModel.ct_imagenes_subidas" />
           <EntitySet Name="users" EntityType="databaseModel.users" />
           <EntitySet Name="ct_tarifas_montos_fijos" EntityType="databaseModel.ct_tarifas_montos_fijos" />
+          <EntitySet Name="sy_boletos_tarifa_fija" EntityType="databaseModel.sy_boletos_tarifa_fija" />
         </EntityContainer>
         <EntityType Name="config_varios">
           <Key>
@@ -914,26 +910,34 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="sy_boletos_tarifa_fija">
+          <Key>
+            <PropertyRef Name="pkBoleto" />
+          </Key>
+          <Property Name="pkBoleto" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="pkBoletoTISA" Type="Int64" />
+          <Property Name="fkAsignacion" Type="Int64" />
+          <Property Name="fkStatus" Type="Int64" />
+          <Property Name="folio" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="tarifa" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="cant_pasajeros" Type="Int32" />
+          <Property Name="total" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="totalCobrado" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="totalPagado" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="fechaHoraCancelacion" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="enviado" Type="Int32" />
+          <Property Name="confirmadoTISA" Type="Int32" />
+          <Property Name="modo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="created_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="updated_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="deleted_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="databaseModelStoreContainer" CdmEntityContainer="databaseEntities">
-          <EntitySetMapping Name="boletos_tarifa_fija">
-            <EntityTypeMapping TypeName="databaseModel.boletos_tarifa_fija">
-              <MappingFragment StoreEntitySet="boletos_tarifa_fija">
-                <ScalarProperty Name="pkBoleto" ColumnName="pkBoleto" />
-                <ScalarProperty Name="folio" ColumnName="folio" />
-                <ScalarProperty Name="tarifa" ColumnName="tarifa" />
-                <ScalarProperty Name="cant_pasajeros" ColumnName="cant_pasajeros" />
-                <ScalarProperty Name="total" ColumnName="total" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
-                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="config_varios">
             <EntityTypeMapping TypeName="databaseModel.config_varios">
               <MappingFragment StoreEntitySet="config_varios">
@@ -1340,6 +1344,29 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
                 <ScalarProperty Name="texto" ColumnName="texto" />
                 <ScalarProperty Name="valor" ColumnName="valor" />
                 <ScalarProperty Name="pkTarifaMontoFijo" ColumnName="pkTarifaMontoFijo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sy_boletos_tarifa_fija">
+            <EntityTypeMapping TypeName="databaseModel.sy_boletos_tarifa_fija">
+              <MappingFragment StoreEntitySet="sy_boletos_tarifa_fija">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="modo" ColumnName="modo" />
+                <ScalarProperty Name="confirmadoTISA" ColumnName="confirmadoTISA" />
+                <ScalarProperty Name="enviado" ColumnName="enviado" />
+                <ScalarProperty Name="fechaHoraCancelacion" ColumnName="fechaHoraCancelacion" />
+                <ScalarProperty Name="totalPagado" ColumnName="totalPagado" />
+                <ScalarProperty Name="totalCobrado" ColumnName="totalCobrado" />
+                <ScalarProperty Name="total" ColumnName="total" />
+                <ScalarProperty Name="cant_pasajeros" ColumnName="cant_pasajeros" />
+                <ScalarProperty Name="tarifa" ColumnName="tarifa" />
+                <ScalarProperty Name="folio" ColumnName="folio" />
+                <ScalarProperty Name="fkStatus" ColumnName="fkStatus" />
+                <ScalarProperty Name="fkAsignacion" ColumnName="fkAsignacion" />
+                <ScalarProperty Name="pkBoletoTISA" ColumnName="pkBoletoTISA" />
+                <ScalarProperty Name="pkBoleto" ColumnName="pkBoleto" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

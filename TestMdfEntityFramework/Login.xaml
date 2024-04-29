@@ -297,7 +297,7 @@
                             Margin="10,0,10,0"
                             Background="GreenYellow" 
                                 Click="btnEntrar_Click" Style="{DynamicResource BUTTONSTYLE}"  >
-                            <TextBlock Text="INGRESAR AL SISTEMA" Foreground="Black" 
+                            <TextBlock Text="INGRESAR A LA CONSOLA" Foreground="Black" 
                             FontSize="50" FontWeight="SemiBold"/>
                         </Button>
                         <!--#endregion-->

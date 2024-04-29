@@ -7,41 +7,41 @@ using TestMdfEntityFramework.Utils;
 
 namespace TestMdfEntityFramework.EntityServices
 {
-    class ServiceBoletosTarifaFija : AbstractService<boletos_tarifa_fija>
+    class ServiceBoletosTarifaFija : AbstractService<sy_boletos_tarifa_fija>
     {
-        public override void addEntity(boletos_tarifa_fija entity)
+        public override void addEntity(sy_boletos_tarifa_fija entity)
         {
-            em.boletos_tarifa_fija.Add(entity);
+            em.sy_boletos_tarifa_fija.Add(entity);
             em.SaveChanges();
         }
 
         public override void delEntity(object pk)
         {
-            boletos_tarifa_fija us = em.boletos_tarifa_fija.Where(q => q.pkBoleto == (int)pk).First<boletos_tarifa_fija>();
+            sy_boletos_tarifa_fija us = em.sy_boletos_tarifa_fija.Where(q => q.pkBoleto == (int)pk).First<sy_boletos_tarifa_fija>();
             if (us == null)
             {
                 throw new ArgumentException("Boleto no Encontrado");
             }
             else
             {
-                em.boletos_tarifa_fija.Remove(us);
+                em.sy_boletos_tarifa_fija.Remove(us);
                 em.SaveChanges();
             }
         }
 
-        public override List<boletos_tarifa_fija> getEntities()
+        public override List<sy_boletos_tarifa_fija> getEntities()
         {
-            return em.boletos_tarifa_fija.ToList<boletos_tarifa_fija>();
+            return em.sy_boletos_tarifa_fija.ToList<sy_boletos_tarifa_fija>();
         }
 
-        public override boletos_tarifa_fija getEntity(object pk)
+        public override sy_boletos_tarifa_fija getEntity(object pk)
         {
-            return em.boletos_tarifa_fija.Where(q => q.pkBoleto == (int)pk).First<boletos_tarifa_fija>();
+            return em.sy_boletos_tarifa_fija.Where(q => (Int64)q.pkBoleto == (Int64)pk).First<sy_boletos_tarifa_fija>();
         }
 
-        public override void updEntity(boletos_tarifa_fija entity)
+        public override void updEntity(sy_boletos_tarifa_fija entity)
         {
-            boletos_tarifa_fija us = em.boletos_tarifa_fija.Where(q => q.pkBoleto == (int)entity.pkBoleto).First<boletos_tarifa_fija>();
+            sy_boletos_tarifa_fija us = em.sy_boletos_tarifa_fija.Where(q => q.pkBoleto == (int)entity.pkBoleto).First<sy_boletos_tarifa_fija>();
             if (us == null)
             {
                 throw new ArgumentException("Boleto no Encontrado");
@@ -60,9 +60,31 @@ namespace TestMdfEntityFramework.EntityServices
             }
         }
 
-        public UInt32 getLastEntity()
+        public Int64 getLastEntity()
         {
-            return em.boletos_tarifa_fija.Last<boletos_tarifa_fija>().pkBoleto;
+            return em.sy_boletos_tarifa_fija.Last().pkBoleto;
+        }
+
+        public Int64 addEntityReturnPkInserted(sy_boletos_tarifa_fija entity)
+        {
+            em.sy_boletos_tarifa_fija.Add(entity);
+            em.SaveChanges();
+
+            return entity.pkBoleto;
+        }
+
+        public sy_boletos_tarifa_fija getEntityLast()
+        {
+            return em.sy_boletos_tarifa_fija.OrderByDescending(q => q.pkBoleto).FirstOrDefault<sy_boletos_tarifa_fija>();
+        }
+
+        public List<sy_boletos_tarifa_fija> getEntitiesByEnviados()
+        {
+            return em.sy_boletos_tarifa_fija.Where(q => q.enviado == 0).ToList<sy_boletos_tarifa_fija>();
+        }
+        public List<sy_boletos_tarifa_fija> getEntitiesByConfirmadosTISA()
+        {
+            return em.sy_boletos_tarifa_fija.Where(q => q.confirmadoTISA == 0).ToList<sy_boletos_tarifa_fija>();
         }
     }
 }

@@ -771,12 +771,13 @@
                            Foreground="Cyan" 
                            FontSize="20" 
                            FontWeight="Bold" 
+                           Margin="10,0,10,0"
                            VerticalAlignment="Center" 
-                           HorizontalAlignment="Center"/>
+                           HorizontalAlignment="Left"/>
                         <TextBox x:Name="txtValor_TarifaMontoFijo" 
                             VerticalAlignment="Top"
-                            Grid.Row="1" Grid.Column="5"  
-                            Margin="10,0,10,0" 
+                            Grid.Row="1" Grid.Column="4"  
+                            Margin="100,0,10,0" 
                             MaxLines="1"
                             MaxLength="32"
                             FontSize="20"
@@ -785,18 +786,19 @@
                             Style="{DynamicResource TEXTBOXSTYLE}"     />
                         <!--#endregion-->
                         <!--#region TEXTO TARIFA MONTO FIJO -->
-                        <TextBlock Grid.Row="2" 
-                                   Grid.Column="4"
+                        <TextBlock Grid.Row="1" 
+                                   Grid.Column="5"
                            Text="TEXTO" 
                            Foreground="Cyan" 
                            FontSize="20" 
                            FontWeight="Bold" 
+                           Margin="10,0,10,0"
                            VerticalAlignment="Center" 
-                           HorizontalAlignment="Center"/>
+                           HorizontalAlignment="Left"/>
                         <TextBox x:Name="txtTexto_TarifaMontoFijo" 
                             VerticalAlignment="Top"
-                            Grid.Row="2" Grid.Column="5"  
-                            Margin="10,0,10,0" 
+                            Grid.Row="1" Grid.Column="5"  
+                            Margin="100,0,10,0" 
                             MaxLines="1"
                             MaxLength="32"
                             FontSize="20"
@@ -805,18 +807,20 @@
                                  Style="{DynamicResource TEXTBOXSTYLE}"/>
                         <!--#endregion-->
                         <!--#region DESCRIPCION TARIFA MONTO FIJO -->
-                        <TextBlock Grid.Row="3" 
+                        <TextBlock Grid.Row="2" 
                             Grid.Column="4"
                             Text="DESCRIPCION" 
                             Foreground="Cyan" 
                             FontSize="20" 
                             FontWeight="Bold" 
+                            Margin="10,0,10,0"
                             VerticalAlignment="Center" 
-                            HorizontalAlignment="Center"/>
+                            HorizontalAlignment="Left"/>
                         <TextBox x:Name="txtDescripcion_TarifaMontoFijo" 
                             VerticalAlignment="Top"
-                            Grid.Row="3" Grid.Column="5"  
-                            Margin="10,0,10,0" 
+                            Grid.Row="2" Grid.Column="4" 
+                            Grid.ColumnSpan="2"
+                            Margin="170,0,10,0" 
                             MaxLines="1"
                             MaxLength="32"
                             FontSize="20"
@@ -826,32 +830,71 @@
 
                         <!--#endregion-->
                         <!--#region ORDEN TARIFA MONTO FIJO -->
-                        <TextBlock Grid.Row="4" 
+                        <TextBlock Grid.Row="3" 
                             Grid.Column="4"
                             Text="ORDEN" 
                             Foreground="Cyan" 
                             FontSize="20" 
                             FontWeight="Bold" 
+                            Margin="10,5,10,5"
                             VerticalAlignment="Center" 
-                            HorizontalAlignment="Center"/>
+                            HorizontalAlignment="Left"/>
                         <ComboBox x:Name="cmbOrden_TarifaMontoFijo"
-                          Grid.Row="4" Grid.Column="5" 
+                          Grid.Row="3" Grid.Column="4" 
                           Background="Transparent"
                           BorderBrush="White" FontSize="15" 
-                          Margin="10,5,10,5"
+                          Margin="100,5,10,5"
                           Style="{DynamicResource COMBOSTYLE}">
                         </ComboBox>
+                        <!--#endregion-->
+                        <!--#region BOTON AGREGAR TARIFA FIJA -->
+                        <Button x:Name="btnAgregar_TarifaFija" 
+                            Grid.Column="5" Grid.Row="3"
+                            Width="30" Height="30" 
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Margin="0,0,10,0"
+                            Style="{DynamicResource BTNSTYLE}" 
+                            Click="btnAgregar_TarifaFija_Click">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.Column="3" Width="30" Height="30"
+                                    Source="../SCS/IMG/plus.png" 
+                                    VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                            </Grid>
+                        </Button>
+                        <!--#endregion-->
+                        <!--#region BOTON AGREGAR TARIFA FIJA -->
+                        <Button x:Name="btnEliminar_TarifaFija" 
+                            Grid.Column="5" Grid.Row="3"
+                            Width="30" Height="30" 
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Margin="0,0,50,0"
+                            Style="{DynamicResource BTNSTYLE}" 
+                            Click="btnEliminar_TarifaFija_Click">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.Column="3" Width="30" Height="30"
+                                    Source="../SCS/IMG/delete.png" 
+                                    VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                            </Grid>
+                        </Button>
                         <!--#endregion-->
 
                         <!--#region GRID -->
                         <DataGrid x:Name="dataGridTarifasMontosFijos"
                                   Grid.Column="4"
-                                  Grid.Row="5" 
+                                  Grid.Row="4" 
                                   Grid.ColumnSpan="2"
-                                  Grid.RowSpan="4" 
+                                  Grid.RowSpan="5" 
                                   VerticalAlignment="Center" 
                                   HorizontalAlignment="Center" 
-                                  Width="450" Height="200" 
+                                  Width="450" Height="250" 
                                   Style="{DynamicResource DATAGRIDSTYLE}">
 
                             <DataGrid.Columns>

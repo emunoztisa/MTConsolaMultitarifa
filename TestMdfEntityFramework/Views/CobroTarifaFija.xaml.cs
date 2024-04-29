@@ -207,11 +207,11 @@ namespace TestMdfEntityFramework.Views
         #endregion
 
         #region METODOS - DB LOCAL MDF
-        private UInt32 ObtenerUltimoFolioInsertado()
+        private Int64 ObtenerUltimoFolioInsertado()
         {
             //AQUI SE OBTENDRA EL ULTIMO FOLIO DE LA BASE DE DATOS LOCAL
             ServiceBoletosTarifaFija sbtf = new ServiceBoletosTarifaFija();
-            UInt32 ultimo_folio = sbtf.getLastEntity();
+            Int64 ultimo_folio = sbtf.getLastEntity();
 
 
             return ultimo_folio;
@@ -281,7 +281,7 @@ namespace TestMdfEntityFramework.Views
                 UInt32 PrecioTarifa1 = Convert.ToUInt32(tarifa_seleccionada);
 
                 //FOLIO BOLETO
-                UInt32 folioVenta = 1; //ObtenerUltimoFolioInsertado(); CONSULTA LA BASE DE DATOS database.mdf
+                Int64 folioVenta = 1; //ObtenerUltimoFolioInsertado(); CONSULTA LA BASE DE DATOS database.mdf
                 folioVenta += 1;
                 //txtFolioVenta.Text = folioVenta.ToString();
 
@@ -439,7 +439,7 @@ namespace TestMdfEntityFramework.Views
             }
             return bytes.ToArray();
         }
-        void varInteger32ToByte(Int32 IndiceBuffer, UInt32 Var32)
+        void varInteger32ToByte(Int32 IndiceBuffer, Int64 Var32)
         {
             BufferSendData[IndiceBuffer] = (byte)Var32;
             BufferSendData[IndiceBuffer + 1] = (byte)(Var32 >> 8);

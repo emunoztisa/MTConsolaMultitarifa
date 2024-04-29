@@ -531,13 +531,13 @@ namespace TestMdfEntityFramework.Views
         #endregion
 
         #region ENTITY DB LOCAL
-        private UInt32 ObtenerUltimoFolioInsertado()
-        {
-            //AQUI SE OBTENDRA EL ULTIMO FOLIO DE LA BASE DE DATOS LOCAL
-            ServiceBoletosTarifaFija sbtf = new ServiceBoletosTarifaFija();
-            UInt32 ultimo_folio = sbtf.getLastEntity();
-            return ultimo_folio;
-        }
+        //private UInt32 ObtenerUltimoFolioInsertado()
+        //{
+        //    //AQUI SE OBTENDRA EL ULTIMO FOLIO DE LA BASE DE DATOS LOCAL
+        //    ServiceBoletosTarifaFija sbtf = new ServiceBoletosTarifaFija();
+        //    UInt32 ultimo_folio = sbtf.getLastEntity();
+        //    return ultimo_folio;
+        //}
         private int getCantidadPersonasPerfil()
         {
             ServiceConfigVarios scv = new ServiceConfigVarios();

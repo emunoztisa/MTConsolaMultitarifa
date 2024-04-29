@@ -400,6 +400,10 @@ namespace TestMdfEntityFramework.Views
 
             llenarComboActivarCamara();
             llenarComboActivarImpresora();
+
+            llenarComboOrdenTarifasMontosFijos();
+
+            llenarGridTarifasMontoFijo();
         }
 
         public void llenaComboComPorts()
@@ -598,6 +602,30 @@ namespace TestMdfEntityFramework.Views
             foreach (var item in list)
             {
                 cmbActivarImpresora.Items.Add(item);
+            }
+        }
+        private void llenarComboOrdenTarifasMontosFijos()
+        {
+            for (int i = 1; i <= 6; i++)
+            {
+                cmbOrden_TarifaMontoFijo.Items.Add(i);
+            }
+        }
+        private void llenarGridTarifasMontoFijo()
+        {
+            dataGridTarifasMontosFijos.Items.Clear();
+
+            List<ct_tarifas_montos_fijos> list = getCatalogo_TarifasMontoFijo_BaseLocal();
+            foreach (var item in list)
+            {
+                dataGridTarifasMontosFijos.Items.Add(new ct_tarifas_montos_fijos 
+                { 
+                    valor = item.valor
+                    , texto = item.texto
+                    , descripcion = item.descripcion
+                    , orden = item.orden
+                    , status = item.status 
+                });
             }
         }
 
@@ -836,6 +864,13 @@ namespace TestMdfEntityFramework.Views
                 list2.Add(list[i].opcion_general);
             }
             return list2;
+        }
+
+        private List<ct_tarifas_montos_fijos> getCatalogo_TarifasMontoFijo_BaseLocal()
+        {
+            ServiceTarifasMontosFijos serv = new ServiceTarifasMontosFijos();
+            List<ct_tarifas_montos_fijos> list = serv.getEntities();
+            return list;
         }
 
         #endregion
@@ -1103,7 +1138,7 @@ namespace TestMdfEntityFramework.Views
 
                 #endregion
 
-                
+
 
                 #region MULTIMEDIA
 
@@ -1141,7 +1176,7 @@ namespace TestMdfEntityFramework.Views
                 conf_varios_multimedia.valor = impresora_default;
                 serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
 
-                
+
 
 
                 #endregion
@@ -1170,7 +1205,6 @@ namespace TestMdfEntityFramework.Views
                 conf_varios_tarifa_texto_display.clave = "TEXTO_DISPLAY_ALCANCIA";
                 conf_varios_tarifa_texto_display.valor = texto_display_alcancia;
                 serv_conf_varios_tarifa.updEntityByClave(conf_varios_tarifa_texto_display);
-
 
                 // SE SETEA EN LA ALCANCIA EL MENSAJE A MOSTRAR EN DISPLAY
                 ejecutar_commando_84_set_mensaje_pantalla_alcancia(conf_varios_tarifa_texto_display.valor);
@@ -1234,15 +1268,15 @@ namespace TestMdfEntityFramework.Views
             obj_denom.nombre = txtNombreDenominacion.Text;
             obj_denom.valor = txtValorDenominacion.Text.ToString().Trim();
             obj_denom.path_imagen = txtPathImagenDenominacion.Text.ToString().Trim();
-            obj_denom.posicion = cmbPosicionArreglo != null && cmbPosicionArreglo.Text != "" ?  Convert.ToInt32(cmbPosicionArreglo.Text.ToString().Trim()) : 0;
+            obj_denom.posicion = cmbPosicionArreglo != null && cmbPosicionArreglo.Text != "" ? Convert.ToInt32(cmbPosicionArreglo.Text.ToString().Trim()) : 0;
             obj_denom.status = 1;
 
             //para insertar en la db local solo en caso de que se hayan ingresado datos para insertar un nuevo registro de denominacion
-            if(obj_denom.nombre != "" && obj_denom.valor != "" && (obj_denom.posicion > -1 && obj_denom.posicion < 30))
+            if (obj_denom.nombre != "" && obj_denom.valor != "" && (obj_denom.posicion > -1 && obj_denom.posicion < 30))
             {
                 serv_denominaciones.addEntity(obj_denom);
             }
-            
+
             //Ciclo para actualizar cada posicion con su denominacion
             List<ct_denominaciones> list_denominaciones = serv_denominaciones.getEntities();
             for (int i = 0; i < list_denominaciones.Count; i++)
@@ -1253,10 +1287,10 @@ namespace TestMdfEntityFramework.Views
                 {
                     ejecutar_commando_80_set_denominacion(posicion_actual, valor_denominacion_centavos);
                 }
-                
+
             }
 
-            
+
 
             llenarGridDenominaciones();
 
@@ -1349,6 +1383,67 @@ namespace TestMdfEntityFramework.Views
                 MessageBox.Show("!!!!!", "ATENCION !!!");
             }
 
+        }
+
+        private void btnAgregar_TarifaFija_Click(object sender, RoutedEventArgs e)
+        {
+            string valor_tarifa = txtValor_TarifaMontoFijo.Text.ToString().Trim();
+            string texto_tarifa = txtTexto_TarifaMontoFijo.Text.ToString().Trim();
+            string descripcion_tarifa = txtDescripcion_TarifaMontoFijo.Text.ToString().Trim();
+            string orden_tarifa = cmbOrden_TarifaMontoFijo.Text.ToString().Trim();
+
+            string fecha_actual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            if (valor_tarifa != "" && texto_tarifa != "" && descripcion_tarifa != "" && orden_tarifa != "")
+            {
+                ServiceTarifasMontosFijos serv_tarifas_montos_fijos = new ServiceTarifasMontosFijos();
+                ct_tarifas_montos_fijos obj = new ct_tarifas_montos_fijos();
+
+                obj.valor = valor_tarifa;
+                obj.texto = texto_tarifa;
+                obj.descripcion = descripcion_tarifa;
+                obj.orden = Convert.ToInt32(orden_tarifa);
+
+
+                //se insertaran solo 6 tarifas para montos fijos
+                ct_tarifas_montos_fijos tarifa_fija_orden = serv_tarifas_montos_fijos.getEntityByOrden(obj.orden);
+                if (tarifa_fija_orden != null && tarifa_fija_orden.orden == obj.orden)
+                {
+                    obj.pkTarifaMontoFijo = tarifa_fija_orden.pkTarifaMontoFijo;
+                    obj.status = 1;
+                    obj.created_at = tarifa_fija_orden.created_at;
+                    obj.updated_at = fecha_actual;
+
+                    serv_tarifas_montos_fijos.updEntity(obj);
+                }
+                else
+                {
+                    obj.pkTarifaMontoFijo = tarifa_fija_orden.pkTarifaMontoFijo;
+                    obj.status = 1;
+                    obj.created_at = tarifa_fija_orden.created_at;
+                    obj.updated_at = fecha_actual;
+
+                    serv_tarifas_montos_fijos.addEntity(obj);
+                }
+
+                llenarGridTarifasMontoFijo();
+
+                txtValor_TarifaMontoFijo.Text = "";
+                txtTexto_TarifaMontoFijo.Text = "";
+                txtDescripcion_TarifaMontoFijo.Text = "";
+                cmbOrden_TarifaMontoFijo.Text = "";
+            }
+        }
+
+        private void btnEliminar_TarifaFija_Click(object sender, RoutedEventArgs e)
+        {
+            ct_tarifas_montos_fijos row = (ct_tarifas_montos_fijos)dataGridTarifasMontosFijos.SelectedItems[0];
+            //int orden = Convert.ToInt32(row.orden.ToString().Trim());
+
+            ServiceTarifasMontosFijos serv_tarifas_montos_fijos = new ServiceTarifasMontosFijos();
+            serv_tarifas_montos_fijos.delEntityByOrden(row);
+
+            llenarGridTarifasMontoFijo();
         }
 
         #endregion
@@ -1565,7 +1660,7 @@ namespace TestMdfEntityFramework.Views
             string empty = " ";
             string cadena = "";
             int n = 5;
-            for (int i = 0; i < ((RecievedDataGlobal_local[3])-1); i++)
+            for (int i = 0; i < ((RecievedDataGlobal_local[3]) - 1); i++)
             {
                 //if((byte)RecievedDataGlobal_local[i] != 0 && (byte)RecievedDataGlobal_local[i] != 32 && (byte)RecievedDataGlobal_local[i] != (byte)empty[0])
                 //{
@@ -1637,7 +1732,7 @@ namespace TestMdfEntityFramework.Views
             }
         }
 
-        
+
 
         private void ejecutar_commando_80_set_denominacion(decimal num_posicion_denom, UInt32 valor_moneda_billete)
         {
@@ -1672,7 +1767,7 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[IndiceBuffer + 1] = (byte)(Var32 >> 8);
             BufferSendData[IndiceBuffer + 2] = (byte)(Var32 >> 16);
             BufferSendData[IndiceBuffer + 3] = (byte)(Var32 >> 24);
-           
+
             BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
             BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
 
@@ -1698,7 +1793,7 @@ namespace TestMdfEntityFramework.Views
             const decimal AddressConsola = 1;
             const decimal AddressAlcancia = 2;
             const decimal Comando = 132;
-           
+
 
             const Int32 K_offsetDatos = 4;
             const Int32 K_CRCs = 2;
@@ -1804,7 +1899,7 @@ namespace TestMdfEntityFramework.Views
                 mensaje = "";
                 MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
             }
-            
+
             return mensaje;
         }
 
@@ -1819,70 +1914,81 @@ namespace TestMdfEntityFramework.Views
             dlg.Filter = "Image Files(*.jpg; *.jpeg; *.png; *.gif; *.bmp)|*.jpg; *.jpeg; *.png; *.gif; *.bmp";
             dlg.ShowDialog();
 
-            // Guarda la imagen en un arreglo de bytes para poder enviarla a la base de datos local
-            FileStream fs = new FileStream(dlg.FileName, FileMode.Open, FileAccess.Read);
-            //byte[] data = new byte[fs.Length];
-            data = new byte[fs.Length];
-            fs.Read(data, 0, System.Convert.ToInt32(fs.Length));
-            fs.Close();
-
-            // valida si hay algo en la imagen para insertarla en la base de datos local
-            if (data != null)
+            if (dlg.FileName != "")
             {
-                ImageSourceConverter imgs = new ImageSourceConverter();
-                imagebox.SetValue(Image.SourceProperty, imgs.
-                ConvertFromString(dlg.FileName.ToString()));
-            }
+                // Guarda la imagen en un arreglo de bytes para poder enviarla a la base de datos local
+                FileStream fs = new FileStream(dlg.FileName, FileMode.Open, FileAccess.Read);
+                //byte[] data = new byte[fs.Length];
+                data = new byte[fs.Length];
+                fs.Read(data, 0, System.Convert.ToInt32(fs.Length));
+                fs.Close();
 
-            // crear un objeto de Bitmap para posteriormente al guardar se tome este objeto para guardar fisicamente en el disco la imagen
-            bi = new BitmapImage();
-            bi.BeginInit();
-            bi.UriSource = new Uri(dlg.FileName, UriKind.RelativeOrAbsolute);
-            bi.EndInit();
+                // valida si hay algo en la imagen para insertarla en la base de datos local
+                if (data != null)
+                {
+                    ImageSourceConverter imgs = new ImageSourceConverter();
+                    imagebox.SetValue(Image.SourceProperty, imgs.
+                    ConvertFromString(dlg.FileName.ToString()));
+                }
+
+                // crear un objeto de Bitmap para posteriormente al guardar se tome este objeto para guardar fisicamente en el disco la imagen
+                bi = new BitmapImage();
+                bi.BeginInit();
+                bi.UriSource = new Uri(dlg.FileName, UriKind.RelativeOrAbsolute);
+                bi.EndInit();
+            }
         }
         private void btnAgregarImagen_Click(object sender, RoutedEventArgs e)
         {
-            string path_imagenes_subidas = @"C:\mt_con_database\IMAGENES_SUBIDAS\";
-
-            string strPath = imagebox.Source.ToString();
-            string filename = System.IO.Path.GetFileName(strPath);
-
-            ServiceImagenesSubidas serv_imagenes_subidas = new ServiceImagenesSubidas();
-            ct_imagenes_subidas img_sub = new ct_imagenes_subidas();
-            img_sub.nombre = txtNombreImagen.Text;
-            img_sub.imagen = data;
-            img_sub.path_imagen = path_imagenes_subidas + filename;
-            img_sub.status = 1;
-
-            if(img_sub.nombre != "" && img_sub.imagen != null)
+            try
             {
-                serv_imagenes_subidas.addEntity(img_sub);
-            }
+                string path_imagenes_subidas = @"C:\mt_con_database\IMAGENES_SUBIDAS\";
 
-            //Para guardar la imagen en el directorio fisico
-            //SaveFileDialog save = new SaveFileDialog();
-            //save.Title = "Save picture as ";
-            //save.Filter = "Image Files(*.jpg; *.jpeg; *.gif; *.bmp)|*.jpg; *.jpeg; *.gif; *.bmp";
-            if (bi != null)
-            {
-                //if (save.ShowDialog() == true)
-                //{
+                string strPath = imagebox.Source.ToString();
+                string filename = System.IO.Path.GetFileName(strPath);
+
+                ServiceImagenesSubidas serv_imagenes_subidas = new ServiceImagenesSubidas();
+                ct_imagenes_subidas img_sub = new ct_imagenes_subidas();
+                img_sub.nombre = txtNombreImagen.Text;
+                img_sub.imagen = data;
+                img_sub.path_imagen = path_imagenes_subidas + filename;
+                img_sub.status = 1;
+
+                if (img_sub.nombre != "" && img_sub.imagen != null)
+                {
+                    serv_imagenes_subidas.addEntity(img_sub);
+                }
+
+                //Para guardar la imagen en el directorio fisico
+                //SaveFileDialog save = new SaveFileDialog();
+                //save.Title = "Save picture as ";
+                //save.Filter = "Image Files(*.jpg; *.jpeg; *.gif; *.bmp)|*.jpg; *.jpeg; *.gif; *.bmp";
+                if (bi != null)
+                {
+                    //if (save.ShowDialog() == true)
+                    //{
                     JpegBitmapEncoder jpg = new JpegBitmapEncoder();
                     jpg.Frames.Add(BitmapFrame.Create(bi));
 
-                string file_a_crear = path_imagenes_subidas + filename;
-                    
-                
-                using (Stream stm = File.Create(file_a_crear))
+                    string file_a_crear = path_imagenes_subidas + filename;
+
+
+                    using (Stream stm = File.Create(file_a_crear))
                     {
                         jpg.Save(stm);
                     }
-                    //using (Stream stm = File.Create(save.FileName))
-                    //{
-                    //    jpg.Save(stm);
-                    //}
-                //}
+
+                }
+
+                //Mostrar el popup para indicar que se guardo la imagen con exito.
+                txtMensajePopup.Text = "Imagen Guardada";
+                mostrarPopupOk();
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
 
         }
         private void CopyAFile()
@@ -1898,7 +2004,7 @@ namespace TestMdfEntityFramework.Views
             }
         }
 
-        
+       
 
         private string ejecutar_commando_85_get_texto_display_alcancia()
         {
