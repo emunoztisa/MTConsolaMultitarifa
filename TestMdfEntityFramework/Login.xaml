@@ -283,6 +283,9 @@
                             Grid.Column="0" 
                                Grid.Row="1" 
                                Grid.RowSpan="5" 
+                               Width="220"
+                               Height="220"
+                               Margin="10,5,10,5"
                                VerticalAlignment="Center"
                                HorizontalAlignment="Center" 
                         Source="SCS/IMG/logo_tisa_consola_multitarifa.png"/>

@@ -68,6 +68,7 @@ namespace TestMdfEntityFramework.EntityServices
 
         public void delEntityByOrden(ct_tarifas_montos_fijos entity)
         {
+            string fecha_actual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             ct_tarifas_montos_fijos it = em.ct_tarifas_montos_fijos.Where(q => (int)q.orden == (int)entity.orden).First<ct_tarifas_montos_fijos>();
             if (it == null)
             {
@@ -76,7 +77,7 @@ namespace TestMdfEntityFramework.EntityServices
             else
             {
                 //em.ct_tarifas_montos_fijos.Remove(it);
-                it.deleted_at = entity.deleted_at;
+                it.deleted_at = fecha_actual;
                 em.SaveChanges();
             }
         }

@@ -633,7 +633,7 @@
                             Background="GreenYellow"
                             Margin="0,0,0,0"
                             Style="{DynamicResource BTNSTYLE}" 
-                            Click="btnGuardarConfiguracion_Click">
+                            Click="btnGuardarConfBoletos_Click">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="10"></ColumnDefinition>

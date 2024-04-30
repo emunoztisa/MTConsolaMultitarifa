@@ -953,9 +953,7 @@ namespace TestMdfEntityFramework.Views
                 string cant_usuarios_perfil = cmbCantUsuariosPerfil.Text;
                 string texto_display_alcancia = txtTextoDisplayAlcancia.Text;
 
-                // BOLETO
-                string prefijo_folio_boleto = txtPrefijoBoleto.Text;
-                string prefijo_folio_corte = txtPrefijoCorte.Text;
+                
 
                 // MULTIMEDIA
                 int indice;
@@ -1119,24 +1117,7 @@ namespace TestMdfEntityFramework.Views
 
                 #endregion
 
-                #region Setear Mensajes en Boleto
-                if (txtEncabezadoLinea1.Text.Length == 32 && txtEncabezadoLinea2.Text.Length == 32 && txtEncabezadoLinea3.Text.Length == 32 &&
-                    txtPiePaginaLinea1.Text.Length == 32 && txtPiePaginaLinea2.Text.Length == 32 && txtPiePaginaLinea3.Text.Length == 32)
-                {
-                    ejecutar_commando_82_set_mensaje(0, txtEncabezadoLinea1.Text);
-                    ejecutar_commando_82_set_mensaje(1, txtEncabezadoLinea2.Text);
-                    ejecutar_commando_82_set_mensaje(2, txtEncabezadoLinea3.Text);
-
-                    ejecutar_commando_82_set_mensaje(3, txtPiePaginaLinea1.Text);
-                    ejecutar_commando_82_set_mensaje(4, txtPiePaginaLinea2.Text);
-                    ejecutar_commando_82_set_mensaje(5, txtPiePaginaLinea3.Text);
-                }
-                else
-                {
-                    MessageBox.Show("Favor de llenar los mensajes del boleto en sus 32 caracteres, asi sea con espacios");
-                }
-
-                #endregion
+               
 
 
 
@@ -1212,22 +1193,7 @@ namespace TestMdfEntityFramework.Views
 
                 #endregion
 
-                #region BOLETO
-
-                ServiceConfigVarios serv_config_varios_boleto = new ServiceConfigVarios();
-
-                config_varios conf_varios_boleto = new config_varios();
-
-                conf_varios_boleto.clave = "PREFIJO_FOLIO_BOLETO";
-                conf_varios_boleto.valor = prefijo_folio_boleto;
-                serv_config_varios_boleto.updEntityByClave(conf_varios_boleto);
-
-                conf_varios_boleto.clave = "PREFIJO_FOLIO_CORTE";
-                conf_varios_boleto.valor = prefijo_folio_corte;
-                serv_config_varios_boleto.updEntityByClave(conf_varios_boleto);
-
-
-                #endregion
+               
 
                 #region MANTENIMIENTO
 
@@ -1444,6 +1410,49 @@ namespace TestMdfEntityFramework.Views
             serv_tarifas_montos_fijos.delEntityByOrden(row);
 
             llenarGridTarifasMontoFijo();
+        } 
+
+        private void btnGuardarConfBoletos_Click(object sender, RoutedEventArgs e)
+        {
+            // BOLETO
+            string prefijo_folio_boleto = txtPrefijoBoleto.Text;
+            string prefijo_folio_corte = txtPrefijoCorte.Text;
+
+            #region Setear Mensajes en Boleto
+            if (txtEncabezadoLinea1.Text.Length == 32 && txtEncabezadoLinea2.Text.Length == 32 && txtEncabezadoLinea3.Text.Length == 32 &&
+                txtPiePaginaLinea1.Text.Length == 32 && txtPiePaginaLinea2.Text.Length == 32 && txtPiePaginaLinea3.Text.Length == 32)
+            {
+                ejecutar_commando_82_set_mensaje(0, txtEncabezadoLinea1.Text);
+                ejecutar_commando_82_set_mensaje(1, txtEncabezadoLinea2.Text);
+                ejecutar_commando_82_set_mensaje(2, txtEncabezadoLinea3.Text);
+
+                ejecutar_commando_82_set_mensaje(3, txtPiePaginaLinea1.Text);
+                ejecutar_commando_82_set_mensaje(4, txtPiePaginaLinea2.Text);
+                ejecutar_commando_82_set_mensaje(5, txtPiePaginaLinea3.Text);
+            }
+            else
+            {
+                MessageBox.Show("Favor de llenar los mensajes del boleto en sus 32 caracteres, asi sea con espacios");
+            }
+
+            #endregion
+
+            #region BOLETO
+
+            ServiceConfigVarios serv_config_varios_boleto = new ServiceConfigVarios();
+
+            config_varios conf_varios_boleto = new config_varios();
+
+            conf_varios_boleto.clave = "PREFIJO_FOLIO_BOLETO";
+            conf_varios_boleto.valor = prefijo_folio_boleto;
+            serv_config_varios_boleto.updEntityByClave(conf_varios_boleto);
+
+            conf_varios_boleto.clave = "PREFIJO_FOLIO_CORTE";
+            conf_varios_boleto.valor = prefijo_folio_corte;
+            serv_config_varios_boleto.updEntityByClave(conf_varios_boleto);
+
+            #endregion
+
         }
 
         #endregion
@@ -2004,7 +2013,7 @@ namespace TestMdfEntityFramework.Views
             }
         }
 
-       
+        
 
         private string ejecutar_commando_85_get_texto_display_alcancia()
         {
@@ -2280,6 +2289,8 @@ namespace TestMdfEntityFramework.Views
             ocultarPopupOk();
         }
         #endregion
+
+       
 
     }
 }

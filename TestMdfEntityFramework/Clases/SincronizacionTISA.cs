@@ -15,6 +15,7 @@ namespace TestMdfEntityFramework.Clases
         Task tarea_sincroniza_boletos = new Task(SincronizaBoletos);
         Task tarea_sincroniza_boletos_detalle = new Task(SincronizaBoletosDetalles);
         Task tarea_sincroniza_boletos_y_boletos_detalle = new Task(SincronizaBoletosYBoletosDetalle);
+        Task tarea_sincroniza_boletos_tarifa_fija = new Task(SincronizaBoletosTarifaFija);
 
 
         public void Task_Sincroniza_Boletos_START()
@@ -114,6 +115,28 @@ namespace TestMdfEntityFramework.Clases
 
             }
         }
+        public static void SincronizaBoletosTarifaFija()
+        {
+            ServiceBoletosTarifaFija serv_boletos_tarifa_fija = new ServiceBoletosTarifaFija();
+            List<sy_boletos_tarifa_fija> list = serv_boletos_tarifa_fija.getEntitiesByEnviados();
+
+            BoletosTarifaFijaController bc = new BoletosTarifaFijaController();
+            foreach (var item in list)
+            {
+                ResBoletosTarifaFija_Insert resBoletoInseted = bc.InsertBoleto(item);
+                if (resBoletoInseted.response == true && resBoletoInseted.status == 200)
+                {
+                    // TODO: Actualizar el pkBoletoTISA en la base de datos local
+                    item.pkBoletoTISA = resBoletoInseted.data.pkBoleto;
+                    item.enviado = 1;
+                    item.confirmadoTISA = 1;
+                    serv_boletos_tarifa_fija.updEntity(item);
+                }
+
+            }
+        }
+
+        
         public static void SincronizaCortes()
         {
             ServiceCortes serv_cortes = new ServiceCortes();

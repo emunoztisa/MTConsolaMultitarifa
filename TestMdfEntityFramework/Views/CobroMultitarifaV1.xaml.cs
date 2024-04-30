@@ -1697,8 +1697,10 @@ namespace TestMdfEntityFramework.Views
                     int status = Convert.ToInt32(RecievedDataGlobal[5]);
                     ESTATUS = status.ToString();
 
-                    uint monto_ingresado = obtenerMontoIngresadoActual(RecievedDataGlobal); //PENDIENTE
-                    MONTO_INGRESADO = (monto_ingresado / 100).ToString();
+                    //uint monto_ingresado = obtenerMontoIngresadoActual(RecievedDataGlobal);
+                    decimal monto_ingresado = obtenerMontoIngresadoActual(RecievedDataGlobal);
+                    decimal num_cien = 100;
+                    MONTO_INGRESADO = (monto_ingresado / num_cien).ToString();
 
                 }
                 //open_serial_port();

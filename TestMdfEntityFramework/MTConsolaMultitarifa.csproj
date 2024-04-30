@@ -148,6 +148,7 @@
     <Compile Include="Controllers\AsignacionesController.cs" />
     <Compile Include="Controllers\BoletosController.cs" />
     <Compile Include="Controllers\BoletosDetalleController.cs" />
+    <Compile Include="Controllers\BoletosTarifaFijaController.cs" />
     <Compile Include="Controllers\CorredoresController.cs" />
     <Compile Include="Controllers\CortesController.cs" />
     <Compile Include="Controllers\EmpresaCorredorOperadorController.cs" />
@@ -246,6 +247,7 @@
     </Compile>
     <Compile Include="Requests\ReqBoletos.cs" />
     <Compile Include="Requests\ReqBoletosDetalle.cs" />
+    <Compile Include="Requests\ReqBoletosTarifaFija.cs" />
     <Compile Include="Requests\ReqCortes.cs" />
     <Compile Include="Requests\ReqLogin.cs" />
     <Compile Include="Requests\ReqMensajes.cs" />
@@ -256,6 +258,8 @@
     <Compile Include="Responses\ResBoletos.cs" />
     <Compile Include="Responses\ResBoletosDetalle.cs" />
     <Compile Include="Responses\ResBoletosDetalle_Insert.cs" />
+    <Compile Include="Responses\ResBoletosTarifaFija.cs" />
+    <Compile Include="Responses\ResBoletosTarifaFija_Insert.cs" />
     <Compile Include="Responses\ResBoletos_Insert.cs" />
     <Compile Include="Responses\ResCorredores.cs" />
     <Compile Include="Responses\ResCortes.cs" />

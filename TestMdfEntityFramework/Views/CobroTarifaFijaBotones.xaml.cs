@@ -309,7 +309,6 @@ namespace TestMdfEntityFramework.Views
             lblMontoCalculado.HorizontalAlignment = HorizontalAlignment.Center;
             lblMontoCalculado.VerticalAlignment = VerticalAlignment.Center;
             lblMontoCalculado.TextAlignment = TextAlignment.Center;
-            lblMontoCalculado.Foreground = Brushes.Black;
             Grid.SetRow(lblMontoCalculado, 0);
             Grid.SetColumn(lblMontoCalculado, 0);
             miGridCobro.Children.Add(lblMontoCalculado);
@@ -317,14 +316,13 @@ namespace TestMdfEntityFramework.Views
 
             #region LABEL QUE MUESTRA LO PAGADO ACTUALMENTE POR EL USUARIO EN LA VENTA ACTUAL
             //TextBlock lbl_pagado = new TextBlock();
-            lblMontoIngresado.Text = "$ 00.00";
+            lblMontoIngresado.Text = "";
             lblMontoIngresado.FontSize = font_size_lbl;
             lblMontoIngresado.FontWeight = FontWeights.Bold;
             lblMontoIngresado.Foreground = Brushes.Green;
             lblMontoIngresado.HorizontalAlignment = HorizontalAlignment.Center;
             lblMontoIngresado.VerticalAlignment = VerticalAlignment.Center;
             lblMontoIngresado.TextAlignment = TextAlignment.Center;
-            lblMontoIngresado.Foreground = Brushes.Black;
             Grid.SetRow(lblMontoIngresado, 1);
             Grid.SetColumn(lblMontoIngresado, 0);
             miGridCobro.Children.Add(lblMontoIngresado);
@@ -378,6 +376,7 @@ namespace TestMdfEntityFramework.Views
             btnCancelarVenta.Margin = new Thickness(15, 15, 15, 15);
             btnCancelarVenta.ClickMode = ClickMode.Press;
             btnCancelarVenta.Click += new RoutedEventHandler(Btn_CancelarVenta_Click);
+            btnCancelarVenta.IsEnabled = false;
 
             WrapPanel miWrapCancelarVenta = new WrapPanel();
 
@@ -755,8 +754,11 @@ namespace TestMdfEntityFramework.Views
                     int status = Convert.ToInt32(RecievedDataGlobal[5]);
                     ESTATUS = status.ToString();
 
-                    uint monto_ingresado = obtenerMontoIngresadoActual(RecievedDataGlobal); //PENDIENTE
-                    MONTO_INGRESADO = (monto_ingresado / 100).ToString();
+                    //uint monto_ingresado = obtenerMontoIngresadoActual(RecievedDataGlobal); //PENDIENTE
+
+                    decimal monto_ingresado = obtenerMontoIngresadoActual(RecievedDataGlobal);
+                    decimal num_cien = 100;
+                    MONTO_INGRESADO = (monto_ingresado / num_cien).ToString();
 
                 }
                 //open_serial_port();
@@ -793,6 +795,8 @@ namespace TestMdfEntityFramework.Views
 
                 //Actualiza Monto Ingresado
                 delegado_actualiza_lbl_monto_ingresado();
+
+                btnCancelarVenta.IsEnabled = false;
 
                 detiene_timers();
 
@@ -1162,14 +1166,20 @@ namespace TestMdfEntityFramework.Views
         private void popupGrid_LostFocus(object sender, RoutedEventArgs e)
         {
             ocultarPopupOk();
+            lblMontoCalculado.Text = "$ 00.00";
+            lblMontoIngresado.Text = "$ 00.00";
         }
         private void popupGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             ocultarPopupOk();
+            lblMontoCalculado.Text = "$ 00.00";
+            lblMontoIngresado.Text = "$ 00.00";
         }
         private void popupGrid_TouchDown(object sender, TouchEventArgs e)
         {
             ocultarPopupOk();
+            lblMontoCalculado.Text = "$ 00.00";
+            lblMontoIngresado.Text = "$ 00.00";
         }
 
         #endregion

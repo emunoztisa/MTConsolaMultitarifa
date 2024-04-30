@@ -27,6 +27,7 @@ namespace TestMdfEntityFramework
 
         DispatcherTimer timerReloj = new DispatcherTimer();
         DispatcherTimer timerEvaluaMensajes = new DispatcherTimer();
+        DispatcherTimer timerSincroniza = new DispatcherTimer();
 
         public Principal()
         {
@@ -60,6 +61,13 @@ namespace TestMdfEntityFramework
             timerEvaluaMensajes.Interval = new TimeSpan(0, 0, 10);
             timerEvaluaMensajes.Start();
         }
+        private void inicializa_timer_sincroniza()
+        {
+            // INICIA TIMER QUE ESTARA ACTUALIZANDO EL VALOR DE ESTATUS
+            timerSincroniza.Tick += new EventHandler(dispatcherTimerSincroniza_Tick);
+            timerSincroniza.Interval = new TimeSpan(0, 1, 0);
+            timerSincroniza.Start();
+        }
         private void dispatcherTimerReloj_Tick(object sender, EventArgs e)
         {
             try
@@ -89,10 +97,29 @@ namespace TestMdfEntityFramework
                 MessageBox.Show(ex.Message, "EXCEPTION !!!");
             }
         }
+        private void dispatcherTimerSincroniza_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                //Envia los pendientes por enviar hacia TISA.
+                // * Boletos tarifa fija
+                // * Boletos y Detalle Multitarifa
+                // * Cortes
+                SincronizaOperacionConsola();
+
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "EXCEPTION !!!");
+            }
+        }
         private void detiene_timers()
         {
             timerReloj.IsEnabled = false;
             timerEvaluaMensajes.IsEnabled = false;
+            timerSincroniza.IsEnabled = false;
         }
 
         #endregion
@@ -103,6 +130,7 @@ namespace TestMdfEntityFramework
 
             inicializa_timer_reloj();
             inicializa_timer_evalua_mensajes();
+            inicializa_timer_sincroniza();
 
             SincronizarCatalogos();
             SetearVersionYCopyright();
@@ -549,6 +577,7 @@ namespace TestMdfEntityFramework
         {
             SincronizacionTISA.SincronizaBoletosYBoletosDetalle();
             SincronizacionTISA.SincronizaCortes();
+            SincronizacionTISA.SincronizaBoletosTarifaFija();
         }
 
         #endregion

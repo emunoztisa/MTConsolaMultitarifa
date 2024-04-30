@@ -52,7 +52,7 @@
                         FontWeight="Bold"
                         Foreground="White"/>
                 <Image x:Name="imgLogoHome"
-                    Grid.Column="0" Grid.Row="1" Width="300" Height="300" 
+                    Grid.Column="0" Grid.Row="1" Width="300" Height="240" 
                     HorizontalAlignment="Center" 
                     VerticalAlignment="Top"  
                     Source="../SCS/IMG/logo_tisa_consola_multitarifa.png"/>
