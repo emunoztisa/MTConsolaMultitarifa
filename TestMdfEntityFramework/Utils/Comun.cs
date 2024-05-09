@@ -183,5 +183,32 @@ namespace TestMdfEntityFramework.Utils
             return desencriptacion;
         }
 
+        public bool HayConexionInternet()
+        {
+            bool hayInternet = false;
+
+            string result = "";
+            System.Uri Url = new System.Uri("http://www.google.com/");
+            System.Net.WebRequest WebRequest;
+            WebRequest = System.Net.WebRequest.Create(Url);
+            System.Net.WebResponse objResp;
+            try
+            {
+                objResp = WebRequest.GetResponse();
+                //result = "Su dispositivo está correctamente conectado a internet";
+                hayInternet = true;
+                objResp.Close();
+                WebRequest = null;
+            }
+            catch (Exception ex)
+            {
+                //result = "Error al intentar conectarse a internet " + ex.Message;
+                WebRequest = null;
+                hayInternet = false;
+            }
+
+            return hayInternet;
+        }
+
     }
 }

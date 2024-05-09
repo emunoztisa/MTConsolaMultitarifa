@@ -316,13 +316,22 @@ namespace TestMdfEntityFramework.Views
                 }
             }
 
+            
+
 
 
             if (validaPuertoCOMConfigurado())
             {
-                SetearValoresTextoEncabezadosYPiePagina();
-                SetearValoresLblNoSerieAlcancia();
-                SetearValoresTextoDisplayAlcancia();
+                if (validaDispositivoConectadoEnPuertoCOM())
+                {
+                    SetearValoresTextoEncabezadosYPiePagina();
+                    SetearValoresLblNoSerieAlcancia();
+                    SetearValoresTextoDisplayAlcancia();
+                }
+                {
+                    MessageBox.Show("Favor de Validar que este conectado el dispositivo al puerto COM");
+                }
+               
             }
 
         }
@@ -363,6 +372,27 @@ namespace TestMdfEntityFramework.Views
             #endregion
         }
 
+        private bool validaDispositivoConectadoEnPuertoCOM()
+        {
+            bool hayDispositivoConectado = false;
+
+            try
+            {
+                if (puertoSerie1.IsOpen == false)
+                {
+                    puertoSerie1.Open();
+                    hayDispositivoConectado = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                hayDispositivoConectado = false;
+                MessageBox.Show(ex.Message);
+            }
+
+            return hayDispositivoConectado;
+        }
+
 
         #region LLENA COMBOS
 
@@ -392,10 +422,12 @@ namespace TestMdfEntityFramework.Views
             llenarComboCantUsuariosPerfiles();
 
             llenarPosicionesArregloDenominaciones();
-            llenarGridDenominaciones();
-            llenaComboImagenesSubidas();
+            
 
-            llenaComboCamaras();
+            llenaComboImagenesSubidas();
+            llenaComboImagenesDenominaciones();
+
+            //llenaComboCamaras();
             llenaComboImpresoras();
 
             llenarComboActivarCamara();
@@ -403,6 +435,7 @@ namespace TestMdfEntityFramework.Views
 
             llenarComboOrdenTarifasMontosFijos();
 
+            llenarGridDenominaciones();
             llenarGridTarifasMontoFijo();
         }
 
@@ -542,12 +575,23 @@ namespace TestMdfEntityFramework.Views
             List<ct_denominaciones> list = getCatalogo_Denominaciones_BaseLocal();
             foreach (var item in list)
             {
-                dataGridDenominaciones.Items.Add(new ct_denominaciones { posicion = item.posicion, nombre = item.nombre, valor = item.valor, path_imagen = item.path_imagen, status = item.status });
+                dataGridDenominaciones.Items.Add(new ct_denominaciones 
+                { 
+                    posicion = item.posicion
+                    , nombre = item.nombre
+                    , valor = item.valor
+                    , path_imagen = item.path_imagen
+                    , status = item.status 
+                });
             }
         }
         private void llenarPosicionesArregloDenominaciones()
         {
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i <= 6; i++)
+            {
+                cmbPosicionArreglo.Items.Add(i);
+            }
+            for (int i = 10; i <= 16; i++)
             {
                 cmbPosicionArreglo.Items.Add(i);
             }
@@ -558,6 +602,15 @@ namespace TestMdfEntityFramework.Views
             foreach (var li in list)
             {
                 cmbImagenesSubidas.Items.Add(li);
+            }
+        }
+
+        public void llenaComboImagenesDenominaciones()
+        {
+            List<string> list = getCatalogo_ImagenesDenominaciones_BaseLocal();
+            foreach (var li in list)
+            {
+                cmbImagenesDenominaciones.Items.Add(li);
             }
         }
         public void llenaComboImpresoras()
@@ -842,6 +895,18 @@ namespace TestMdfEntityFramework.Views
             return list2;
         }
 
+        private List<string> getCatalogo_ImagenesDenominaciones_BaseLocal()
+        {
+            ServiceImagenesSubidas su = new ServiceImagenesSubidas();
+            List<ct_imagenes_subidas> list = su.getEntities();
+            List<string> list2 = new List<string>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                list2.Add(list[i].nombre);
+            }
+            return list2;
+        }
+
         private List<string> getCatalogo_ActivarCamara_BaseLocal()
         {
             ServiceOpcionesGenerales sog = new ServiceOpcionesGenerales();
@@ -970,11 +1035,6 @@ namespace TestMdfEntityFramework.Views
 
                 //APARIENCIA
                 string logo_home = cmbImagenesSubidas.Text;
-
-
-                // UBICACION
-                string activar_ubicacion = cmbActivarUbicacion.Text;
-
 
                 // MANTENIMIENTO
                 string base_url = txtUrlBase.Text;
@@ -1131,12 +1191,6 @@ namespace TestMdfEntityFramework.Views
                 conf_varios_multimedia.valor = activar_voz;
                 serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
 
-                // UBICACION ACTIVA
-                conf_varios_multimedia.clave = "UBICACION_ACTIVA";
-                conf_varios_multimedia.valor = activar_ubicacion;
-                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
-
-
                 // CAMARA ACTIVA
                 conf_varios_multimedia.clave = "CAMARA_ACTIVA";
                 conf_varios_multimedia.valor = activar_camara;
@@ -1227,38 +1281,32 @@ namespace TestMdfEntityFramework.Views
         {
             #region DENOMINACIONES MONEDAS Y BILLETES
 
-            ServiceDenominaciones serv_denominaciones = new ServiceDenominaciones();
-
-            ct_denominaciones obj_denom = new ct_denominaciones();
-            //obj_denom.pkDenominacion = null;
-            obj_denom.nombre = txtNombreDenominacion.Text;
-            obj_denom.valor = txtValorDenominacion.Text.ToString().Trim();
-            obj_denom.path_imagen = txtPathImagenDenominacion.Text.ToString().Trim();
-            obj_denom.posicion = cmbPosicionArreglo != null && cmbPosicionArreglo.Text != "" ? Convert.ToInt32(cmbPosicionArreglo.Text.ToString().Trim()) : 0;
-            obj_denom.status = 1;
-
-            //para insertar en la db local solo en caso de que se hayan ingresado datos para insertar un nuevo registro de denominacion
-            if (obj_denom.nombre != "" && obj_denom.valor != "" && (obj_denom.posicion > -1 && obj_denom.posicion < 30))
+            try
             {
-                serv_denominaciones.addEntity(obj_denom);
-            }
+                ServiceDenominaciones serv_denominaciones = new ServiceDenominaciones();
+                ct_denominaciones obj_denom = new ct_denominaciones();
 
-            //Ciclo para actualizar cada posicion con su denominacion
-            List<ct_denominaciones> list_denominaciones = serv_denominaciones.getEntities();
-            for (int i = 0; i < list_denominaciones.Count; i++)
-            {
-                decimal posicion_actual = list_denominaciones[i].posicion != null ? Convert.ToDecimal(list_denominaciones[i].posicion) : -1;
-                UInt32 valor_denominacion_centavos = (UInt32)(Convert.ToDecimal(list_denominaciones[i].valor) * 100);
-                if (posicion_actual != -1)
+                //Ciclo para actualizar cada posicion con su denominacion
+                List<ct_denominaciones> list_denominaciones = serv_denominaciones.getEntities();
+                for (int i = 0; i < list_denominaciones.Count; i++)
                 {
-                    ejecutar_commando_80_set_denominacion(posicion_actual, valor_denominacion_centavos);
+                    decimal posicion_actual = list_denominaciones[i].posicion != null ? Convert.ToDecimal(list_denominaciones[i].posicion) : -1;
+                    UInt32 valor_denominacion_centavos = (UInt32)(Convert.ToDecimal(list_denominaciones[i].valor) * 100);
+                    if (posicion_actual != -1)
+                    {
+                        ejecutar_commando_80_set_denominacion(posicion_actual, valor_denominacion_centavos);
+                    }
                 }
 
+                txtMensajePopup.Text = "CONFIGURACION EXITOSA";
+                mostrarPopupOk();
             }
-
-
-
-            llenarGridDenominaciones();
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
+            
 
             #endregion
         }
@@ -1455,6 +1503,72 @@ namespace TestMdfEntityFramework.Views
 
         }
 
+        private void btnAgregar_Denominacion_Click(object sender, RoutedEventArgs e)
+        {
+            //Obtener objeto de imagenes subidas segun la seleccion de la imagen
+            ServiceImagenesSubidas serv_img = new ServiceImagenesSubidas();
+            ct_imagenes_subidas img_sub = serv_img.getEntityByName(cmbImagenesDenominaciones.Text.ToString().Trim());
+            string filename_with_extension = System.IO.Path.GetFileName(img_sub.path_imagen);
+
+            //extracion de valor de los controles y asignaciona a variables.
+            string nombre_denominacion = txtNombreDenominacion.Text.ToString().Trim();
+            string valor_denominacion = txtValorDenominacion.Text.ToString().Trim();
+            string path_imagen_denominacion = @"C:\mt_con_database\IMAGENES_SUBIDAS\" + filename_with_extension;
+            string posicion_tarifa = cmbPosicionArreglo.Text.ToString().Trim();
+
+            string fecha_actual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            if (nombre_denominacion != "" && valor_denominacion != "" && path_imagen_denominacion != "" && posicion_tarifa != "")
+            {
+                ServiceDenominaciones serv_denominaciones = new ServiceDenominaciones();
+                ct_denominaciones obj = new ct_denominaciones();
+
+                obj.nombre = nombre_denominacion;
+                obj.valor = valor_denominacion;
+                obj.path_imagen = path_imagen_denominacion;
+                obj.posicion = Convert.ToInt32(posicion_tarifa);
+
+
+                //se insertaran solo 6 tarifas para montos fijos
+                ct_denominaciones denominacion = serv_denominaciones.getEntityByOrden(obj.posicion);
+                if (denominacion != null && denominacion.posicion == obj.posicion)
+                {
+                    obj.pkDenominacion = denominacion.pkDenominacion;
+                    obj.status = 1;
+                    obj.created_at = denominacion.created_at;
+                    obj.updated_at = fecha_actual;
+
+                    serv_denominaciones.updEntity(obj);
+                }
+                else
+                {
+                    obj.pkDenominacion = denominacion.pkDenominacion;
+                    obj.status = 1;
+                    obj.created_at = denominacion.created_at;
+                    obj.updated_at = fecha_actual;
+
+                    serv_denominaciones.addEntity(obj);
+                }
+
+                llenarGridDenominaciones();
+
+                txtNombreDenominacion.Text = "";
+                txtValorDenominacion.Text = "";
+                cmbImagenesDenominaciones.Text = "";
+                cmbPosicionArreglo.Text = "";
+            }
+        }
+        private void btnEliminar_Denominacion_Click(object sender, RoutedEventArgs e)
+        {
+            ct_denominaciones row = (ct_denominaciones)dataGridDenominaciones.SelectedItems[0];
+            //int orden = Convert.ToInt32(row.orden.ToString().Trim());
+
+            ServiceDenominaciones serv_denominaciones = new ServiceDenominaciones();
+            serv_denominaciones.delEntityByOrden(row);
+
+            llenarGridDenominaciones();
+        }
+
         #endregion
 
         #region PUERTO SERIAL
@@ -1506,7 +1620,6 @@ namespace TestMdfEntityFramework.Views
                 configura_puerto_serial();
 
             }
-
         }
         private void close_serial_port()
         {
@@ -1768,7 +1881,11 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[2] = decimal.ToByte(AddressConsola);
             BufferSendData[3] = decimal.ToByte(CantidadDatos);
             BufferSendData[4] = decimal.ToByte(Comando);
-            BufferSendData[5] = decimal.ToByte(numero_posicion_denominacion);
+
+            byte Code_xVar = (byte)numero_posicion_denominacion;
+            BufferSendData[5] = Code_xVar;
+
+            BufferSendData[5] = (byte)numero_posicion_denominacion;
 
             int IndiceBuffer = 6;
             UInt32 Var32 = valor_moneda_billete;
@@ -2013,7 +2130,23 @@ namespace TestMdfEntityFramework.Views
             }
         }
 
-        
+        private void btnGuardarConfiguracionUbicacion_Click(object sender, RoutedEventArgs e)
+        {
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_ubicacion = new config_varios();
+
+            // UBICACION
+            string activar_ubicacion = cmbActivarUbicacion.Text;
+
+            // UBICACION ACTIVA
+            cv_ubicacion.clave = "UBICACION_ACTIVA";
+            cv_ubicacion.valor = activar_ubicacion;
+            serv_config_varios.updEntityByClave(cv_ubicacion);
+
+            // MUESTRA POPUP DE CONFIRMACION DE QUE SE GUARDO EXITOSAMENTE.
+            txtMensajePopup.Text = "CONFIGURACION EXITOSA";
+            mostrarPopupOk();
+        }
 
         private string ejecutar_commando_85_get_texto_display_alcancia()
         {

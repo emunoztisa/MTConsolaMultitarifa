@@ -446,33 +446,41 @@ namespace TestMdfEntityFramework.Views
         {
             //MessageBox.Show(((Button)sender).Tag.ToString());
 
-            ejecutar_commando_06_cancelar_venta();
-
-            Task.WaitAll(new Task[] { Task.Delay(200) });
-            puertoSerie1.Read(RecievedDataGlobal, 0, 50);
-
-            if (RecievedDataGlobal != null)
+            if (validaDispositivoConectadoEnPuertoCOM())
             {
-                insert_boleto_cancelado_en_db_local(RecievedDataGlobal);
-                Task.WaitAll(new Task[] { Task.Delay(100) });
+                ejecutar_commando_06_cancelar_venta();
 
-                desbloqueaCampos();
+                Task.WaitAll(new Task[] { Task.Delay(200) });
+                puertoSerie1.Read(RecievedDataGlobal, 0, 50);
 
-                txtMensajePopup.Text = "VENTA CANCELADA";
-                mostrarPopupOk();
+                if (RecievedDataGlobal != null)
+                {
+                    insert_boleto_cancelado_en_db_local(RecievedDataGlobal);
+                    Task.WaitAll(new Task[] { Task.Delay(100) });
 
-                actualizaTxtStatus();
-                delegado_actualiza_txt_status();
+                    desbloqueaCampos();
 
-                //Actualiza Monto Ingresado
-                delegado_actualiza_lbl_monto_ingresado();
+                    txtMensajePopup.Text = "VENTA CANCELADA";
+                    mostrarPopupOk();
 
-                detiene_timers();
+                    actualizaTxtStatus();
+                    delegado_actualiza_txt_status();
+
+                    //Actualiza Monto Ingresado
+                    delegado_actualiza_lbl_monto_ingresado();
+
+                    detiene_timers();
+                }
+                else
+                {
+                    MessageBox.Show("Algo salio mal", "ERROR");
+                }
             }
             else
             {
-                MessageBox.Show("Algo salio mal", "ERROR");
+                MessageBox.Show("Favor de Validar que este conectado el dispositivo al puerto COM");
             }
+            
         }
 
 
@@ -588,6 +596,26 @@ namespace TestMdfEntityFramework.Views
                 MessageBox.Show(ex.Message);
             }
         }
+        private bool validaDispositivoConectadoEnPuertoCOM()
+        {
+            bool hayDispositivoConectado = false;
+
+            try
+            {
+                if (puertoSerie1.IsOpen == false)
+                {
+                    puertoSerie1.Open();
+                    hayDispositivoConectado = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                hayDispositivoConectado = false;
+                MessageBox.Show(ex.Message);
+            }
+
+            return hayDispositivoConectado;
+        }
 
         #region SERIAL PORT
         public void configura_puerto_serial()
@@ -634,9 +662,16 @@ namespace TestMdfEntityFramework.Views
         }
         private void open_serial_port()
         {
-            if (puertoSerie1.IsOpen == false)
+            try
             {
-                puertoSerie1.Open();
+                if (puertoSerie1.IsOpen == false)
+                {
+                    puertoSerie1.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "EXCEPTION !!!");
             }
         }
         private void close_serial_port()

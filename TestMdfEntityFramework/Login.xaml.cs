@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,11 +9,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+//using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using TestMdfEntityFramework;
 using TestMdfEntityFramework.Clases;
 using TestMdfEntityFramework.Controllers;
@@ -36,14 +39,31 @@ namespace TestMdfEntityFramework
         private Storyboard bottomToCenterStoryboard, topToCenterStoryboard,
             leftToCenterStoryboard, rightToCenterStoryboard;
 
+        //TIMERS
+        DispatcherTimer timerEvaluaConexionInternet = new DispatcherTimer();
+
         public Login()
         {
             InitializeComponent();
-            //SettearValoresProduccion();
+            SettearValoresProduccion();
             //SettearValoresPruebas();
-            SettearValoresPruebasInstallConfig();
+            //SettearValoresPruebasInstallConfig();
 
             cargar_logo_home();
+            cargar_logo_aplicacion();
+        }
+
+        private void cargar_logo_aplicacion()
+        {
+            //this.Icon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(Properties.Resources.mt_consola_icon., Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            BitmapSource mt_icon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(Properties.Resources.mt_consola.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            this.Icon = mt_icon;
+        }
+        private void cargar_logo_aplicacion_v2()
+        {
+            // Set an icon using code
+            Uri iconUri = new Uri(@"C:\mt_con_database\mt_consola.ico", UriKind.RelativeOrAbsolute);
+            this.Icon = BitmapFrame.Create(iconUri);
         }
 
         private void cargar_logo_home()
@@ -157,27 +177,31 @@ namespace TestMdfEntityFramework
                     if (user_actual.token == null && user_actual.token != "")
                     {
                         string password_desencriptado = mc.DesencriptarCadena(user_actual.contrasena);
-                        ResLogin resLogin = lc.login(usuario, password_desencriptado);
-                        if (resLogin.GetToken() != null && resLogin.GetToken() != "")
+                        Comun comun = new Comun();
+                        if (comun.HayConexionInternet())
                         {
-                            //validacion si tiene el perfil que se requiere para poder mostrar la opcion de configuracion
-                            int cont = 0;
-                            foreach (var item in resLogin.perfiles)
+                            ResLogin resLogin = lc.login(usuario, password_desencriptado);
+                            if (resLogin.GetToken() != null && resLogin.GetToken() != "")
                             {
-                                if(item.fkRole == 95 || item.fkRole == 96)
+                                //validacion si tiene el perfil que se requiere para poder mostrar la opcion de configuracion
+                                int cont = 0;
+                                foreach (var item in resLogin.perfiles)
                                 {
-                                    cont++;
+                                    if (item.fkRole == 95 || item.fkRole == 96)
+                                    {
+                                        cont++;
+                                    }
                                 }
+
+                                if (cont >= 2) { user_actual.tipo_usuario = "INSTALL_CONFIG"; }
+                                else { user_actual.tipo_usuario = "OPERADOR"; }
+
+                                user_actual.token = resLogin.token;
+                                val = true;
+                                serv_users.updEntity(user_actual);
+
+
                             }
-
-                            if(cont >= 2) { user_actual.tipo_usuario = "INSTALL_CONFIG"; }
-                            else { user_actual.tipo_usuario = "OPERADOR"; }
-
-                            user_actual.token = resLogin.token;
-                            val = true;
-                            serv_users.updEntity(user_actual);
-
-                            
                         }
                     }
                 }
@@ -215,12 +239,22 @@ namespace TestMdfEntityFramework
         #region EVENTOS DE CONTROLES
         private void Login_OnLoad(object sender, RoutedEventArgs e)
         {
-            //SINCRONIZAR USUARIOS HACIA LA BASE DE DATOS LOCAL  --  ejemplo: MT_OPE_XXXXX
-            SincronizaUsuarios();
+            inicializa_timer_evalua_mensajes();
 
+            //SINCRONIZAR USUARIOS HACIA LA BASE DE DATOS LOCAL  --  ejemplo: MT_OPE_XXXXX
+            Comun comun = new Comun();
+            if (comun.HayConexionInternet())
+            {
+                SincronizaUsuarios();
+            }
+            
             //EVENTOS PARA POPUP OK
             SetPopupDlgCenter();
             InitializeAnimations();
+        }
+        private void OnUnload(object sender, RoutedEventArgs e)
+        {
+            detiene_timers();
         }
         private void btnCerrarClick(object sender, RoutedEventArgs e)
         {
@@ -234,9 +268,20 @@ namespace TestMdfEntityFramework
         {
             if (validaUsuario())
             {
-                Principal prin = new Principal();
-                this.Close();
-                prin.Show();
+                Comun comun = new Comun();
+                if (comun.HayConexionInternet())
+                {
+                    Principal prin = new Principal();
+                    this.Close();
+                    prin.Show();
+                }
+                else
+                {
+                    txtMensajePopup.Text = "NO HAY CONEXION INTERNET";
+                    txtMensajePopup.FontSize = 10;
+                    imgPopup.Source = new BitmapImage(new Uri(@"/SCS/IMG/equis_roja.png", UriKind.Relative));
+                    mostrarPopupOk();
+                }
             }
             else
             {
@@ -248,6 +293,9 @@ namespace TestMdfEntityFramework
                 //MessageBox.Show("El usuario no existe o no tiene permisos para acceder","ATENCION");
             }
         }
+
+
+
         #endregion
 
         #region METODOS GRID POPUP
@@ -270,6 +318,9 @@ namespace TestMdfEntityFramework
                 throw;
             }
         }
+
+        
+
         private void mostrarPopupOk()
         {
             try
@@ -405,14 +456,67 @@ namespace TestMdfEntityFramework
         private void popupGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             ocultarPopupOk();
-            LimpiarCamposTexto();
+            //LimpiarCamposTexto();
         }
         private void popupGrid_TouchDown(object sender, TouchEventArgs e)
         {
             ocultarPopupOk();
-            LimpiarCamposTexto();
+            //LimpiarCamposTexto();
         }
         #endregion
+
+        #region TIMERS
+        private void inicializa_timer_evalua_mensajes()
+        {
+            // INICIA TIMER QUE ESTARA ACTUALIZANDO EL VALOR DE ESTATUS
+            timerEvaluaConexionInternet.Tick += new EventHandler(dispatcherTimerEvaluaMensajes_Tick);
+            timerEvaluaConexionInternet.Interval = new TimeSpan(0, 0, 10);
+            timerEvaluaConexionInternet.Start();
+        }
+        private void dispatcherTimerEvaluaMensajes_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                //Sincronizar los usuarios desde TISA hacia la CONSOLA
+                Comun comun = new Comun();
+                if (comun.HayConexionInternet())
+                {
+                    SincronizaUsuarios();
+                }
+
+                //Cambia la imagen de mensajes en la menubar de principal, segun si hay o no mensajes pendientes de reproducir.
+                Cambia_Imagen_Evalua_Conexion_Internet();
+
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "EXCEPTION !!!");
+            }
+        }
+       
+        private void detiene_timers()
+        {
+
+            timerEvaluaConexionInternet.IsEnabled = false;
+            
+        }
+
+        #endregion
+
+        private void Cambia_Imagen_Evalua_Conexion_Internet()
+        {
+            //Sincronizar los usuarios desde TISA hacia la CONSOLA
+            Comun comun = new Comun();
+            if (comun.HayConexionInternet())
+            {
+                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/conectado.png", UriKind.Relative));
+            }
+            else
+            {
+                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/desconectado.png", UriKind.Relative));
+            }
+        }
 
     }
 }

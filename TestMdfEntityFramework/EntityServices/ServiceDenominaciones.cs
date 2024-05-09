@@ -61,5 +61,26 @@ namespace TestMdfEntityFramework.EntityServices
                 em.SaveChanges();
             }
         }
+
+        public ct_denominaciones getEntityByOrden(object posicion)
+        {
+            return em.ct_denominaciones.Where(q => (int)q.posicion == (int)posicion).FirstOrDefault<ct_denominaciones>();
+        }
+
+        public void delEntityByOrden(ct_denominaciones entity)
+        {
+            string fecha_actual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            ct_denominaciones it = em.ct_denominaciones.Where(q => (int)q.posicion == (int)entity.posicion).First<ct_denominaciones>();
+            if (it == null)
+            {
+                throw new ArgumentException("Denominacion no Encontrada");
+            }
+            else
+            {
+                //em.ct_tarifas_montos_fijos.Remove(it);
+                it.deleted_at = fecha_actual;
+                em.SaveChanges();
+            }
+        }
     }
 }

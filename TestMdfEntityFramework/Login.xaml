@@ -9,7 +9,7 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
-        Background="Transparent">
+        Background="Transparent" Unloaded="OnUnload">
     <Window.Resources>
         <SolidColorBrush x:Key="TextBox.Static.Border" Color="#FFABAdB3"/>
         <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FF7EB4EA"/>
@@ -320,10 +320,17 @@
                         <ColumnDefinition Width="1000" />
                     </Grid.ColumnDefinitions>
                     <!-- #REGION VERSION-->
-                    <TextBlock Text="VERSION: 1.0.0" Grid.Column="0" 
+                    <TextBlock Text="VERSION: 1.0.0.0" Grid.Column="0" 
                                Foreground="White" HorizontalAlignment="Left" 
                                VerticalAlignment="Center" Margin="25,5,5,5" />
                     <!-- #ENDREGION-->
+                    <!--#region HAY INTERNET -->
+                    <Image x:Name="imgHayInternet" 
+                           Grid.Column="0" 
+                           HorizontalAlignment="Center"   
+                           Width="30" 
+                           Source="SCS/IMG/validando_conexion.png"/>
+                    <!--#endregion-->
                     <!-- #REGION COPYRIGHT-->
                     <TextBlock Text="© 2024 Tarjetas Integrales SA de CV" Grid.Column="0" 
                                Foreground="White" HorizontalAlignment="Right" 

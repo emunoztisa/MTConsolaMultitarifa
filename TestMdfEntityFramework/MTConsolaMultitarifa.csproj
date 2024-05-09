@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>false</MapFileExtensions>
-    <ApplicationRevision>40</ApplicationRevision>
+    <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -149,18 +149,22 @@
     <Compile Include="Controllers\BoletosController.cs" />
     <Compile Include="Controllers\BoletosDetalleController.cs" />
     <Compile Include="Controllers\BoletosTarifaFijaController.cs" />
+    <Compile Include="Controllers\ConfigVariosController.cs" />
     <Compile Include="Controllers\CorredoresController.cs" />
     <Compile Include="Controllers\CortesController.cs" />
+    <Compile Include="Controllers\DenominacionesController.cs" />
     <Compile Include="Controllers\EmpresaCorredorOperadorController.cs" />
     <Compile Include="Controllers\EmpresasController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\LugaresController.cs" />
     <Compile Include="Controllers\LugarRutaController.cs" />
     <Compile Include="Controllers\MensajesController.cs" />
+    <Compile Include="Controllers\OpcionesGeneralesController.cs" />
     <Compile Include="Controllers\OperadoresController.cs" />
     <Compile Include="Controllers\PerfilesController.cs" />
     <Compile Include="Controllers\RutasController.cs" />
     <Compile Include="Controllers\TarifasController.cs" />
+    <Compile Include="Controllers\TarifasMontosFijosController.cs" />
     <Compile Include="Controllers\UbicacionController.cs" />
     <Compile Include="Controllers\UnidadesController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -245,6 +249,7 @@
     <Compile Include="Principal.xaml.cs">
       <DependentUpon>Principal.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Clases\ClaseRepUsers.cs" />
     <Compile Include="Requests\ReqBoletos.cs" />
     <Compile Include="Requests\ReqBoletosDetalle.cs" />
     <Compile Include="Requests\ReqBoletosTarifaFija.cs" />
@@ -261,9 +266,11 @@
     <Compile Include="Responses\ResBoletosTarifaFija.cs" />
     <Compile Include="Responses\ResBoletosTarifaFija_Insert.cs" />
     <Compile Include="Responses\ResBoletos_Insert.cs" />
+    <Compile Include="Responses\ResConfigVarios.cs" />
     <Compile Include="Responses\ResCorredores.cs" />
     <Compile Include="Responses\ResCortes.cs" />
     <Compile Include="Responses\ResCortes_Insert.cs" />
+    <Compile Include="Responses\ResDenominaciones.cs" />
     <Compile Include="Responses\ResEmpresaCorredorOperador.cs" />
     <Compile Include="Responses\ResEmpresas.cs" />
     <Compile Include="Responses\ResLogin.cs" />
@@ -271,10 +278,12 @@
     <Compile Include="Responses\ResLugarRuta.cs" />
     <Compile Include="Responses\ResMensajes.cs" />
     <Compile Include="Responses\ResMensajes_Insert.cs" />
+    <Compile Include="Responses\ResOpcionesGenerales.cs" />
     <Compile Include="Responses\ResOperadores.cs" />
     <Compile Include="Responses\ResPerfiles.cs" />
     <Compile Include="Responses\ResRutas.cs" />
     <Compile Include="Responses\ResTarifas.cs" />
+    <Compile Include="Responses\ResTarifasMontosFijos.cs" />
     <Compile Include="Responses\ResUbicacion.cs" />
     <Compile Include="Responses\ResUnidades.cs" />
     <Compile Include="Responses\ResUsers.cs" />
@@ -475,6 +484,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -484,10 +494,12 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\ReporteUsers.rdlc" />
     <EntityDeploy Include="dbModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>dbModel.Designer.cs</LastGenOutput>
@@ -496,6 +508,16 @@
       <DependentUpon>dbModel.edmx</DependentUpon>
     </None>
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\TestMdfEntityFramework.Clases.ClaseRepUsers.datasource" />
+    <None Include="Properties\DataSources\TestMdfEntityFramework.Clases.clase_rep_users.datasource" />
+    <None Include="Properties\DataSources\TestMdfEntityFramework.Clases.CLocation.datasource" />
+    <None Include="Properties\DataSources\TestMdfEntityFramework.Clases.ConfigPort.datasource" />
+    <None Include="Properties\DataSources\TestMdfEntityFramework.Clases.Perfiles.datasource" />
+    <None Include="Properties\DataSources\TestMdfEntityFramework.Clases.SincronizacionTISA.datasource" />
+    <None Include="Properties\DataSources\TestMdfEntityFramework.Clases.TipoTarifa.datasource" />
+    <None Include="Properties\DataSources\TestMdfEntityFramework.Clases.User.datasource" />
+    <None Include="Properties\DataSources\TestMdfEntityFramework.EntityServices.ServiceBoletosTarifaFija.datasource" />
+    <None Include="Properties\DataSources\TestMdfEntityFramework.ReportesClases.clase_rep_users.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -518,6 +540,11 @@
     </Content>
     <Resource Include="SCS\IMG\plus.png" />
     <Resource Include="SCS\IMG\delete.png" />
+    <Resource Include="SCS\IMG\MONEDAS\50centavos.png" />
+    <Resource Include="SCS\IMG\conectado.png" />
+    <Resource Include="SCS\IMG\desconectado.png" />
+    <Resource Include="SCS\IMG\validando_conexion.png" />
+    <None Include="Resources\mt_consola.ico" />
     <Content Include="SqlServerTypes\readme.htm" />
     <Content Include="SqlServerTypes\x64\msvcr120.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -601,7 +628,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Libs\" />
+    <Folder Include="ReportesClases\" />
     <Folder Include="SCS\IMG\IMAGENES_SUBIDAS\" />
+    <Folder Include="Views\Reports\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

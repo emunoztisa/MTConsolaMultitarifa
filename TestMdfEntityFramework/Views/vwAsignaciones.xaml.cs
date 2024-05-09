@@ -37,27 +37,31 @@ namespace TestMdfEntityFramework.Views
             config_varios cv = scv.getEntityByClave("ASIGNACION_ACTIVA");
             string asignacionActiva = cv.valor;
 
-            ServiceAsignaciones sasign = new ServiceAsignaciones();
-            sy_asignaciones asignacion_activa = sasign.getEntityByFolio(asignacionActiva);
+            ServiceAsignaciones serv_asign = new ServiceAsignaciones();
+            sy_asignaciones obj_asignacion_activa = serv_asign.getEntityByFolio(asignacionActiva);
+            
+            if(obj_asignacion_activa != null)
+            {
+                lblFolioAsignacion.Text = obj_asignacion_activa.folio;
+                lblDia.Text = obj_asignacion_activa.fecha;
+                lblHora.Text = obj_asignacion_activa.hora;
 
-            lblFolioAsignacion.Text = asignacion_activa.folio;
-            lblDia.Text = asignacion_activa.fecha;
-            lblHora.Text = asignacion_activa.hora;
+                //setear ruta
+                ServiceRutas sr = new ServiceRutas();
+                ct_rutas ruta_actual = sr.getEntity(obj_asignacion_activa.fkRuta);
+                lblRuta.Text = ruta_actual != null ? ruta_actual.nombre : "";
 
-            //setear ruta
-            ServiceRutas sr = new ServiceRutas();
-            ct_rutas ruta_actual = sr.getEntity(asignacion_activa.fkRuta);
-            lblRuta.Text = ruta_actual != null ? ruta_actual.nombre : "";
+                //setear unidad
+                ServiceUnidades su = new ServiceUnidades();
+                ct_unidades unidad_actual = su.getEntity(obj_asignacion_activa.fkUnidad);
+                lblUnidad.Text = unidad_actual != null ? unidad_actual.nombre : "";
 
-            //setear unidad
-            ServiceUnidades su = new ServiceUnidades();
-            ct_unidades unidad_actual = su.getEntity(asignacion_activa.fkUnidad);
-            lblUnidad.Text = unidad_actual != null ? unidad_actual.nombre : "";
-
-            //setear operador
-            ServiceOperadores so = new ServiceOperadores();
-            ct_operadores operador_actual = so.getEntity(asignacion_activa.fkOperador);
-            lblOperador.Text = operador_actual != null ? operador_actual.nombre : "";
+                //setear operador
+                ServiceOperadores so = new ServiceOperadores();
+                ct_operadores operador_actual = so.getEntity(obj_asignacion_activa.fkOperador);
+                lblOperador.Text = operador_actual != null ? operador_actual.nombre : "";
+            }
+            
         }
         private void btnGuardarAsignacion_Click(object sender, RoutedEventArgs e)
         {

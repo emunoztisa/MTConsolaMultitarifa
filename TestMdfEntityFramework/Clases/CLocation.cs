@@ -8,6 +8,7 @@ using System.Device.Location;
 using TestMdfEntityFramework.Controllers;
 using TestMdfEntityFramework.Responses;
 using TestMdfEntityFramework.EntityServices;
+using TestMdfEntityFramework.Utils;
 
 namespace TestMdfEntityFramework.Clases
 {
@@ -22,6 +23,8 @@ namespace TestMdfEntityFramework.Clases
 
         public decimal latitud { get; set; }
         public decimal longitud { get; set; }
+
+        int contador = 0;
 
         public CLocation()
         {
@@ -49,6 +52,8 @@ namespace TestMdfEntityFramework.Clases
             ASIGNACION_ACTIVA = cv_asign.valor;
             FK_ASIGNACION_ACTIVA = asig.pkAsignacion;
             MODO_APP = cv_modo.valor;
+
+            contador = 0;
         }
 
         public void GetLocationDataEvent()
@@ -60,11 +65,19 @@ namespace TestMdfEntityFramework.Clases
 
         private void watcher_PositionChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
         {
-            latitud = (decimal)e.Position.Location.Latitude;
-            longitud = (decimal)e.Position.Location.Longitude;
-            this.watcher.Stop();
+            if(contador == 0)
+            {
+                latitud = (decimal)e.Position.Location.Latitude;
+                longitud = (decimal)e.Position.Location.Longitude;
+                this.watcher.Stop();
 
-            Sincronizar_Ubicacion(latitud, longitud);
+                Sincronizar_Ubicacion(latitud, longitud);
+
+                contador++;
+            }
+
+            
+
 
             ////Enviar la Ubicacion a TISA, por medio del servicio
             //UbicacionController ubi_controller = new UbicacionController();
@@ -90,23 +103,27 @@ namespace TestMdfEntityFramework.Clases
         {
             try
             {
-                //Enviar la Ubicacion a TISA, por medio del servicio
-                UbicacionController ubi_controller = new UbicacionController();
-                sy_ubicacion ubi = new sy_ubicacion();
-                ubi.fkAsignacion = FK_ASIGNACION_ACTIVA;
-                ubi.latitud = _lat;
-                ubi.longitud = _lng;
-                ubi.enviado = 1;
-                ubi.confirmadoTISA = 0;
-                ubi.modo = MODO_APP;
-                ResUbicacion res_ubicacion = ubi_controller.InsertUbicacion(ubi);
-
-                //Insertar la ubicacion en la dblocal en caso de que se haya insertado correctamente en TISA.
-                if (res_ubicacion.response == true && res_ubicacion.status == 200)
+                Comun comun = new Comun();
+                if (comun.HayConexionInternet())
                 {
-                    ServiceUbicacion serv_ubicacion = new ServiceUbicacion();
-                    ubi.confirmadoTISA = 1;
-                    serv_ubicacion.addEntity(ubi);
+                    //Enviar la Ubicacion a TISA, por medio del servicio
+                    UbicacionController ubi_controller = new UbicacionController();
+                    sy_ubicacion ubi = new sy_ubicacion();
+                    ubi.fkAsignacion = FK_ASIGNACION_ACTIVA;
+                    ubi.latitud = _lat;
+                    ubi.longitud = _lng;
+                    ubi.enviado = 1;
+                    ubi.confirmadoTISA = 0;
+                    ubi.modo = MODO_APP;
+                    ResUbicacion res_ubicacion = ubi_controller.InsertUbicacion(ubi);
+
+                    //Insertar la ubicacion en la dblocal en caso de que se haya insertado correctamente en TISA.
+                    if (res_ubicacion.response == true && res_ubicacion.status == 200)
+                    {
+                        ServiceUbicacion serv_ubicacion = new ServiceUbicacion();
+                        ubi.confirmadoTISA = 1;
+                        serv_ubicacion.addEntity(ubi);
+                    }
                 }
             }
             catch (Exception ex)

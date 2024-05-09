@@ -361,7 +361,7 @@
             <!--#region POPUP OK -->
             <Grid x:Name="popupGrid"
               Visibility="Hidden"
-              Grid.Row="3" Grid.Column="4" 
+              Grid.Row="3" Grid.Column="6" 
                   LostFocus="popupGrid_LostFocus" 
                   MouseDown="popupGrid_MouseDown" 
                   TouchDown="popupGrid_TouchDown">

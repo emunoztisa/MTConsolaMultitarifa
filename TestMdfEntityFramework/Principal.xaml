@@ -545,13 +545,32 @@
                                Foreground="White" HorizontalAlignment="Left" 
                                VerticalAlignment="Center" Margin="15,5,5,5" />
                     <!-- #ENDREGION-->
+                    <!--#region HAY INTERNET -->
+                    <Image x:Name="imgHayInternet" 
+                           Grid.Column="0" 
+                           HorizontalAlignment="Center"   
+                           Width="30"
+                           Margin="5,5,500,5"
+                           Source="SCS/IMG/validando_conexion.png"/>
+                    <!--#endregion-->
+                    <!-- #REGION DIA-->
+                    <TextBlock x:Name="lblFecha"
+                                Grid.Column="0" 
+                               FontSize="30"
+                               Foreground="White" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center" 
+                               Margin="5,5,200,5" 
+                               Text=""/>
+                    <!-- #ENDREGION-->
                     <!-- #REGION RELOJ-->
                     <TextBlock x:Name="lblReloj"
                         Text="" Grid.Column="0" 
                                FontSize="30"
                                Foreground="White" 
                                HorizontalAlignment="Center" 
-                               VerticalAlignment="Center" Margin="5,5,5,5" />
+                               VerticalAlignment="Center" 
+                               Margin="180,5,5,5" />
                     <!-- #ENDREGION-->
                     <!-- #REGION COPYRIGHT-->
                     <TextBlock x:Name="txtCopyright"

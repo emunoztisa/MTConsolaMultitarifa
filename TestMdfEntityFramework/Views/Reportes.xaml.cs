@@ -65,67 +65,76 @@ namespace TestMdfEntityFramework.Views
 
         private void btnCorteCaja_Click(object sender, RoutedEventArgs e)
         {
-            DateTime varFechaHora = DateTime.Now;
-            byte[] BCDDateTime = ToBCD_DT(varFechaHora);
-
-            const decimal Comando = 3;
-            const decimal CRC1 = 193;
-            const decimal CRC2 = 194;
-
-            int CantidadDatos = 0;
-
-            ClearBufferSendData();
-
-            BufferSendData[0] = decimal.ToByte(ByteInicio);
-            BufferSendData[1] = decimal.ToByte(AddressAlcancia);
-            BufferSendData[2] = decimal.ToByte(AddressConsola);
-
-            BufferSendData[4] = decimal.ToByte(Comando);
-            CantidadDatos += 1;
-
-            // Metodo para consultar el siguiente corte de alcancia a asignar
-            string folio_corte = obtener_siguiente_folio_corte(); //"COR_000001_000001";
-
-            ingresa_folio_en_buffer_send_data(folio_corte);
-            CantidadDatos += 17;
-
-            BufferSendData[22] = BCDDateTime[0];
-            BufferSendData[23] = BCDDateTime[1];
-            BufferSendData[24] = BCDDateTime[2];
-            BufferSendData[25] = BCDDateTime[3];
-            BufferSendData[26] = BCDDateTime[4];
-            BufferSendData[27] = BCDDateTime[5];
-            CantidadDatos += 6;
-
-            BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
-            BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
-
-            BufferSendData[K_posicionCantidadDatos] = (byte)(CantidadDatos);
-
-            open_serial_port();
-            puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
-
-            Task.WaitAll(new Task[] { Task.Delay(200) });
-            puertoSerie1.Read(RecievedDataGlobal, 0, 50);
-
-            if (RecievedDataGlobal != null)
+            if (validaDispositivoConectadoEnPuertoCOM())
             {
-                //TODO: Popup notificando que se ha impreso el corte de forma correcta.
+                DateTime varFechaHora = DateTime.Now;
+                byte[] BCDDateTime = ToBCD_DT(varFechaHora);
 
-                insert_corte_db_local(RecievedDataGlobal);
-                Task.WaitAll(new Task[] { Task.Delay(100) });
+                const decimal Comando = 3;
+                const decimal CRC1 = 193;
+                const decimal CRC2 = 194;
 
-                ejecutar_commando_04();
-                Task.WaitAll(new Task[] { Task.Delay(100) });
+                int CantidadDatos = 0;
 
-                txtMensajePopup.Text = "CORTE IMPRESO";
-                mostrarPopupOk();
+                ClearBufferSendData();
 
-                //MessageBox.Show("Corte Impreso desde Alcancia", "IMPRESION CORTE");
+                BufferSendData[0] = decimal.ToByte(ByteInicio);
+                BufferSendData[1] = decimal.ToByte(AddressAlcancia);
+                BufferSendData[2] = decimal.ToByte(AddressConsola);
+
+                BufferSendData[4] = decimal.ToByte(Comando);
+                CantidadDatos += 1;
+
+                // Metodo para consultar el siguiente corte de alcancia a asignar
+                string folio_corte = obtener_siguiente_folio_corte(); //"COR_000001_000001";
+
+                ingresa_folio_en_buffer_send_data(folio_corte);
+                CantidadDatos += 17;
+
+                BufferSendData[22] = BCDDateTime[0];
+                BufferSendData[23] = BCDDateTime[1];
+                BufferSendData[24] = BCDDateTime[2];
+                BufferSendData[25] = BCDDateTime[3];
+                BufferSendData[26] = BCDDateTime[4];
+                BufferSendData[27] = BCDDateTime[5];
+                CantidadDatos += 6;
+
+                BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
+                BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+                BufferSendData[K_posicionCantidadDatos] = (byte)(CantidadDatos);
+
+                open_serial_port();
+                puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
+
+                Task.WaitAll(new Task[] { Task.Delay(200) });
+                puertoSerie1.Read(RecievedDataGlobal, 0, 50);
+
+                if (RecievedDataGlobal != null)
+                {
+                    //TODO: Popup notificando que se ha impreso el corte de forma correcta.
+
+                    insert_corte_db_local(RecievedDataGlobal);
+                    Task.WaitAll(new Task[] { Task.Delay(100) });
+
+                    ejecutar_commando_04();
+                    Task.WaitAll(new Task[] { Task.Delay(100) });
+
+                    txtMensajePopup.Text = "CORTE IMPRESO";
+                    mostrarPopupOk();
+
+                    //MessageBox.Show("Corte Impreso desde Alcancia", "IMPRESION CORTE");
+                }
+                else
+                {
+                    MessageBox.Show("Algo salio mal", "ERROR");
+                }
             }
-            else {
-                MessageBox.Show("Algo salio mal", "ERROR");
+            else
+            {
+                MessageBox.Show("Favor de Validar que este conectado el dispositivo al puerto COM");
             }
+            
         }
 
         private void ejecutar_commando_04()
@@ -275,7 +284,26 @@ namespace TestMdfEntityFramework.Views
             return TextoFechaHora;
         }
 
+        private bool validaDispositivoConectadoEnPuertoCOM()
+        {
+            bool hayDispositivoConectado = false;
 
+            try
+            {
+                if (puertoSerie1.IsOpen == false)
+                {
+                    puertoSerie1.Open();
+                    hayDispositivoConectado = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                hayDispositivoConectado = false;
+                MessageBox.Show(ex.Message);
+            }
+
+            return hayDispositivoConectado;
+        }
 
         public void configura_puerto_serial()
         {
@@ -304,7 +332,23 @@ namespace TestMdfEntityFramework.Views
             }
 
         }
+
         private void open_serial_port()
+        {
+            try
+            {
+                if (puertoSerie1.IsOpen == false)
+                {
+                    puertoSerie1.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+                configura_puerto_serial();
+
+            }
+        }
+        private void open_serial_port_v2()
         {
             if (puertoSerie1.IsOpen == false)
             {

@@ -13,6 +13,7 @@ using TestMdfEntityFramework.Responses;
 using TestMdfEntityFramework.Views;
 using System.Device.Location;
 using System.Threading.Tasks;
+using TestMdfEntityFramework.Utils;
 
 namespace TestMdfEntityFramework
 {
@@ -33,7 +34,23 @@ namespace TestMdfEntityFramework
         {
             InitializeComponent();
             btnInicio_Click(null, null);
+            
+            cargar_logo_aplicacion();
         }
+
+        private void cargar_logo_aplicacion()
+        {
+            //this.Icon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(Properties.Resources.mt_consola_icon., Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            BitmapSource mt_icon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(Properties.Resources.mt_consola.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            this.Icon = mt_icon;
+        }
+        private void cargar_logo_aplicacion_v2()
+        {
+            // Set an icon using code
+            Uri iconUri = new Uri(@"C:\mt_con_database\mt_consola.ico", UriKind.RelativeOrAbsolute);
+            this.Icon = BitmapFrame.Create(iconUri);
+        }
+
 
         private void btnResetPortName_Click(object sender, RoutedEventArgs e)
         {
@@ -72,6 +89,7 @@ namespace TestMdfEntityFramework
         {
             try
             {
+                lblFecha.Text = DateTime.Now.ToString("dd/MM/yyyy");
                 lblReloj.Text = DateTime.Now.ToString("hh:mm:ss tt");
             }
             catch (Exception ex)
@@ -83,14 +101,27 @@ namespace TestMdfEntityFramework
         {
             try
             {
-                //Envio los mensajes a TISA
-                Sincronizar_Mensajes();
+                Comun comun = new Comun();
+                if (comun.HayConexionInternet())
+                {
+                    //Envio los mensajes a TISA
+                    Sincronizar_Mensajes();
+                }
 
                 //Cambia la imagen de mensajes en la menubar de principal, segun si hay o no mensajes pendientes de reproducir.
                 Cambia_Imagen_Mensajes();
 
+                //Cambia la imagen de conexion en caso de haber o no conexion a internet
+                Cambia_Imagen_Evalua_Conexion_Internet();
+
                 //Envio de la ubicacion actual de la unidad en latitud y longitud
-                //Sincronizar_Ubicacion();
+                ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
+                config_varios cv_ubicacion = serv_conf_varios.getEntityByClave("UBICACION_ACTIVA");
+                if(cv_ubicacion.valor == "HABILITADO")
+                {
+                    Sincronizar_Ubicacion();
+                }
+                
             }
             catch (Exception ex)
             {
@@ -132,9 +163,14 @@ namespace TestMdfEntityFramework
             inicializa_timer_evalua_mensajes();
             inicializa_timer_sincroniza();
 
-            SincronizarCatalogos();
+            Comun comun = new Comun();
+            if (comun.HayConexionInternet())
+            {
+                SincronizarCatalogos();
+                SincronizaOperacionConsola();
+            }
+            
             SetearVersionYCopyright();
-            SincronizaOperacionConsola();
 
             //OBTENER CONFIGURACIONES VARIAS DEL SISTEMA Y OPERACION ACTUAL
             ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
@@ -145,7 +181,7 @@ namespace TestMdfEntityFramework
             sy_asignaciones asig = serv_asign.getEntityByFolio(cv_asign.valor);
 
             ASIGNACION_ACTIVA = cv_asign.valor;
-            FK_ASIGNACION_ACTIVA = asig.pkAsignacion;
+            FK_ASIGNACION_ACTIVA = cv_asign.valor != "" ? asig.pkAsignacion : 0;
             MODO_APP = cv_modo.valor;
 
 
@@ -175,11 +211,27 @@ namespace TestMdfEntityFramework
             }
         }
 
+        private void Cambia_Imagen_Evalua_Conexion_Internet()
+        {
+            //Sincronizar los usuarios desde TISA hacia la CONSOLA
+            Comun comun = new Comun();
+            if (comun.HayConexionInternet())
+            {
+                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/conectado.png", UriKind.Relative));
+            }
+            else
+            {
+                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/desconectado.png", UriKind.Relative));
+            }
+        }
+
         private void Principal_OnUnLoad(object sender, RoutedEventArgs e)
         {
             LimpiarUsuarioActualLogueado();
 
             detiene_timers();
+
+            LimpiarAsignacionActual();
 
             ////////////////////////////////////////////////////////////////////////
             // ESTAS TAREAS SE DETENDRAN AL SALIR DEL FORMULARIO.
@@ -192,6 +244,17 @@ namespace TestMdfEntityFramework
             */
             ////////////////////////////////////////////////////////////////////////
         }
+
+        private void LimpiarAsignacionActual()
+        {
+            // ACTUALIZAR EN LA BASE DE DATOS CON EL USUARIO ACTUAL CONECTADO
+            ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
+            config_varios cv_asignacion_actual = new config_varios();
+            cv_asignacion_actual.clave = "ASIGNACION_ACTIVA";
+            cv_asignacion_actual.valor = "";
+            serv_conf_varios.updEntityByClave(cv_asignacion_actual);
+        }
+
         private void Principal_Closing(object sender, CancelEventArgs e)
         {
             Login login = new Login();
@@ -228,28 +291,56 @@ namespace TestMdfEntityFramework
         }
         private void btnCobroTarifa_Click(object sender, RoutedEventArgs e)
         {
-            ServiceConfigVarios scv = new ServiceConfigVarios();
-            config_varios cv = scv.getEntityByClave("TIPO_TARIFA");
-
-            if (cv != null)
+            if (HayAsignacionActiva())
             {
-                if (cv.valor == "FIJA")
+                ServiceConfigVarios scv = new ServiceConfigVarios();
+                config_varios cv = scv.getEntityByClave("TIPO_TARIFA");
+
+                if (cv != null)
                 {
-                    DataContext = new CobroTarifaFija();
-                }
-                if (cv.valor == "MULTITARIFA")
-                {
-                    DataContext = new CobroMultitarifaV1();
-                }
-                if(cv.valor == "FIJA_DINAMICA")
-                {
-                    DataContext = new CobroTarifaFijaBotones();
+                    if (cv.valor == "FIJA")
+                    {
+                        DataContext = new CobroTarifaFija();
+                    }
+                    if (cv.valor == "MULTITARIFA")
+                    {
+                        DataContext = new CobroMultitarifaV1();
+                    }
+                    if (cv.valor == "FIJA_DINAMICA")
+                    {
+                        DataContext = new CobroTarifaFijaBotones();
+                    }
                 }
             }
+            else
+            {
+                MessageBox.Show("FAVOR DE SELECCIONAR UNA ASIGNACION ANTES DE OPERAR LA UNIDAD DE TRANSPORTE");
+            } 
         }
+
         private void btnReportes_Click(object sender, RoutedEventArgs e)
         {
-            DataContext = new Reportes();
+            if (HayAsignacionActiva())
+            {
+                DataContext = new Reportes();
+            }
+            else
+            {
+                MessageBox.Show("FAVOR DE SELECCIONAR UNA ASIGNACION ANTES DE OPERAR LA UNIDAD DE TRANSPORTE");
+            }
+        }
+        private bool HayAsignacionActiva()
+        {
+            bool HayAsignacionActiva = false;
+
+            ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
+            config_varios cv_asignacion_actual = serv_conf_varios.getEntityByClave("ASIGNACION_ACTIVA");
+            if (cv_asignacion_actual.valor != "")
+            {
+                HayAsignacionActiva = true;
+            }
+
+            return HayAsignacionActiva;
         }
         private void btnLogout_Click(object sender, RoutedEventArgs e)
         {
@@ -273,7 +364,14 @@ namespace TestMdfEntityFramework
         }
         private void btnMensajes_Click(object sender, RoutedEventArgs e)
         {
-            DataContext = new Mensajes();
+            if (HayAsignacionActiva())
+            {
+                DataContext = new Mensajes();
+            }
+            else
+            {
+                MessageBox.Show("FAVOR DE SELECCIONAR UNA ASIGNACION ANTES DE OPERAR LA UNIDAD DE TRANSPORTE");
+            }
         }
 
         #endregion
@@ -568,6 +666,98 @@ namespace TestMdfEntityFramework
             }
         }
 
+
+        private void Sincroniza_Denominacines()
+        {
+            //Se obtienen las unidades del endpoint
+            DenominacionesController uc = new DenominacionesController();
+            List<ct_denominaciones> list = uc.GetDenominacionesPorUnidad(); //PENDIENTE
+
+            //Se insertan las unidades en la base local
+            ServiceDenominaciones serv = new ServiceDenominaciones();
+
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (serv.getEntity(list[i].pkDenominacion) != null)
+                {
+                    serv.updEntity(list[i]);
+                }
+                else
+                {
+                    serv.addEntity(list[i]);
+                }
+            }
+        }
+
+        private void Sincroniza_TarifasMontosFijos()
+        {
+            //Se obtienen las unidades del endpoint
+            TarifasMontosFijosController uc = new TarifasMontosFijosController();
+            List<ct_tarifas_montos_fijos> list = uc.GetTarifasMontosFijosPorUnidad(); //PENDIENTE
+
+            //Se insertan las unidades en la base local
+            ServiceTarifasMontosFijos serv = new ServiceTarifasMontosFijos();
+
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (serv.getEntity(list[i].pkTarifaMontoFijo) != null)
+                {
+                    serv.updEntity(list[i]);
+                }
+                else
+                {
+                    serv.addEntity(list[i]);
+                }
+            }
+        }
+
+        private void Sincroniza_OpcionesGenerales()
+        {
+            //Se obtienen las unidades del endpoint
+            OpcionesGeneralesController uc = new OpcionesGeneralesController();
+            List<opciones_generales> list = uc.GetOpcionesGenerales();
+
+            //Se insertan las unidades en la base local
+            ServiceOpcionesGenerales serv = new ServiceOpcionesGenerales();
+
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (serv.getEntity(list[i].pkOpcionGeneral) != null)
+                {
+                    serv.updEntity(list[i]);
+                }
+                else
+                {
+                    serv.addEntity(list[i]);
+                }
+            }
+        }
+
+        private void Sincroniza_ConfigVarios()
+        {
+            //Se obtienen las unidades del endpoint
+            ConfigVariosController uc = new ConfigVariosController();
+            List<config_varios> list = uc.GetConfigVarios();
+
+            //Se insertan las unidades en la base local
+            ServiceConfigVarios serv = new ServiceConfigVarios();
+
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (serv.getEntity(list[i].pkConfigVarios) != null)
+                {
+                    serv.updEntity(list[i]);
+                }
+                else
+                {
+                    serv.addEntity(list[i]);
+                }
+            }
+        }
 
 
         #endregion

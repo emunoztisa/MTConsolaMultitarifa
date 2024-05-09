@@ -197,7 +197,7 @@ namespace TestMdfEntityFramework.Views
             sy_asignaciones asig = serv_asign.getEntityByFolio(cv_asign.valor);
 
             ASIGNACION_ACTIVA = cv_asign.valor;
-            FK_ASIGNACION_ACTIVA = asig.pkAsignacion;
+            FK_ASIGNACION_ACTIVA = cv_asign.valor != "" ? asig.pkAsignacion : 0;
             MODO_APP = cv_modo.valor;
             VOZ = cv_voz.valor;
 
@@ -256,6 +256,8 @@ namespace TestMdfEntityFramework.Views
 
             txtMensajePopup.Text = "MENSAJE ENVIADO";
             mostrarPopupOk();
+
+            txtMensajes.Text = "";
         }
         private void btnEnviarAsistenciaMecanica_Click(object sender, RoutedEventArgs e)
         {

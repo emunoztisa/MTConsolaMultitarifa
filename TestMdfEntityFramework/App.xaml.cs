@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using TestMdfEntityFramework.Views;
 
 namespace TestMdfEntityFramework
 {
@@ -13,5 +14,13 @@ namespace TestMdfEntityFramework
     /// </summary>
     public partial class App : Application
     {
+
+        //protected override void OnStartup(StartupEventArgs e)
+        //{
+        //    base.OnStartup(e);
+        //    var form = new Form1();
+        //    form.Show();
+        //}
+
     }
 }
