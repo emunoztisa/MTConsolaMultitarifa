@@ -26,6 +26,11 @@ namespace TestMdfEntityFramework
         long FK_ASIGNACION_ACTIVA = 0;
         string MODO_APP = "";
 
+        //SERIAL PORT
+        System.IO.Ports.SerialPort puertoSerie1 = new System.IO.Ports.SerialPort();
+        String[] listado_puerto = System.IO.Ports.SerialPort.GetPortNames();
+
+        //TIMERS
         DispatcherTimer timerReloj = new DispatcherTimer();
         DispatcherTimer timerEvaluaMensajes = new DispatcherTimer();
         DispatcherTimer timerSincroniza = new DispatcherTimer();
@@ -36,31 +41,6 @@ namespace TestMdfEntityFramework
             btnInicio_Click(null, null);
             
             cargar_logo_aplicacion();
-        }
-
-        private void cargar_logo_aplicacion()
-        {
-            //this.Icon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(Properties.Resources.mt_consola_icon., Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            BitmapSource mt_icon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(Properties.Resources.mt_consola.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            this.Icon = mt_icon;
-        }
-        private void cargar_logo_aplicacion_v2()
-        {
-            // Set an icon using code
-            Uri iconUri = new Uri(@"C:\mt_con_database\mt_consola.ico", UriKind.RelativeOrAbsolute);
-            this.Icon = BitmapFrame.Create(iconUri);
-        }
-
-
-        private void btnResetPortName_Click(object sender, RoutedEventArgs e)
-        {
-            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
-            config_varios cv_port_name = serv_config_varios.getEntityByClave("PORT_NAME");
-            if (cv_port_name.valor != null && cv_port_name.valor != "")
-            {
-                cv_port_name.valor = "";
-                serv_config_varios.updEntityByClave(cv_port_name);
-            }
         }
 
         #region TIMERS
@@ -113,6 +93,9 @@ namespace TestMdfEntityFramework
 
                 //Cambia la imagen de conexion en caso de haber o no conexion a internet
                 Cambia_Imagen_Evalua_Conexion_Internet();
+
+                //Cambia la imagen de conexion serial en caso de haber o no conexion a la alcancia.
+                Cambia_Imagen_Evalua_Conexion_Puerto_Serial();
 
                 //Envio de la ubicacion actual de la unidad en latitud y longitud
                 ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
@@ -167,6 +150,7 @@ namespace TestMdfEntityFramework
             if (comun.HayConexionInternet())
             {
                 SincronizarCatalogos();
+                SincronizarConfiguraciones();
                 SincronizaOperacionConsola();
             }
             
@@ -190,41 +174,6 @@ namespace TestMdfEntityFramework
 
 
         }
-
-        private void validar_tipo_usuario()
-        {
-            ServiceConfigVarios serv_config_varios_user = new ServiceConfigVarios();
-            config_varios cv_user = serv_config_varios_user.getEntityByClave("USUARIO_ACTUAL");
-
-            ServiceUsers serv_users = new ServiceUsers();
-            users obj_user_actual = serv_users.getEntityByUser(cv_user.valor);
-
-            if(obj_user_actual.tipo_usuario == "INSTALL_CONFIG")
-            {
-                btnConfiguraciones.IsEnabled = true;
-                btnConfiguraciones.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                btnConfiguraciones.IsEnabled = false;
-                btnConfiguraciones.Visibility = Visibility.Hidden;
-            }
-        }
-
-        private void Cambia_Imagen_Evalua_Conexion_Internet()
-        {
-            //Sincronizar los usuarios desde TISA hacia la CONSOLA
-            Comun comun = new Comun();
-            if (comun.HayConexionInternet())
-            {
-                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/conectado.png", UriKind.Relative));
-            }
-            else
-            {
-                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/desconectado.png", UriKind.Relative));
-            }
-        }
-
         private void Principal_OnUnLoad(object sender, RoutedEventArgs e)
         {
             LimpiarUsuarioActualLogueado();
@@ -232,6 +181,8 @@ namespace TestMdfEntityFramework
             detiene_timers();
 
             LimpiarAsignacionActual();
+
+            
 
             ////////////////////////////////////////////////////////////////////////
             // ESTAS TAREAS SE DETENDRAN AL SALIR DEL FORMULARIO.
@@ -244,17 +195,6 @@ namespace TestMdfEntityFramework
             */
             ////////////////////////////////////////////////////////////////////////
         }
-
-        private void LimpiarAsignacionActual()
-        {
-            // ACTUALIZAR EN LA BASE DE DATOS CON EL USUARIO ACTUAL CONECTADO
-            ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
-            config_varios cv_asignacion_actual = new config_varios();
-            cv_asignacion_actual.clave = "ASIGNACION_ACTIVA";
-            cv_asignacion_actual.valor = "";
-            serv_conf_varios.updEntityByClave(cv_asignacion_actual);
-        }
-
         private void Principal_Closing(object sender, CancelEventArgs e)
         {
             Login login = new Login();
@@ -270,6 +210,7 @@ namespace TestMdfEntityFramework
         }
         private void btnCerrarClick(object sender, RoutedEventArgs e)
         {
+            SetUltimoUsuarioLogueado();
             LimpiarUsuarioActualLogueado();
             Close();
         }
@@ -317,7 +258,6 @@ namespace TestMdfEntityFramework
                 MessageBox.Show("FAVOR DE SELECCIONAR UNA ASIGNACION ANTES DE OPERAR LA UNIDAD DE TRANSPORTE");
             } 
         }
-
         private void btnReportes_Click(object sender, RoutedEventArgs e)
         {
             if (HayAsignacionActiva())
@@ -329,21 +269,20 @@ namespace TestMdfEntityFramework
                 MessageBox.Show("FAVOR DE SELECCIONAR UNA ASIGNACION ANTES DE OPERAR LA UNIDAD DE TRANSPORTE");
             }
         }
-        private bool HayAsignacionActiva()
+        private void btnResetPortName_Click(object sender, RoutedEventArgs e)
         {
-            bool HayAsignacionActiva = false;
-
-            ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
-            config_varios cv_asignacion_actual = serv_conf_varios.getEntityByClave("ASIGNACION_ACTIVA");
-            if (cv_asignacion_actual.valor != "")
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_port_name = serv_config_varios.getEntityByClave("PORT_NAME");
+            if (cv_port_name.valor != null && cv_port_name.valor != "")
             {
-                HayAsignacionActiva = true;
+                cv_port_name.valor = "";
+                serv_config_varios.updEntityByClave(cv_port_name);
             }
-
-            return HayAsignacionActiva;
         }
         private void btnLogout_Click(object sender, RoutedEventArgs e)
         {
+            SetUltimoUsuarioLogueado();
+
             //Hacer una funcion para hacer Logout a los servicios de TISA.
             LimpiarUsuarioActualLogueado();
 
@@ -393,6 +332,53 @@ namespace TestMdfEntityFramework
             Sincroniza_EmpresaCorredorOperador();
             Sincroniza_Asignaciones();
 
+        }
+
+        private void SincronizarConfiguraciones()
+        {
+            /* PARA SINCRONIZAR LAS TABLAS DESDE TISA HACIA CONSOLA
+                * dbo.config_varios
+                * dbo.opciones_generales
+                * dbo.ct_tarifas_montos_fijos
+                * dbo.ct_denominaciones
+             */
+            ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
+
+            config_varios cv_sinc_config_varios = serv_conf_varios.getEntityByClave("SINC_TISA_CONFIG_VARIOS");
+            if (cv_sinc_config_varios != null)
+            {
+                if (cv_sinc_config_varios.valor == "SI")
+                {
+                    Sincroniza_ConfigVarios();
+                }
+            }
+
+            config_varios cv_sinc_tarifas_montos_fijos = serv_conf_varios.getEntityByClave("SINC_TISA_TARIFAS_MONTOS_FIJOS");
+            if (cv_sinc_tarifas_montos_fijos != null)
+            {
+                if (cv_sinc_tarifas_montos_fijos.valor == "SI")
+                {
+                    Sincroniza_TarifasMontosFijos();
+                }
+            }
+
+            config_varios cv_sinc_denominaciones = serv_conf_varios.getEntityByClave("SINC_TISA_DENOMINACIONES");
+            if (cv_sinc_denominaciones != null)
+            {
+                if (cv_sinc_denominaciones.valor == "SI")
+                {
+                    Sincroniza_Denominaciones();
+                }
+            }
+
+            config_varios cv_sinc_opciones_generales = serv_conf_varios.getEntityByClave("SINC_TISA_OPCIONES_GENERALES");
+            if (cv_sinc_opciones_generales != null)
+            {
+                if (cv_sinc_opciones_generales.valor == "SI")
+                {
+                    Sincroniza_OpcionesGenerales();
+                }
+            }
         }
 
         private void Sincroniza_Empresas()
@@ -666,68 +652,96 @@ namespace TestMdfEntityFramework
             }
         }
 
-
-        private void Sincroniza_Denominacines()
-        {
-            //Se obtienen las unidades del endpoint
-            DenominacionesController uc = new DenominacionesController();
-            List<ct_denominaciones> list = uc.GetDenominacionesPorUnidad(); //PENDIENTE
-
-            //Se insertan las unidades en la base local
-            ServiceDenominaciones serv = new ServiceDenominaciones();
-
-
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (serv.getEntity(list[i].pkDenominacion) != null)
-                {
-                    serv.updEntity(list[i]);
-                }
-                else
-                {
-                    serv.addEntity(list[i]);
-                }
-            }
-        }
-
         private void Sincroniza_TarifasMontosFijos()
         {
+            //Obtener el fkUnidad
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_nombre_unidad = serv_config_varios.getEntityByClave("NUMERO_UNIDAD");
+            ServiceUnidades serv_unidades = new ServiceUnidades();
+            ct_unidades obj_unidad = serv_unidades.getEntityByName(cv_nombre_unidad.valor);
+            
             //Se obtienen las unidades del endpoint
-            TarifasMontosFijosController uc = new TarifasMontosFijosController();
-            List<ct_tarifas_montos_fijos> list = uc.GetTarifasMontosFijosPorUnidad(); //PENDIENTE
-
+            TarifasMontosFijosController controller = new TarifasMontosFijosController();
+            List<ct_tarifas_montos_fijos> list = controller.GetTarifasMontosFijosPorUnidad(obj_unidad); 
+            
             //Se insertan las unidades en la base local
             ServiceTarifasMontosFijos serv = new ServiceTarifasMontosFijos();
 
-
             for (int i = 0; i < list.Count; i++)
             {
-                if (serv.getEntity(list[i].pkTarifaMontoFijo) != null)
+                ct_tarifas_montos_fijos obj_tmf = serv.getEntityByValor(decimal.Parse(list[i].valor).ToString("#0.00"));
+
+                if (obj_tmf != null)
                 {
-                    serv.updEntity(list[i]);
+                    if(obj_tmf.valor.ToString().Trim() != decimal.Parse(list[i].valor).ToString("#0.00").Trim())
+                    {
+                        //en caso de no existir el valor en la base local de la aplicacion, esta tarifa monto fijo se insertara
+                        serv.addEntity(list[i]);
+                    }
                 }
                 else
                 {
+                    //en caso de no existir el valor en la base local de la aplicacion, esta tarifa monto fijo se insertara
                     serv.addEntity(list[i]);
                 }
             }
         }
+        private void Sincroniza_Denominaciones()
+        {
+            //Obtener el fkUnidad
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_nombre_unidad = serv_config_varios.getEntityByClave("NUMERO_UNIDAD");
+            ServiceUnidades serv_unidades = new ServiceUnidades();
+            ct_unidades obj_unidad = serv_unidades.getEntityByName(cv_nombre_unidad.valor);
 
+            //Se obtienen las unidades del endpoint
+            DenominacionesController controller = new DenominacionesController();
+            List<ct_denominaciones> list = controller.GetDenominacionesPorUnidad(obj_unidad);
+
+            //Se insertan las denominaciones en la base local
+            ServiceDenominaciones serv = new ServiceDenominaciones();
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                ct_denominaciones obj_deno = serv.getEntityByValor(decimal.Parse(list[i].valor).ToString("#0.00"));
+
+                if (obj_deno != null)
+                {
+                    if (obj_deno.valor.ToString().Trim() != decimal.Parse(list[i].valor).ToString("#0.00").Trim())
+                    {
+                        //en caso de no existir el valor en la base local de la aplicacion, esta tarifa monto fijo se insertara
+                        serv.addEntity(list[i]);
+                    }
+                }
+                else
+                {
+                    //en caso de no existir el valor en la base local de la aplicacion, esta tarifa monto fijo se insertara
+                    serv.addEntity(list[i]);
+                }
+            }
+        }
         private void Sincroniza_OpcionesGenerales()
         {
+            //Obtener el fkUnidad
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_nombre_unidad = serv_config_varios.getEntityByClave("NUMERO_UNIDAD");
+            ServiceUnidades serv_unidades = new ServiceUnidades();
+            ct_unidades obj_unidad = serv_unidades.getEntityByName(cv_nombre_unidad.valor);
+
             //Se obtienen las unidades del endpoint
-            OpcionesGeneralesController uc = new OpcionesGeneralesController();
-            List<opciones_generales> list = uc.GetOpcionesGenerales();
+            OpcionesGeneralesController controller = new OpcionesGeneralesController();
+            List<opciones_generales> list = controller.GetOpcionesGeneralesPorUnidad(obj_unidad);
 
-            //Se insertan las unidades en la base local
+            //Se insertan las denominaciones en la base local
             ServiceOpcionesGenerales serv = new ServiceOpcionesGenerales();
-
 
             for (int i = 0; i < list.Count; i++)
             {
-                if (serv.getEntity(list[i].pkOpcionGeneral) != null)
+                opciones_generales obj = serv.getEntityByOpcionGeneral(list[i].opcion_general);
+
+                if (obj != null)
                 {
-                    serv.updEntity(list[i]);
+                    serv.updEntityByOpcionGeneral(list[i]);
                 }
                 else
                 {
@@ -735,22 +749,31 @@ namespace TestMdfEntityFramework
                 }
             }
         }
-
         private void Sincroniza_ConfigVarios()
         {
+            //Obtener el fkUnidad
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_nombre_unidad = serv_config_varios.getEntityByClave("NUMERO_UNIDAD");
+            ServiceUnidades serv_unidades = new ServiceUnidades();
+            ct_unidades obj_unidad = serv_unidades.getEntityByName(cv_nombre_unidad.valor);
+
             //Se obtienen las unidades del endpoint
-            ConfigVariosController uc = new ConfigVariosController();
-            List<config_varios> list = uc.GetConfigVarios();
+            ConfigVariosController controller = new ConfigVariosController();
+            List<config_varios> list = controller.GetConfigVariosPorUnidad(obj_unidad);
 
-            //Se insertan las unidades en la base local
+            //Se insertan las denominaciones en la base local
             ServiceConfigVarios serv = new ServiceConfigVarios();
-
 
             for (int i = 0; i < list.Count; i++)
             {
-                if (serv.getEntity(list[i].pkConfigVarios) != null)
+                config_varios obj = serv.getEntityByClave(list[i].clave);
+
+                if (obj != null)
                 {
-                    serv.updEntity(list[i]);
+                    if(obj.clave != "USUARIO_ACTUAL")
+                    {
+                        serv.updEntityByClave(list[i]);
+                    }
                 }
                 else
                 {
@@ -773,6 +796,17 @@ namespace TestMdfEntityFramework
         #endregion
 
         #region METODOS PROPIOS
+        private void SetUltimoUsuarioLogueado()
+        {
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_usuario_actual = serv_config_varios.getEntityByClave("USUARIO_ACTUAL");
+
+
+            config_varios cv_ult_usu_logueado = new config_varios();
+            cv_ult_usu_logueado.clave = "ULTIMO_USUARIO_LOGUEADO";
+            cv_ult_usu_logueado.valor = cv_usuario_actual.valor;
+            serv_config_varios.updEntityByClave(cv_ult_usu_logueado);
+        }
         private void SetearVersionYCopyright()
         {
             ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
@@ -883,9 +917,230 @@ namespace TestMdfEntityFramework
                 imgOpcionMensajes.Source = new BitmapImage(new Uri(@"/SCS/IMG/mensajes.png", UriKind.Relative));
             }
         }
+        private void cargar_logo_aplicacion()
+        {
+            //this.Icon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(Properties.Resources.mt_consola_icon., Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            BitmapSource mt_icon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(Properties.Resources.mt_consola.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            this.Icon = mt_icon;
+        }
+        private void cargar_logo_aplicacion_v2()
+        {
+            // Set an icon using code
+            Uri iconUri = new Uri(@"C:\mt_con_database\mt_consola.ico", UriKind.RelativeOrAbsolute);
+            this.Icon = BitmapFrame.Create(iconUri);
+        }
+        private void validar_tipo_usuario()
+        {
+            ServiceConfigVarios serv_config_varios_user = new ServiceConfigVarios();
+            config_varios cv_user = serv_config_varios_user.getEntityByClave("USUARIO_ACTUAL");
 
+            ServiceUsers serv_users = new ServiceUsers();
+            users obj_user_actual = serv_users.getEntityByUser(cv_user.valor);
+
+            if (obj_user_actual.tipo_usuario == "INSTALL_CONFIG")
+            {
+                btnConfiguraciones.IsEnabled = true;
+                btnConfiguraciones.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                btnConfiguraciones.IsEnabled = false;
+                btnConfiguraciones.Visibility = Visibility.Hidden;
+            }
+        }
+        private void Cambia_Imagen_Evalua_Conexion_Internet()
+        {
+            //Sincronizar los usuarios desde TISA hacia la CONSOLA
+            Comun comun = new Comun();
+            if (comun.HayConexionInternet())
+            {
+                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/conectado.png", UriKind.Relative));
+            }
+            else
+            {
+                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/desconectado.png", UriKind.Relative));
+            }
+        }
+        private bool HayAsignacionActiva()
+        {
+            bool HayAsignacionActiva = false;
+
+            ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
+            config_varios cv_asignacion_actual = serv_conf_varios.getEntityByClave("ASIGNACION_ACTIVA");
+            if (cv_asignacion_actual.valor != "")
+            {
+                HayAsignacionActiva = true;
+            }
+
+            return HayAsignacionActiva;
+        }
+        private void LimpiarAsignacionActual()
+        {
+            // ACTUALIZAR EN LA BASE DE DATOS CON EL USUARIO ACTUAL CONECTADO
+            ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
+            config_varios cv_asignacion_actual = new config_varios();
+            cv_asignacion_actual.clave = "ASIGNACION_ACTIVA";
+            cv_asignacion_actual.valor = "";
+            serv_conf_varios.updEntityByClave(cv_asignacion_actual);
+        }
 
         #endregion
+
+        #region PUERTO SERIAL
+        public void configura_puerto_serial()
+        {
+            try
+            {
+                ServiceConfigVarios scv = new ServiceConfigVarios();
+                config_varios cv_port_name = scv.getEntityByClave("PORT_NAME");
+                config_varios cv_baud_rate = scv.getEntityByClave("BAUD_RATE");
+                config_varios cv_paridad = scv.getEntityByClave("PARIDAD");
+                config_varios cv_data_bits = scv.getEntityByClave("DATA_BITS");
+                config_varios cv_stop_bits = scv.getEntityByClave("STOP_BITS");
+                config_varios cv_handshake = scv.getEntityByClave("HANDSHAKE");
+
+                if (cv_port_name.valor != "")
+                {
+                    //MessageBox.Show(cv_port_name.valor);
+
+                    this.puertoSerie1 = new System.IO.Ports.SerialPort
+                    ("" + cv_port_name.valor
+                    , Convert.ToInt32(cv_baud_rate.valor)
+                    , cv_paridad.valor == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                    , Convert.ToInt32(cv_data_bits.valor)
+                    , Convert.ToInt32(cv_stop_bits.valor) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                    );
+                    puertoSerie1.Handshake = cv_handshake.valor == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
+            }
+
+            close_serial_port();
+
+        }
+        private void open_serial_port()
+        {
+            try
+            {
+                if (puertoSerie1.IsOpen == false)
+                {
+                    puertoSerie1.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+                configura_puerto_serial();
+
+            }
+        }
+        private void close_serial_port()
+        {
+            if (puertoSerie1.IsOpen == true)
+            {
+                puertoSerie1.Close();
+            }
+        }
+
+        #endregion
+
+        #region VALIDACIONES
+        private bool validaPuertoCOMConfigurado()
+        {
+            bool isConfigured = false;
+
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_port_name = serv_config_varios.getEntityByClave("PORT_NAME");
+            if (cv_port_name.valor != null && cv_port_name.valor != "")
+            {
+                isConfigured = true;
+            }
+            else
+            {
+                isConfigured = false;
+            }
+
+            return isConfigured;
+        }
+        private bool isValidComPortAndConnected()
+        {
+            bool isValid;
+            try
+            {
+                open_serial_port();
+                isValid = true;
+            }
+            catch (Exception ex)
+            {
+                isValid = false;
+            }
+            return isValid;
+        }
+        private bool validaDispositivoConectadoEnPuertoCOM()
+        {
+            bool hayDispositivoConectado = false;
+
+            try
+            {
+                if (puertoSerie1.IsOpen == false)
+                {
+                    puertoSerie1.Open();
+                    hayDispositivoConectado = true;
+                }
+                else
+                {
+                    hayDispositivoConectado = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                hayDispositivoConectado = false;
+                //MessageBox.Show(ex.Message);
+            }
+
+            return hayDispositivoConectado;
+        }
+
+        #endregion
+        public bool HayConexionPuertoSerial()
+        {
+            bool hayConexionPuertoSerial = false;
+
+            try
+            {
+                if (validaPuertoCOMConfigurado())
+                {
+                    if (isValidComPortAndConnected())
+                    {
+                        //if (validaDispositivoConectadoEnPuertoCOM())
+                        //{
+                            hayConexionPuertoSerial = true;
+                        //}
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                hayConexionPuertoSerial = false;
+            }
+
+            return hayConexionPuertoSerial;
+        }
+        private void Cambia_Imagen_Evalua_Conexion_Puerto_Serial()
+        {
+            //Sincronizar los usuarios desde TISA hacia la CONSOLA
+            Comun comun = new Comun();
+            if (HayConexionPuertoSerial())
+            {
+                imgHayConexionSerial.Source = new BitmapImage(new Uri(@"/SCS/IMG/puerto_verde.png", UriKind.Relative));
+            }
+            else
+            {
+                imgHayConexionSerial.Source = new BitmapImage(new Uri(@"/SCS/IMG/puerto_rojo.png", UriKind.Relative));
+            }
+        }
 
 
     }

@@ -545,6 +545,9 @@
     <Resource Include="SCS\IMG\desconectado.png" />
     <Resource Include="SCS\IMG\validando_conexion.png" />
     <None Include="Resources\mt_consola.ico" />
+    <Resource Include="SCS\IMG\puerto_rojo.png" />
+    <Resource Include="SCS\IMG\puerto_verde.png" />
+    <Resource Include="SCS\IMG\puerto_gris.png" />
     <Content Include="SqlServerTypes\readme.htm" />
     <Content Include="SqlServerTypes\x64\msvcr120.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

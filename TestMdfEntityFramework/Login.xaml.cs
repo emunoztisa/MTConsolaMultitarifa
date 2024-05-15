@@ -31,6 +31,9 @@ namespace TestMdfEntityFramework
     /// </summary>
     public partial class Login : Window
     {
+        //SERIAL PORT
+        System.IO.Ports.SerialPort puertoSerie1 = new System.IO.Ports.SerialPort();
+        String[] listado_puerto = System.IO.Ports.SerialPort.GetPortNames();
 
         //POPUP OK
         private double left, top, right, bottom, centerX, centerY;
@@ -162,7 +165,7 @@ namespace TestMdfEntityFramework
 
             if (user_actual != null && user_actual.user != "")
             {
-                if(password == mc.DesencriptarCadena(user_actual.contrasena))
+                if (password == mc.DesencriptarCadena(user_actual.contrasena))
                 {
                     // ACTUALIZAR EN LA BASE DE DATOS CON EL USUARIO ACTUAL CONECTADO
                     ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
@@ -206,7 +209,7 @@ namespace TestMdfEntityFramework
                     }
                 }
             }
-            
+
             return val;
         }
         private void SettearValoresProduccion()
@@ -227,11 +230,18 @@ namespace TestMdfEntityFramework
             txtContrasena.Password = "12321";
             btnEntrar.Focus();
         }
-
         private void LimpiarCamposTexto()
         {
             txtUsuario.Text = "";
             txtContrasena.Password = "";
+        }
+
+        
+        private void GetUltimoUsuarioLogueado()
+        {
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_ultimo_usuario_logueado = serv_config_varios.getEntityByClave("ULTIMO_USUARIO_LOGUEADO");
+            txtUsuario.Text = cv_ultimo_usuario_logueado.valor;
         }
 
         #endregion
@@ -240,6 +250,8 @@ namespace TestMdfEntityFramework
         private void Login_OnLoad(object sender, RoutedEventArgs e)
         {
             inicializa_timer_evalua_mensajes();
+
+            GetUltimoUsuarioLogueado();
 
             //SINCRONIZAR USUARIOS HACIA LA BASE DE DATOS LOCAL  --  ejemplo: MT_OPE_XXXXX
             Comun comun = new Comun();
@@ -484,10 +496,12 @@ namespace TestMdfEntityFramework
                     SincronizaUsuarios();
                 }
 
-                //Cambia la imagen de mensajes en la menubar de principal, segun si hay o no mensajes pendientes de reproducir.
+                //Cambia la imagen de conexion internet.
                 Cambia_Imagen_Evalua_Conexion_Internet();
 
-                
+                //Cambia la imagen de conexion serial.
+                Cambia_Imagen_Evalua_Conexion_Puerto_Serial();
+
             }
             catch (Exception ex)
             {
@@ -504,6 +518,66 @@ namespace TestMdfEntityFramework
 
         #endregion
 
+        #region PUERTO SERIAL
+        public void configura_puerto_serial()
+        {
+            try
+            {
+                ServiceConfigVarios scv = new ServiceConfigVarios();
+                config_varios cv_port_name = scv.getEntityByClave("PORT_NAME");
+                config_varios cv_baud_rate = scv.getEntityByClave("BAUD_RATE");
+                config_varios cv_paridad = scv.getEntityByClave("PARIDAD");
+                config_varios cv_data_bits = scv.getEntityByClave("DATA_BITS");
+                config_varios cv_stop_bits = scv.getEntityByClave("STOP_BITS");
+                config_varios cv_handshake = scv.getEntityByClave("HANDSHAKE");
+
+                if (cv_port_name.valor != "")
+                {
+                    //MessageBox.Show(cv_port_name.valor);
+
+                    this.puertoSerie1 = new System.IO.Ports.SerialPort
+                    ("" + cv_port_name.valor
+                    , Convert.ToInt32(cv_baud_rate.valor)
+                    , cv_paridad.valor == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                    , Convert.ToInt32(cv_data_bits.valor)
+                    , Convert.ToInt32(cv_stop_bits.valor) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                    );
+                    puertoSerie1.Handshake = cv_handshake.valor == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
+            }
+
+            close_serial_port();
+
+        }
+        private void open_serial_port()
+        {
+            try
+            {
+                if (puertoSerie1.IsOpen == false)
+                {
+                    puertoSerie1.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+                configura_puerto_serial();
+
+            }
+        }
+        private void close_serial_port()
+        {
+            if (puertoSerie1.IsOpen == true)
+            {
+                puertoSerie1.Close();
+            }
+        }
+        
+        #endregion
+
         private void Cambia_Imagen_Evalua_Conexion_Internet()
         {
             //Sincronizar los usuarios desde TISA hacia la CONSOLA
@@ -515,6 +589,103 @@ namespace TestMdfEntityFramework
             else
             {
                 imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/desconectado.png", UriKind.Relative));
+            }
+        }
+
+
+        #region VALIDACIONES
+        private bool validaPuertoCOMConfigurado()
+        {
+            bool isConfigured = false;
+
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_port_name = serv_config_varios.getEntityByClave("PORT_NAME");
+            if (cv_port_name.valor != null && cv_port_name.valor != "")
+            {
+                isConfigured = true;
+            }
+            else
+            {
+                isConfigured = false;
+            }
+
+            return isConfigured;
+        }
+        private bool isValidComPortAndConnected()
+        {
+            bool isValid;
+            try
+            {
+                open_serial_port();
+                isValid = true;
+            }
+            catch (Exception ex)
+            {
+                isValid = false;
+            }
+            return isValid;
+        }
+        private bool validaDispositivoConectadoEnPuertoCOM()
+        {
+            bool hayDispositivoConectado = false;
+
+            try
+            {
+                if (puertoSerie1.IsOpen == false)
+                {
+                    puertoSerie1.Open();
+                    hayDispositivoConectado = true;
+                }
+                else
+                {
+                    hayDispositivoConectado = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                hayDispositivoConectado = false;
+                //MessageBox.Show(ex.Message);
+            }
+
+            return hayDispositivoConectado;
+        }
+
+        #endregion
+        public bool HayConexionPuertoSerial()
+        {
+            bool hayConexionPuertoSerial = false;
+
+            try
+            {
+                if (validaPuertoCOMConfigurado())
+                {
+                    if (isValidComPortAndConnected())
+                    {
+                        if (validaDispositivoConectadoEnPuertoCOM())
+                        {
+                            hayConexionPuertoSerial = true;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                hayConexionPuertoSerial = false;
+            }
+
+            return hayConexionPuertoSerial;
+        }
+        private void Cambia_Imagen_Evalua_Conexion_Puerto_Serial()
+        {
+            //Sincronizar los usuarios desde TISA hacia la CONSOLA
+            Comun comun = new Comun();
+            if (HayConexionPuertoSerial())
+            {
+                imgHayConexionSerial.Source = new BitmapImage(new Uri(@"/SCS/IMG/puerto_verde.png", UriKind.Relative));
+            }
+            else
+            {
+                imgHayConexionSerial.Source = new BitmapImage(new Uri(@"/SCS/IMG/puerto_rojo.png", UriKind.Relative));
             }
         }
 

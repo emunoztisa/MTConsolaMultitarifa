@@ -550,8 +550,16 @@
                            Grid.Column="0" 
                            HorizontalAlignment="Center"   
                            Width="30"
-                           Margin="5,5,500,5"
+                           Margin="5,5,600,5"
                            Source="SCS/IMG/validando_conexion.png"/>
+                    <!--#endregion-->
+                    <!--#region HAY CONEXION PUERTO SERIAL -->
+                    <Image x:Name="imgHayConexionSerial" 
+                           Grid.Column="0" 
+                           HorizontalAlignment="Center"   
+                           Width="30"
+                           Margin="0,0,500,0"
+                           Source="SCS/IMG/puerto_gris.png"/>
                     <!--#endregion-->
                     <!-- #REGION DIA-->
                     <TextBlock x:Name="lblFecha"

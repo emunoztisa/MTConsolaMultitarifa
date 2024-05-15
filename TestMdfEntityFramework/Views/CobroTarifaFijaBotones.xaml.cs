@@ -574,6 +574,8 @@ namespace TestMdfEntityFramework.Views
                 BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
                 BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
 
+                close_serial_port();
+                dispose_serial_port();
                 open_serial_port();
                 puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
                 //close_serial_port();
@@ -607,10 +609,14 @@ namespace TestMdfEntityFramework.Views
                     puertoSerie1.Open();
                     hayDispositivoConectado = true;
                 }
+                else
+                {
+                    hayDispositivoConectado = true;
+                }
             }
             catch (Exception ex)
             {
-                hayDispositivoConectado = false;
+                hayDispositivoConectado = true;
                 MessageBox.Show(ex.Message);
             }
 
@@ -681,7 +687,13 @@ namespace TestMdfEntityFramework.Views
                 puertoSerie1.Close();
             }
         }
-
+        private void dispose_serial_port()
+        {
+            if(puertoSerie1.IsOpen == false)
+            {
+                puertoSerie1.Dispose();
+            }
+        }
         #endregion
 
         #region CONVERSIONES
@@ -1020,6 +1032,8 @@ namespace TestMdfEntityFramework.Views
 
             BufferSendData[K_posicionCantidadDatos] = (byte)(CantidadDatos);
 
+            close_serial_port();
+            dispose_serial_port();
             open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
         }
@@ -1045,6 +1059,8 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
             BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
 
+            close_serial_port();
+            dispose_serial_port();
             open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
         }

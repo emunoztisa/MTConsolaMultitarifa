@@ -82,5 +82,10 @@ namespace TestMdfEntityFramework.EntityServices
                 em.SaveChanges();
             }
         }
+
+        public ct_denominaciones getEntityByValor(object valor)
+        {
+            return em.ct_denominaciones.Where(q => q.valor.ToString().Trim() == valor.ToString().Trim()).FirstOrDefault<ct_denominaciones>();
+        }
     }
 }

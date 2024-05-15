@@ -81,5 +81,10 @@ namespace TestMdfEntityFramework.EntityServices
                 em.SaveChanges();
             }
         }
+
+        public ct_tarifas_montos_fijos getEntityByValor(object valor)
+        {
+            return em.ct_tarifas_montos_fijos.Where(q => q.valor.ToString().Trim() == valor.ToString().Trim()).FirstOrDefault<ct_tarifas_montos_fijos>();
+        }
     }
 }

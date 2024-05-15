@@ -755,14 +755,23 @@
 
                         <!--#region Titulo Tarifa Montos FIjos -->
                         <TextBlock Grid.Row="0" 
-                                   Grid.Column="4"
-                                   Grid.ColumnSpan="2"
+                           Grid.Column="5" 
+                           Grid.ColumnSpan="2"
                            Text="TARIFAS MONTOS FIJOS" 
                            Foreground="White" 
-                           FontSize="20" 
+                           FontSize="17" 
                            FontWeight="Bold" 
                            VerticalAlignment="Center" 
                            HorizontalAlignment="Center"/>
+
+                        <CheckBox x:Name="chkSinTISA_TarifasMontosFijos"
+                           Grid.Row="0" Grid.Column="4"
+                           FontSize="15" FontStyle="Normal" FontWeight="Bold"
+                           Foreground="YellowGreen"
+                           Margin="10,5,2,0" Checked="chkSinTISA_TarifasMontosFijos_Checked">
+                            <TextBlock Text="Sincronizar desde TISA" />
+                        </CheckBox>
+
                         <!--#endregion-->
                         <!--#region VALOR TARIFA MONTO FIJO -->
                         <TextBlock Grid.Row="1" 
@@ -1398,6 +1407,16 @@
                            FontWeight="Bold" 
                            VerticalAlignment="Center" 
                            HorizontalAlignment="Center"/>
+                        
+                        <CheckBox x:Name="chkSinTISA_Denominaciones"
+                           Grid.Row="0" Grid.Column="1"
+                           FontSize="15" FontStyle="Normal" FontWeight="Bold"
+                           Foreground="YellowGreen"
+                           Margin="10,10,2,0" Checked="chkSinTISA_Denominaciones_Checked">
+                            <TextBlock Text="Sincronizar desde TISA" />
+                        </CheckBox>
+
+
 
                         <TextBlock Grid.Row="2" 
                            Grid.Column="1"
@@ -1985,6 +2004,27 @@
                           Margin="10,5,10,5"
                           Style="{DynamicResource COMBOSTYLE}">
                         </ComboBox>
+                        <!--#endregion-->
+                        <!--#region HABILITAR ALGUNAS OTRAS SINCRONIZACIONES -->
+
+                        <CheckBox x:Name="chkSinTISA_OpcionesGenerales"
+                           Grid.Row="3" Grid.Column="1"
+                           Grid.ColumnSpan="2"
+                           FontSize="15" FontStyle="Normal" FontWeight="Bold"
+                           Foreground="YellowGreen"
+                           Margin="10,10,2,0" Checked="chkSinTISA_OpcionesGenerales_Checked" >
+                            <TextBlock Text=" OPCIONES GENERALES - Sincronizar desde TISA" />
+                        </CheckBox>
+
+                        <CheckBox x:Name="chkSinTISA_ConfigVarios"
+                           Grid.Row="4" Grid.Column="1"
+                           Grid.ColumnSpan="2"
+                           FontSize="15" FontStyle="Normal" FontWeight="Bold"
+                           Foreground="YellowGreen"
+                           Margin="10,10,2,0" Checked="chkSinTISA_ConfigVarios_Checked" >
+                            <TextBlock Text=" CONFIGURACIONES VARIAS - Sincronizar desde TISA" />
+                        </CheckBox>
+
                         <!--#endregion-->
 
                         <!--#region BOTON GUARDAR -->

@@ -61,30 +61,17 @@ namespace TestMdfEntityFramework.Views
         public Configuracionv2()
         {
             InitializeComponent();
-            if (validaPuertoCOMConfigurado())
-            {
-                configura_puerto_serial();
-            }
+            //if (validaPuertoCOMConfigurado())
+            //{
+            //    configura_puerto_serial();
+            //}
 
             llenaCombos();
             Task.WaitAll(new Task[] { Task.Delay(300) });
 
         }
 
-        private bool isValidComPortAndConnected()
-        {
-            bool isValid;
-            try
-            {
-                open_serial_port();
-                isValid = true;
-            }
-            catch (Exception ex)
-            {
-                isValid = false;
-            }
-            return isValid;
-        }
+        #region METODOS PARA SETEAR VALORES EN CONTROLES
         public void SeteaValoresEnCombosConValoresDBLocal()
         {
             ServiceConfigVarios scv = new ServiceConfigVarios();
@@ -98,17 +85,6 @@ namespace TestMdfEntityFramework.Views
                 }
             }
 
-            //config_varios config_impresora = scv.getEntityByClave("IMPRESORA_DEFAULT");
-            //for (int i = 0; i < cmbImpresoras.Items.Count; i++)
-            //{
-            //    if (cmbImpresoras.Items[i].ToString() == config_impresora.valor)
-            //    {
-            //        cmbImpresoras.SelectedValue = config_impresora.valor;
-            //    }
-            //}
-
-
-
             config_varios config_modo = scv.getEntityByClave("MODO");
             for (int i = 0; i < cmbModoApp.Items.Count; i++)
             {
@@ -117,14 +93,6 @@ namespace TestMdfEntityFramework.Views
                     cmbModoApp.SelectedValue = config_modo.valor;
                 }
             }
-            //foreach (var item in cmbUnidad.Items)
-            //{
-            //    if( ((ComboBoxItem)item).Tag.ToString() == config_numero_unidad.valor)
-            //    {
-            //        cmbUnidad.SelectedItem = ((ComboBoxItem)item).Tag.ToString();
-            //    }
-            //}
-
 
             config_varios config_baud_rate = scv.getEntityByClave("BAUD_RATE");
             for (int i = 0; i < cmbBausRate.Items.Count; i++)
@@ -316,9 +284,6 @@ namespace TestMdfEntityFramework.Views
                 }
             }
 
-            
-
-
 
             if (validaPuertoCOMConfigurado())
             {
@@ -328,10 +293,11 @@ namespace TestMdfEntityFramework.Views
                     SetearValoresLblNoSerieAlcancia();
                     SetearValoresTextoDisplayAlcancia();
                 }
+                else
                 {
                     MessageBox.Show("Favor de Validar que este conectado el dispositivo al puerto COM");
                 }
-               
+
             }
 
         }
@@ -372,27 +338,81 @@ namespace TestMdfEntityFramework.Views
             #endregion
         }
 
-        private bool validaDispositivoConectadoEnPuertoCOM()
+        private void SeteaValoresCheckboxConValoresDBLocal()
         {
-            bool hayDispositivoConectado = false;
-
-            try
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            
+            config_varios cv_sinc_tarifas_montos_fijos = serv_config_varios.getEntityByClave("SINC_TISA_TARIFAS_MONTOS_FIJOS");
+            if(cv_sinc_tarifas_montos_fijos != null)
             {
-                if (puertoSerie1.IsOpen == false)
+                if(cv_sinc_tarifas_montos_fijos.valor == "SI") 
                 {
-                    puertoSerie1.Open();
-                    hayDispositivoConectado = true;
+                    chkSinTISA_TarifasMontosFijos.IsChecked = true;
+                }
+                else if (cv_sinc_tarifas_montos_fijos.valor == "NO")
+                {
+                    chkSinTISA_TarifasMontosFijos.IsChecked = false;
+                }
+                else
+                {
+                    chkSinTISA_TarifasMontosFijos.IsChecked = false;
                 }
             }
-            catch (Exception ex)
+
+            config_varios cv_sinc_denominaciones = serv_config_varios.getEntityByClave("SINC_TISA_DENOMINACIONES");
+            if (cv_sinc_denominaciones != null)
             {
-                hayDispositivoConectado = false;
-                MessageBox.Show(ex.Message);
+                if (cv_sinc_denominaciones.valor == "SI")
+                {
+                    chkSinTISA_Denominaciones.IsChecked = true;
+                }
+                else if (cv_sinc_denominaciones.valor == "NO")
+                {
+                    chkSinTISA_Denominaciones.IsChecked = false;
+                }
+                else
+                {
+                    chkSinTISA_Denominaciones.IsChecked = false;
+                }
             }
 
-            return hayDispositivoConectado;
+            config_varios cv_sinc_opciones_generales = serv_config_varios.getEntityByClave("SINC_TISA_OPCIONES_GENERALES");
+            if (cv_sinc_opciones_generales != null)
+            {
+                if (cv_sinc_opciones_generales.valor == "SI")
+                {
+                    chkSinTISA_OpcionesGenerales.IsChecked = true;
+                }
+                else if (cv_sinc_opciones_generales.valor == "NO")
+                {
+                    chkSinTISA_OpcionesGenerales.IsChecked = false;
+                }
+                else
+                {
+                    chkSinTISA_OpcionesGenerales.IsChecked = false;
+                }
+            }
+
+            config_varios cv_sinc_config_varios = serv_config_varios.getEntityByClave("SINC_TISA_CONFIG_VARIOS");
+            if (cv_sinc_config_varios != null)
+            {
+                if (cv_sinc_config_varios.valor == "SI")
+                {
+                    chkSinTISA_ConfigVarios.IsChecked = true;
+                }
+                else if (cv_sinc_config_varios.valor == "NO")
+                {
+                    chkSinTISA_ConfigVarios.IsChecked = false;
+                }
+                else
+                {
+                    chkSinTISA_ConfigVarios.IsChecked = false;
+                }
+            }
+
         }
 
+        #endregion
 
         #region LLENA COMBOS
 
@@ -940,32 +960,7 @@ namespace TestMdfEntityFramework.Views
 
         #endregion
 
-        #region EVENTOS CONTROLES
-        private void Configuracion_OnLoad(object sender, RoutedEventArgs e)
-        {
-            //MuestraValoresConfigSerial();
-
-            //EVENTOS PARA POPUP OK
-            SetPopupDlgCenter();
-            InitializeAnimations();
-
-            try
-            {
-                if (isValidComPortAndConnected())
-                {
-                    SeteaValoresEnCombosConValoresDBLocal();
-                }
-
-            }
-            catch (Exception ex)
-            {
-
-
-            }
-
-
-        }
-
+        #region VALIDACIONES
         private bool validaPuertoCOMConfigurado()
         {
             bool isConfigured = false;
@@ -983,11 +978,52 @@ namespace TestMdfEntityFramework.Views
 
             return isConfigured;
         }
-
-        private void Configuracionv2_OnUnload(object sender, RoutedEventArgs e)
+        private bool isValidComPortAndConnected()
         {
-            close_serial_port();
+            bool isValid;
+            try
+            {
+                open_serial_port();
+                isValid = true;
+            }
+            catch (Exception ex)
+            {
+                isValid = false;
+            }
+            return isValid;
         }
+        private bool validaDispositivoConectadoEnPuertoCOM()
+        {
+            bool hayDispositivoConectado = false;
+
+            try
+            {
+                if (puertoSerie1.IsOpen == false)
+                {
+                    close_serial_port();
+                    //open_serial_port();
+                    puertoSerie1.Dispose();
+                    puertoSerie1.Open();
+                    hayDispositivoConectado = true;
+                }
+                else
+                {
+                    hayDispositivoConectado = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                hayDispositivoConectado = true;
+                MessageBox.Show(ex.Message);
+            }
+
+            return hayDispositivoConectado;
+        }
+
+        #endregion
+
+        #region BOTONES DE GUARDAR DE CADA PANTALLA EN CONFIGURACION
+
         private void btnGuardarConfiguracion_Click(object sender, RoutedEventArgs e)
         {
             //configura_puerto_serial();
@@ -1018,7 +1054,7 @@ namespace TestMdfEntityFramework.Views
                 string cant_usuarios_perfil = cmbCantUsuariosPerfil.Text;
                 string texto_display_alcancia = txtTextoDisplayAlcancia.Text;
 
-                
+
 
                 // MULTIMEDIA
                 int indice;
@@ -1177,7 +1213,7 @@ namespace TestMdfEntityFramework.Views
 
                 #endregion
 
-               
+
 
 
 
@@ -1247,7 +1283,7 @@ namespace TestMdfEntityFramework.Views
 
                 #endregion
 
-               
+
 
                 #region MANTENIMIENTO
 
@@ -1276,7 +1312,6 @@ namespace TestMdfEntityFramework.Views
             }
 
         }
-
         private void btnGuardarConfiguracionDenominaciones_Click(object sender, RoutedEventArgs e)
         {
             #region DENOMINACIONES MONEDAS Y BILLETES
@@ -1305,14 +1340,232 @@ namespace TestMdfEntityFramework.Views
             {
                 MessageBox.Show(ex.Message);
             }
-            
-            
+
+
 
             #endregion
         }
+        private void btnGuardarConfBoletos_Click(object sender, RoutedEventArgs e)
+        {
+            // BOLETO
+            string prefijo_folio_boleto = txtPrefijoBoleto.Text;
+            string prefijo_folio_corte = txtPrefijoCorte.Text;
+
+            #region Setear Mensajes en Boleto
+            if (txtEncabezadoLinea1.Text.Length == 32 && txtEncabezadoLinea2.Text.Length == 32 && txtEncabezadoLinea3.Text.Length == 32 &&
+                txtPiePaginaLinea1.Text.Length == 32 && txtPiePaginaLinea2.Text.Length == 32 && txtPiePaginaLinea3.Text.Length == 32)
+            {
+                ejecutar_commando_82_set_mensaje(0, txtEncabezadoLinea1.Text);
+                ejecutar_commando_82_set_mensaje(1, txtEncabezadoLinea2.Text);
+                ejecutar_commando_82_set_mensaje(2, txtEncabezadoLinea3.Text);
+
+                ejecutar_commando_82_set_mensaje(3, txtPiePaginaLinea1.Text);
+                ejecutar_commando_82_set_mensaje(4, txtPiePaginaLinea2.Text);
+                ejecutar_commando_82_set_mensaje(5, txtPiePaginaLinea3.Text);
+            }
+            else
+            {
+                MessageBox.Show("Favor de llenar los mensajes del boleto en sus 32 caracteres, asi sea con espacios");
+            }
+
+            #endregion
+
+            #region BOLETO
+
+            ServiceConfigVarios serv_config_varios_boleto = new ServiceConfigVarios();
+
+            config_varios conf_varios_boleto = new config_varios();
+
+            conf_varios_boleto.clave = "PREFIJO_FOLIO_BOLETO";
+            conf_varios_boleto.valor = prefijo_folio_boleto;
+            serv_config_varios_boleto.updEntityByClave(conf_varios_boleto);
+
+            conf_varios_boleto.clave = "PREFIJO_FOLIO_CORTE";
+            conf_varios_boleto.valor = prefijo_folio_corte;
+            serv_config_varios_boleto.updEntityByClave(conf_varios_boleto);
+
+            #endregion
+
+        }
+        private void btnGuardarConfiguracionUbicacion_Click(object sender, RoutedEventArgs e)
+        {
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_ubicacion = new config_varios();
+
+            // UBICACION
+            string activar_ubicacion = cmbActivarUbicacion.Text;
+
+            // UBICACION ACTIVA
+            cv_ubicacion.clave = "UBICACION_ACTIVA";
+            cv_ubicacion.valor = activar_ubicacion;
+            serv_config_varios.updEntityByClave(cv_ubicacion);
+
+            // MUESTRA POPUP DE CONFIRMACION DE QUE SE GUARDO EXITOSAMENTE.
+            txtMensajePopup.Text = "CONFIGURACION EXITOSA";
+            mostrarPopupOk();
+        }
+
+        #endregion
+
+        #region EVENTOS CONTROLES
+        private void Configuracion_OnLoad(object sender, RoutedEventArgs e)
+        {
+            //MuestraValoresConfigSerial();
+
+            if (validaPuertoCOMConfigurado())
+            {
+                configura_puerto_serial();
+            }
+
+            //EVENTOS PARA POPUP OK
+            SetPopupDlgCenter();
+            InitializeAnimations();
+
+            try
+            {
+                if (isValidComPortAndConnected())
+                {
+                    SeteaValoresEnCombosConValoresDBLocal();
+                    SeteaValoresCheckboxConValoresDBLocal();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message,"ATENCION !!!");
+            }
+        }
+        private void Configuracionv2_OnUnload(object sender, RoutedEventArgs e)
+        {
+            close_serial_port();
+        }
+        
+        private void btnAgregar_TarifaFija_Click(object sender, RoutedEventArgs e)
+        {
+            string valor_tarifa = txtValor_TarifaMontoFijo.Text.ToString().Trim();
+            string texto_tarifa = txtTexto_TarifaMontoFijo.Text.ToString().Trim();
+            string descripcion_tarifa = txtDescripcion_TarifaMontoFijo.Text.ToString().Trim();
+            string orden_tarifa = cmbOrden_TarifaMontoFijo.Text.ToString().Trim();
+
+            string fecha_actual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            if (valor_tarifa != "" && texto_tarifa != "" && descripcion_tarifa != "" && orden_tarifa != "")
+            {
+                ServiceTarifasMontosFijos serv_tarifas_montos_fijos = new ServiceTarifasMontosFijos();
+                ct_tarifas_montos_fijos obj = new ct_tarifas_montos_fijos();
+
+                obj.valor = valor_tarifa;
+                obj.texto = texto_tarifa;
+                obj.descripcion = descripcion_tarifa;
+                obj.orden = Convert.ToInt32(orden_tarifa);
 
 
-        //string nombre_combo_cambiado_actualmente = "";
+                //se insertaran solo 6 tarifas para montos fijos
+                ct_tarifas_montos_fijos tarifa_fija_orden = serv_tarifas_montos_fijos.getEntityByOrden(obj.orden);
+                if (tarifa_fija_orden != null && tarifa_fija_orden.orden == obj.orden)
+                {
+                    obj.pkTarifaMontoFijo = tarifa_fija_orden.pkTarifaMontoFijo;
+                    obj.status = 1;
+                    obj.created_at = tarifa_fija_orden.created_at;
+                    obj.updated_at = fecha_actual;
+
+                    serv_tarifas_montos_fijos.updEntity(obj);
+                }
+                else
+                {
+                    obj.pkTarifaMontoFijo = tarifa_fija_orden.pkTarifaMontoFijo;
+                    obj.status = 1;
+                    obj.created_at = tarifa_fija_orden.created_at;
+                    obj.updated_at = fecha_actual;
+
+                    serv_tarifas_montos_fijos.addEntity(obj);
+                }
+
+                llenarGridTarifasMontoFijo();
+
+                txtValor_TarifaMontoFijo.Text = "";
+                txtTexto_TarifaMontoFijo.Text = "";
+                txtDescripcion_TarifaMontoFijo.Text = "";
+                cmbOrden_TarifaMontoFijo.Text = "";
+            }
+        }
+        private void btnEliminar_TarifaFija_Click(object sender, RoutedEventArgs e)
+        {
+            ct_tarifas_montos_fijos row = (ct_tarifas_montos_fijos)dataGridTarifasMontosFijos.SelectedItems[0];
+            //int orden = Convert.ToInt32(row.orden.ToString().Trim());
+
+            ServiceTarifasMontosFijos serv_tarifas_montos_fijos = new ServiceTarifasMontosFijos();
+            serv_tarifas_montos_fijos.delEntityByOrden(row);
+
+            llenarGridTarifasMontoFijo();
+        } 
+        private void btnAgregar_Denominacion_Click(object sender, RoutedEventArgs e)
+        {
+            //Obtener objeto de imagenes subidas segun la seleccion de la imagen
+            ServiceImagenesSubidas serv_img = new ServiceImagenesSubidas();
+            ct_imagenes_subidas img_sub = serv_img.getEntityByName(cmbImagenesDenominaciones.Text.ToString().Trim());
+            string filename_with_extension = System.IO.Path.GetFileName(img_sub.path_imagen);
+
+            //extracion de valor de los controles y asignaciona a variables.
+            string nombre_denominacion = txtNombreDenominacion.Text.ToString().Trim();
+            string valor_denominacion = txtValorDenominacion.Text.ToString().Trim();
+            string path_imagen_denominacion = @"C:\mt_con_database\IMAGENES_SUBIDAS\" + filename_with_extension;
+            string posicion_tarifa = cmbPosicionArreglo.Text.ToString().Trim();
+
+            string fecha_actual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            if (nombre_denominacion != "" && valor_denominacion != "" && path_imagen_denominacion != "" && posicion_tarifa != "")
+            {
+                ServiceDenominaciones serv_denominaciones = new ServiceDenominaciones();
+                ct_denominaciones obj = new ct_denominaciones();
+
+                obj.nombre = nombre_denominacion;
+                obj.valor = valor_denominacion;
+                obj.path_imagen = path_imagen_denominacion;
+                obj.posicion = Convert.ToInt32(posicion_tarifa);
+
+
+                //se insertaran solo 6 tarifas para montos fijos
+                ct_denominaciones denominacion = serv_denominaciones.getEntityByOrden(obj.posicion);
+                if (denominacion != null && denominacion.posicion == obj.posicion)
+                {
+                    obj.pkDenominacion = denominacion.pkDenominacion;
+                    obj.status = 1;
+                    obj.created_at = denominacion.created_at;
+                    obj.updated_at = fecha_actual;
+
+                    serv_denominaciones.updEntity(obj);
+                }
+                else
+                {
+                    obj.pkDenominacion = denominacion.pkDenominacion;
+                    obj.status = 1;
+                    obj.created_at = denominacion.created_at;
+                    obj.updated_at = fecha_actual;
+
+                    serv_denominaciones.addEntity(obj);
+                }
+
+                llenarGridDenominaciones();
+
+                txtNombreDenominacion.Text = "";
+                txtValorDenominacion.Text = "";
+                cmbImagenesDenominaciones.Text = "";
+                cmbPosicionArreglo.Text = "";
+            }
+        }
+        private void btnEliminar_Denominacion_Click(object sender, RoutedEventArgs e)
+        {
+            ct_denominaciones row = (ct_denominaciones)dataGridDenominaciones.SelectedItems[0];
+            //int orden = Convert.ToInt32(row.orden.ToString().Trim());
+
+            ServiceDenominaciones serv_denominaciones = new ServiceDenominaciones();
+            serv_denominaciones.delEntityByOrden(row);
+
+            llenarGridDenominaciones();
+        }
+
+
         private void cmbEmpresa_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //nombre_combo_cambiado_actualmente = "cmbEmpresa";
@@ -1399,175 +1652,180 @@ namespace TestMdfEntityFramework.Views
 
         }
 
-        private void btnAgregar_TarifaFija_Click(object sender, RoutedEventArgs e)
+        byte[] data; // Global
+        BitmapImage bi = null; // Global
+        private void btnExaminarImagen_Click(object sender, RoutedEventArgs e)
         {
-            string valor_tarifa = txtValor_TarifaMontoFijo.Text.ToString().Trim();
-            string texto_tarifa = txtTexto_TarifaMontoFijo.Text.ToString().Trim();
-            string descripcion_tarifa = txtDescripcion_TarifaMontoFijo.Text.ToString().Trim();
-            string orden_tarifa = cmbOrden_TarifaMontoFijo.Text.ToString().Trim();
+            //Muestra el open dialog para seleccionar la imagen
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.Title = "Examinar Imagen a Subir";
+            dlg.Multiselect = false;
+            dlg.Filter = "Image Files(*.jpg; *.jpeg; *.png; *.gif; *.bmp)|*.jpg; *.jpeg; *.png; *.gif; *.bmp";
+            dlg.ShowDialog();
 
-            string fecha_actual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-            if (valor_tarifa != "" && texto_tarifa != "" && descripcion_tarifa != "" && orden_tarifa != "")
+            if (dlg.FileName != "")
             {
-                ServiceTarifasMontosFijos serv_tarifas_montos_fijos = new ServiceTarifasMontosFijos();
-                ct_tarifas_montos_fijos obj = new ct_tarifas_montos_fijos();
+                // Guarda la imagen en un arreglo de bytes para poder enviarla a la base de datos local
+                FileStream fs = new FileStream(dlg.FileName, FileMode.Open, FileAccess.Read);
+                //byte[] data = new byte[fs.Length];
+                data = new byte[fs.Length];
+                fs.Read(data, 0, System.Convert.ToInt32(fs.Length));
+                fs.Close();
 
-                obj.valor = valor_tarifa;
-                obj.texto = texto_tarifa;
-                obj.descripcion = descripcion_tarifa;
-                obj.orden = Convert.ToInt32(orden_tarifa);
-
-
-                //se insertaran solo 6 tarifas para montos fijos
-                ct_tarifas_montos_fijos tarifa_fija_orden = serv_tarifas_montos_fijos.getEntityByOrden(obj.orden);
-                if (tarifa_fija_orden != null && tarifa_fija_orden.orden == obj.orden)
+                // valida si hay algo en la imagen para insertarla en la base de datos local
+                if (data != null)
                 {
-                    obj.pkTarifaMontoFijo = tarifa_fija_orden.pkTarifaMontoFijo;
-                    obj.status = 1;
-                    obj.created_at = tarifa_fija_orden.created_at;
-                    obj.updated_at = fecha_actual;
-
-                    serv_tarifas_montos_fijos.updEntity(obj);
-                }
-                else
-                {
-                    obj.pkTarifaMontoFijo = tarifa_fija_orden.pkTarifaMontoFijo;
-                    obj.status = 1;
-                    obj.created_at = tarifa_fija_orden.created_at;
-                    obj.updated_at = fecha_actual;
-
-                    serv_tarifas_montos_fijos.addEntity(obj);
+                    ImageSourceConverter imgs = new ImageSourceConverter();
+                    imagebox.SetValue(Image.SourceProperty, imgs.
+                    ConvertFromString(dlg.FileName.ToString()));
                 }
 
-                llenarGridTarifasMontoFijo();
+                // crear un objeto de Bitmap para posteriormente al guardar se tome este objeto para guardar fisicamente en el disco la imagen
+                bi = new BitmapImage();
+                bi.BeginInit();
+                bi.UriSource = new Uri(dlg.FileName, UriKind.RelativeOrAbsolute);
+                bi.EndInit();
+            }
+        }
+        private void btnAgregarImagen_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string path_imagenes_subidas = @"C:\mt_con_database\IMAGENES_SUBIDAS\";
 
-                txtValor_TarifaMontoFijo.Text = "";
-                txtTexto_TarifaMontoFijo.Text = "";
-                txtDescripcion_TarifaMontoFijo.Text = "";
-                cmbOrden_TarifaMontoFijo.Text = "";
+                string strPath = imagebox.Source.ToString();
+                string filename = System.IO.Path.GetFileName(strPath);
+
+                ServiceImagenesSubidas serv_imagenes_subidas = new ServiceImagenesSubidas();
+                ct_imagenes_subidas img_sub = new ct_imagenes_subidas();
+                img_sub.nombre = txtNombreImagen.Text;
+                img_sub.imagen = data;
+                img_sub.path_imagen = path_imagenes_subidas + filename;
+                img_sub.status = 1;
+
+                if (img_sub.nombre != "" && img_sub.imagen != null)
+                {
+                    serv_imagenes_subidas.addEntity(img_sub);
+                }
+
+                //Para guardar la imagen en el directorio fisico
+                //SaveFileDialog save = new SaveFileDialog();
+                //save.Title = "Save picture as ";
+                //save.Filter = "Image Files(*.jpg; *.jpeg; *.gif; *.bmp)|*.jpg; *.jpeg; *.gif; *.bmp";
+                if (bi != null)
+                {
+                    //if (save.ShowDialog() == true)
+                    //{
+                    JpegBitmapEncoder jpg = new JpegBitmapEncoder();
+                    jpg.Frames.Add(BitmapFrame.Create(bi));
+
+                    string file_a_crear = path_imagenes_subidas + filename;
+
+
+                    using (Stream stm = File.Create(file_a_crear))
+                    {
+                        jpg.Save(stm);
+                    }
+
+                }
+
+                //Mostrar el popup para indicar que se guardo la imagen con exito.
+                txtMensajePopup.Text = "Imagen Guardada";
+                mostrarPopupOk();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+
+        }
+        private void CopyAFile()
+        {
+            var source = new OpenFileDialog();
+            if (source.ShowDialog().GetValueOrDefault())
+            {
+                var dest = new SaveFileDialog();
+                if (dest.ShowDialog().GetValueOrDefault())
+                {
+                    File.Copy(source.FileName, dest.FileName);
+                }
             }
         }
 
-        private void btnEliminar_TarifaFija_Click(object sender, RoutedEventArgs e)
+        private void chkSinTISA_TarifasMontosFijos_Checked(object sender, RoutedEventArgs e)
         {
-            ct_tarifas_montos_fijos row = (ct_tarifas_montos_fijos)dataGridTarifasMontosFijos.SelectedItems[0];
-            //int orden = Convert.ToInt32(row.orden.ToString().Trim());
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_sinc_tarifas_montos_fijos = new config_varios();
 
-            ServiceTarifasMontosFijos serv_tarifas_montos_fijos = new ServiceTarifasMontosFijos();
-            serv_tarifas_montos_fijos.delEntityByOrden(row);
-
-            llenarGridTarifasMontoFijo();
-        } 
-
-        private void btnGuardarConfBoletos_Click(object sender, RoutedEventArgs e)
-        {
-            // BOLETO
-            string prefijo_folio_boleto = txtPrefijoBoleto.Text;
-            string prefijo_folio_corte = txtPrefijoCorte.Text;
-
-            #region Setear Mensajes en Boleto
-            if (txtEncabezadoLinea1.Text.Length == 32 && txtEncabezadoLinea2.Text.Length == 32 && txtEncabezadoLinea3.Text.Length == 32 &&
-                txtPiePaginaLinea1.Text.Length == 32 && txtPiePaginaLinea2.Text.Length == 32 && txtPiePaginaLinea3.Text.Length == 32)
+            if (chkSinTISA_TarifasMontosFijos.IsChecked == true)
             {
-                ejecutar_commando_82_set_mensaje(0, txtEncabezadoLinea1.Text);
-                ejecutar_commando_82_set_mensaje(1, txtEncabezadoLinea2.Text);
-                ejecutar_commando_82_set_mensaje(2, txtEncabezadoLinea3.Text);
-
-                ejecutar_commando_82_set_mensaje(3, txtPiePaginaLinea1.Text);
-                ejecutar_commando_82_set_mensaje(4, txtPiePaginaLinea2.Text);
-                ejecutar_commando_82_set_mensaje(5, txtPiePaginaLinea3.Text);
+                cv_sinc_tarifas_montos_fijos.clave = "SINC_TISA_TARIFAS_MONTOS_FIJOS";
+                cv_sinc_tarifas_montos_fijos.valor = "SI";
             }
             else
             {
-                MessageBox.Show("Favor de llenar los mensajes del boleto en sus 32 caracteres, asi sea con espacios");
+                cv_sinc_tarifas_montos_fijos.clave = "SINC_TISA_TARIFAS_MONTOS_FIJOS";
+                cv_sinc_tarifas_montos_fijos.valor = "NO";
             }
 
-            #endregion
-
-            #region BOLETO
-
-            ServiceConfigVarios serv_config_varios_boleto = new ServiceConfigVarios();
-
-            config_varios conf_varios_boleto = new config_varios();
-
-            conf_varios_boleto.clave = "PREFIJO_FOLIO_BOLETO";
-            conf_varios_boleto.valor = prefijo_folio_boleto;
-            serv_config_varios_boleto.updEntityByClave(conf_varios_boleto);
-
-            conf_varios_boleto.clave = "PREFIJO_FOLIO_CORTE";
-            conf_varios_boleto.valor = prefijo_folio_corte;
-            serv_config_varios_boleto.updEntityByClave(conf_varios_boleto);
-
-            #endregion
-
+            serv_config_varios.updEntityByClave(cv_sinc_tarifas_montos_fijos);
         }
-
-        private void btnAgregar_Denominacion_Click(object sender, RoutedEventArgs e)
+        private void chkSinTISA_Denominaciones_Checked(object sender, RoutedEventArgs e)
         {
-            //Obtener objeto de imagenes subidas segun la seleccion de la imagen
-            ServiceImagenesSubidas serv_img = new ServiceImagenesSubidas();
-            ct_imagenes_subidas img_sub = serv_img.getEntityByName(cmbImagenesDenominaciones.Text.ToString().Trim());
-            string filename_with_extension = System.IO.Path.GetFileName(img_sub.path_imagen);
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_sinc_denominaciones = new config_varios();
 
-            //extracion de valor de los controles y asignaciona a variables.
-            string nombre_denominacion = txtNombreDenominacion.Text.ToString().Trim();
-            string valor_denominacion = txtValorDenominacion.Text.ToString().Trim();
-            string path_imagen_denominacion = @"C:\mt_con_database\IMAGENES_SUBIDAS\" + filename_with_extension;
-            string posicion_tarifa = cmbPosicionArreglo.Text.ToString().Trim();
-
-            string fecha_actual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-            if (nombre_denominacion != "" && valor_denominacion != "" && path_imagen_denominacion != "" && posicion_tarifa != "")
+            if (chkSinTISA_Denominaciones.IsChecked == true)
             {
-                ServiceDenominaciones serv_denominaciones = new ServiceDenominaciones();
-                ct_denominaciones obj = new ct_denominaciones();
-
-                obj.nombre = nombre_denominacion;
-                obj.valor = valor_denominacion;
-                obj.path_imagen = path_imagen_denominacion;
-                obj.posicion = Convert.ToInt32(posicion_tarifa);
-
-
-                //se insertaran solo 6 tarifas para montos fijos
-                ct_denominaciones denominacion = serv_denominaciones.getEntityByOrden(obj.posicion);
-                if (denominacion != null && denominacion.posicion == obj.posicion)
-                {
-                    obj.pkDenominacion = denominacion.pkDenominacion;
-                    obj.status = 1;
-                    obj.created_at = denominacion.created_at;
-                    obj.updated_at = fecha_actual;
-
-                    serv_denominaciones.updEntity(obj);
-                }
-                else
-                {
-                    obj.pkDenominacion = denominacion.pkDenominacion;
-                    obj.status = 1;
-                    obj.created_at = denominacion.created_at;
-                    obj.updated_at = fecha_actual;
-
-                    serv_denominaciones.addEntity(obj);
-                }
-
-                llenarGridDenominaciones();
-
-                txtNombreDenominacion.Text = "";
-                txtValorDenominacion.Text = "";
-                cmbImagenesDenominaciones.Text = "";
-                cmbPosicionArreglo.Text = "";
+                cv_sinc_denominaciones.clave = "SINC_TISA_DENOMINACIONES";
+                cv_sinc_denominaciones.valor = "SI";
             }
+            else
+            {
+                cv_sinc_denominaciones.clave = "SINC_TISA_DENOMINACIONES";
+                cv_sinc_denominaciones.valor = "NO";
+            }
+
+            serv_config_varios.updEntityByClave(cv_sinc_denominaciones);
         }
-        private void btnEliminar_Denominacion_Click(object sender, RoutedEventArgs e)
+        private void chkSinTISA_OpcionesGenerales_Checked(object sender, RoutedEventArgs e)
         {
-            ct_denominaciones row = (ct_denominaciones)dataGridDenominaciones.SelectedItems[0];
-            //int orden = Convert.ToInt32(row.orden.ToString().Trim());
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_sinc_opciones_generales = new config_varios();
 
-            ServiceDenominaciones serv_denominaciones = new ServiceDenominaciones();
-            serv_denominaciones.delEntityByOrden(row);
+            if (chkSinTISA_OpcionesGenerales.IsChecked == true)
+            {
+                cv_sinc_opciones_generales.clave = "SINC_TISA_OPCIONES_GENERALES";
+                cv_sinc_opciones_generales.valor = "SI";
+            }
+            else
+            {
+                cv_sinc_opciones_generales.clave = "SINC_TISA_OPCIONES_GENERALES";
+                cv_sinc_opciones_generales.valor = "NO";
+            }
 
-            llenarGridDenominaciones();
+            serv_config_varios.updEntityByClave(cv_sinc_opciones_generales);
         }
+        private void chkSinTISA_ConfigVarios_Checked(object sender, RoutedEventArgs e)
+        {
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_sinc_config_varios = new config_varios();
+
+            if (chkSinTISA_ConfigVarios.IsChecked == true)
+            {
+                cv_sinc_config_varios.clave = "SINC_TISA_CONFIG_VARIOS";
+                cv_sinc_config_varios.valor = "SI";
+            }
+            else
+            {
+                cv_sinc_config_varios.clave = "SINC_TISA_CONFIG_VARIOS";
+                cv_sinc_config_varios.valor = "NO";
+            }
+
+            serv_config_varios.updEntityByClave(cv_sinc_config_varios);
+        }
+
 
         #endregion
 
@@ -1775,26 +2033,6 @@ namespace TestMdfEntityFramework.Views
                 MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
             }
         }
-
-
-        private string GetMensajeString(byte[] RecievedDataGlobal_local)
-        {
-            string empty = " ";
-            string cadena = "";
-            int n = 5;
-            for (int i = 0; i < ((RecievedDataGlobal_local[3]) - 1); i++)
-            {
-                //if((byte)RecievedDataGlobal_local[i] != 0 && (byte)RecievedDataGlobal_local[i] != 32 && (byte)RecievedDataGlobal_local[i] != (byte)empty[0])
-                //{
-                char varTmp = (char)RecievedDataGlobal_local[n++];
-                cadena += varTmp.ToString();
-                //}
-
-            }
-
-            //cadena = cadena.Substring(0, cadena.Length - 5);
-            return cadena;
-        }
         private void ejecutar_commando_82_set_mensaje(decimal num_linea, string mensaje)
         {
             const decimal ByteInicio = 1;
@@ -1853,9 +2091,6 @@ namespace TestMdfEntityFramework.Views
                 MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
             }
         }
-
-
-
         private void ejecutar_commando_80_set_denominacion(decimal num_posicion_denom, UInt32 valor_moneda_billete)
         {
             const decimal ByteInicio = 1;
@@ -1912,7 +2147,6 @@ namespace TestMdfEntityFramework.Views
                 MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando 80");
             }
         }
-
         private void ejecutar_commando_84_set_mensaje_pantalla_alcancia(string mensaje)
         {
             const decimal ByteInicio = 1;
@@ -1971,7 +2205,6 @@ namespace TestMdfEntityFramework.Views
                 MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando 84");
             }
         }
-
         private string ejecutar_commando_83_get_mensaje(int num_linea)
         {
             string mensaje = "";
@@ -2028,126 +2261,6 @@ namespace TestMdfEntityFramework.Views
 
             return mensaje;
         }
-
-        byte[] data; // Global
-        BitmapImage bi = null; // Global
-        private void btnExaminarImagen_Click(object sender, RoutedEventArgs e)
-        {
-            //Muestra el open dialog para seleccionar la imagen
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.Title = "Examinar Imagen a Subir";
-            dlg.Multiselect = false;
-            dlg.Filter = "Image Files(*.jpg; *.jpeg; *.png; *.gif; *.bmp)|*.jpg; *.jpeg; *.png; *.gif; *.bmp";
-            dlg.ShowDialog();
-
-            if (dlg.FileName != "")
-            {
-                // Guarda la imagen en un arreglo de bytes para poder enviarla a la base de datos local
-                FileStream fs = new FileStream(dlg.FileName, FileMode.Open, FileAccess.Read);
-                //byte[] data = new byte[fs.Length];
-                data = new byte[fs.Length];
-                fs.Read(data, 0, System.Convert.ToInt32(fs.Length));
-                fs.Close();
-
-                // valida si hay algo en la imagen para insertarla en la base de datos local
-                if (data != null)
-                {
-                    ImageSourceConverter imgs = new ImageSourceConverter();
-                    imagebox.SetValue(Image.SourceProperty, imgs.
-                    ConvertFromString(dlg.FileName.ToString()));
-                }
-
-                // crear un objeto de Bitmap para posteriormente al guardar se tome este objeto para guardar fisicamente en el disco la imagen
-                bi = new BitmapImage();
-                bi.BeginInit();
-                bi.UriSource = new Uri(dlg.FileName, UriKind.RelativeOrAbsolute);
-                bi.EndInit();
-            }
-        }
-        private void btnAgregarImagen_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                string path_imagenes_subidas = @"C:\mt_con_database\IMAGENES_SUBIDAS\";
-
-                string strPath = imagebox.Source.ToString();
-                string filename = System.IO.Path.GetFileName(strPath);
-
-                ServiceImagenesSubidas serv_imagenes_subidas = new ServiceImagenesSubidas();
-                ct_imagenes_subidas img_sub = new ct_imagenes_subidas();
-                img_sub.nombre = txtNombreImagen.Text;
-                img_sub.imagen = data;
-                img_sub.path_imagen = path_imagenes_subidas + filename;
-                img_sub.status = 1;
-
-                if (img_sub.nombre != "" && img_sub.imagen != null)
-                {
-                    serv_imagenes_subidas.addEntity(img_sub);
-                }
-
-                //Para guardar la imagen en el directorio fisico
-                //SaveFileDialog save = new SaveFileDialog();
-                //save.Title = "Save picture as ";
-                //save.Filter = "Image Files(*.jpg; *.jpeg; *.gif; *.bmp)|*.jpg; *.jpeg; *.gif; *.bmp";
-                if (bi != null)
-                {
-                    //if (save.ShowDialog() == true)
-                    //{
-                    JpegBitmapEncoder jpg = new JpegBitmapEncoder();
-                    jpg.Frames.Add(BitmapFrame.Create(bi));
-
-                    string file_a_crear = path_imagenes_subidas + filename;
-
-
-                    using (Stream stm = File.Create(file_a_crear))
-                    {
-                        jpg.Save(stm);
-                    }
-
-                }
-
-                //Mostrar el popup para indicar que se guardo la imagen con exito.
-                txtMensajePopup.Text = "Imagen Guardada";
-                mostrarPopupOk();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            
-
-        }
-        private void CopyAFile()
-        {
-            var source = new OpenFileDialog();
-            if (source.ShowDialog().GetValueOrDefault())
-            {
-                var dest = new SaveFileDialog();
-                if (dest.ShowDialog().GetValueOrDefault())
-                {
-                    File.Copy(source.FileName, dest.FileName);
-                }
-            }
-        }
-
-        private void btnGuardarConfiguracionUbicacion_Click(object sender, RoutedEventArgs e)
-        {
-            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
-            config_varios cv_ubicacion = new config_varios();
-
-            // UBICACION
-            string activar_ubicacion = cmbActivarUbicacion.Text;
-
-            // UBICACION ACTIVA
-            cv_ubicacion.clave = "UBICACION_ACTIVA";
-            cv_ubicacion.valor = activar_ubicacion;
-            serv_config_varios.updEntityByClave(cv_ubicacion);
-
-            // MUESTRA POPUP DE CONFIRMACION DE QUE SE GUARDO EXITOSAMENTE.
-            txtMensajePopup.Text = "CONFIGURACION EXITOSA";
-            mostrarPopupOk();
-        }
-
         private string ejecutar_commando_85_get_texto_display_alcancia()
         {
             string mensaje = "";
@@ -2203,18 +2316,6 @@ namespace TestMdfEntityFramework.Views
 
             return mensaje;
         }
-
-        private string GetNoSerieAlcanciaString(byte[] RecievedDataGlobal_local)
-        {
-            string cadena = "";
-            int n = 5;
-            for (int i = 0; i < 16; i++)
-            {
-                char varTmp = (char)RecievedDataGlobal_local[n++];
-                cadena += varTmp.ToString();
-            }
-            return cadena;
-        }
         private string ejecutar_commando_88_obtener_serie_alcancia()
         {
             string no_serie_alcancia = "";
@@ -2259,6 +2360,37 @@ namespace TestMdfEntityFramework.Views
             }
             return no_serie_alcancia;
         }
+
+        private string GetNoSerieAlcanciaString(byte[] RecievedDataGlobal_local)
+        {
+            string cadena = "";
+            int n = 5;
+            for (int i = 0; i < 16; i++)
+            {
+                char varTmp = (char)RecievedDataGlobal_local[n++];
+                cadena += varTmp.ToString();
+            }
+            return cadena;
+        }
+        private string GetMensajeString(byte[] RecievedDataGlobal_local)
+        {
+            string empty = " ";
+            string cadena = "";
+            int n = 5;
+            for (int i = 0; i < ((RecievedDataGlobal_local[3]) - 1); i++)
+            {
+                //if((byte)RecievedDataGlobal_local[i] != 0 && (byte)RecievedDataGlobal_local[i] != 32 && (byte)RecievedDataGlobal_local[i] != (byte)empty[0])
+                //{
+                char varTmp = (char)RecievedDataGlobal_local[n++];
+                cadena += varTmp.ToString();
+                //}
+
+            }
+
+            //cadena = cadena.Substring(0, cadena.Length - 5);
+            return cadena;
+        }
+        
         #endregion
 
         #region METODOS GRID POPUP

@@ -64,5 +64,30 @@ namespace TestMdfEntityFramework.EntityServices
         {
             return em.opciones_generales.Where(q => q.agrupador == (string)agrupador).ToList<opciones_generales>();
         }
+
+        public opciones_generales getEntityByOpcionGeneral(string opcion_general)
+        {
+            return em.opciones_generales.Where(q => q.opcion_general == opcion_general).First<opciones_generales>();
+        }
+
+        public void updEntityByOpcionGeneral(opciones_generales entity)
+        {
+            opciones_generales us = em.opciones_generales.Where(q => q.opcion_general == (string)entity.opcion_general).First<opciones_generales>();
+            if (us == null)
+            {
+                throw new ArgumentException("Opcion General no Encontrado");
+            }
+            else
+            {
+                us.valor = entity.valor;
+                us.orden = entity.orden;
+                us.agrupador = entity.agrupador;
+                us.created_at = entity.created_at;
+                us.updated_at = entity.updated_at;
+                us.deleted_at = entity.deleted_at;
+
+                em.SaveChanges();
+            }
+        }
     }
 }
