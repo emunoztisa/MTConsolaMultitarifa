@@ -60,52 +60,14 @@ namespace TestMdfEntityFramework.Views
 
         private void Reportes_OnUnload(object sender, RoutedEventArgs e)
         {
-            close_serial_port();
+            //close_serial_port();
         }
 
         private void btnCorteCaja_Click(object sender, RoutedEventArgs e)
         {
             if (validaDispositivoConectadoEnPuertoCOM())
             {
-                DateTime varFechaHora = DateTime.Now;
-                byte[] BCDDateTime = ToBCD_DT(varFechaHora);
-
-                const decimal Comando = 3;
-                const decimal CRC1 = 193;
-                const decimal CRC2 = 194;
-
-                int CantidadDatos = 0;
-
-                ClearBufferSendData();
-
-                BufferSendData[0] = decimal.ToByte(ByteInicio);
-                BufferSendData[1] = decimal.ToByte(AddressAlcancia);
-                BufferSendData[2] = decimal.ToByte(AddressConsola);
-
-                BufferSendData[4] = decimal.ToByte(Comando);
-                CantidadDatos += 1;
-
-                // Metodo para consultar el siguiente corte de alcancia a asignar
-                string folio_corte = obtener_siguiente_folio_corte(); //"COR_000001_000001";
-
-                ingresa_folio_en_buffer_send_data(folio_corte);
-                CantidadDatos += 17;
-
-                BufferSendData[22] = BCDDateTime[0];
-                BufferSendData[23] = BCDDateTime[1];
-                BufferSendData[24] = BCDDateTime[2];
-                BufferSendData[25] = BCDDateTime[3];
-                BufferSendData[26] = BCDDateTime[4];
-                BufferSendData[27] = BCDDateTime[5];
-                CantidadDatos += 6;
-
-                BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
-                BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
-
-                BufferSendData[K_posicionCantidadDatos] = (byte)(CantidadDatos);
-
-                open_serial_port();
-                puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
+                ejecutar_commando_03_corte_ventas_realizadas();
 
                 Task.WaitAll(new Task[] { Task.Delay(200) });
                 puertoSerie1.Read(RecievedDataGlobal, 0, 50);
@@ -117,7 +79,7 @@ namespace TestMdfEntityFramework.Views
                     insert_corte_db_local(RecievedDataGlobal);
                     Task.WaitAll(new Task[] { Task.Delay(100) });
 
-                    ejecutar_commando_04();
+                    ejecutar_commando_04_reiniciar_contadores();
                     Task.WaitAll(new Task[] { Task.Delay(100) });
 
                     txtMensajePopup.Text = "CORTE IMPRESO";
@@ -136,8 +98,52 @@ namespace TestMdfEntityFramework.Views
             }
             
         }
+        private void ejecutar_commando_03_corte_ventas_realizadas()
+        {
+            DateTime varFechaHora = DateTime.Now;
+            byte[] BCDDateTime = ToBCD_DT(varFechaHora);
 
-        private void ejecutar_commando_04()
+            const decimal Comando = 3;
+            const decimal CRC1 = 193;
+            const decimal CRC2 = 194;
+
+            int CantidadDatos = 0;
+
+            ClearBufferSendData();
+
+            BufferSendData[0] = decimal.ToByte(ByteInicio);
+            BufferSendData[1] = decimal.ToByte(AddressAlcancia);
+            BufferSendData[2] = decimal.ToByte(AddressConsola);
+
+            BufferSendData[4] = decimal.ToByte(Comando);
+            CantidadDatos += 1;
+
+            // Metodo para consultar el siguiente corte de alcancia a asignar
+            string folio_corte = obtener_siguiente_folio_corte(); //"COR_000001_000001";
+
+            ingresa_folio_en_buffer_send_data(folio_corte);
+            CantidadDatos += 17;
+
+            BufferSendData[22] = BCDDateTime[0];
+            BufferSendData[23] = BCDDateTime[1];
+            BufferSendData[24] = BCDDateTime[2];
+            BufferSendData[25] = BCDDateTime[3];
+            BufferSendData[26] = BCDDateTime[4];
+            BufferSendData[27] = BCDDateTime[5];
+            CantidadDatos += 6;
+
+            BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
+            BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+            BufferSendData[K_posicionCantidadDatos] = (byte)(CantidadDatos);
+
+            //close_serial_port();
+            //dispose_serial_port();
+
+            open_serial_port();
+            puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
+        }
+        private void ejecutar_commando_04_reiniciar_contadores()
         {
             int CantidadDatos = 5;
             const decimal Comando = 4;
@@ -161,6 +167,9 @@ namespace TestMdfEntityFramework.Views
 
             BufferSendData[9] = decimal.ToByte(CRC1);
             BufferSendData[10] = decimal.ToByte(CRC2);
+
+            //close_serial_port();
+            //dispose_serial_port();
 
             open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
@@ -362,6 +371,13 @@ namespace TestMdfEntityFramework.Views
                 puertoSerie1.Close();
             }
         }
+        private void dispose_serial_port()
+        {
+            if (puertoSerie1.IsOpen == false)
+            {
+                puertoSerie1.Dispose();
+            }
+        }
 
         static byte[] ToBCD_DT(DateTime d)
         {
@@ -530,9 +546,6 @@ namespace TestMdfEntityFramework.Views
             Canvas.SetLeft(popupBd, centerX);
             Canvas.SetTop(popupBd, centerY);
         }
-        #endregion
-
-
         private void popupGrid_LostFocus(object sender, RoutedEventArgs e)
         {
             ocultarPopupOk();
@@ -545,6 +558,10 @@ namespace TestMdfEntityFramework.Views
         {
             ocultarPopupOk();
         }
+        #endregion
+
+
+
 
 
     }

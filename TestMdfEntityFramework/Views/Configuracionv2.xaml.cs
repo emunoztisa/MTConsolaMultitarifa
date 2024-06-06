@@ -61,14 +61,47 @@ namespace TestMdfEntityFramework.Views
         public Configuracionv2()
         {
             InitializeComponent();
+
             //if (validaPuertoCOMConfigurado())
             //{
             //    configura_puerto_serial();
             //}
 
             llenaCombos();
-            Task.WaitAll(new Task[] { Task.Delay(300) });
+            Task.WaitAll(new Task[] { Task.Delay(200) });
 
+        }
+        private void Configuracion_OnLoad(object sender, RoutedEventArgs e)
+        {
+            //MuestraValoresConfigSerial();
+
+            if (validaPuertoCOMConfigurado())
+            {
+                configura_puerto_serial();
+            }
+
+            //EVENTOS PARA POPUP OK
+            SetPopupDlgCenter();
+            InitializeAnimations();
+
+            try
+            {
+                if (isValidComPortAndConnected())
+                {
+                    SeteaValoresEnCombosConValoresDBLocal();
+                    SeteaValoresCheckboxConValoresDBLocal();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ATENCION !!!");
+            }
+        }
+        private void Configuracionv2_OnUnload(object sender, RoutedEventArgs e)
+        {
+            close_serial_port();
+            dispose_serial_port();
         }
 
         #region METODOS PARA SETEAR VALORES EN CONTROLES
@@ -1000,10 +1033,12 @@ namespace TestMdfEntityFramework.Views
             {
                 if (puertoSerie1.IsOpen == false)
                 {
-                    close_serial_port();
+                    //close_serial_port();
                     //open_serial_port();
-                    puertoSerie1.Dispose();
-                    puertoSerie1.Open();
+                    //puertoSerie1.Dispose();
+                    
+                    //puertoSerie1.Open();
+
                     hayDispositivoConectado = true;
                 }
                 else
@@ -1026,14 +1061,27 @@ namespace TestMdfEntityFramework.Views
 
         private void btnGuardarConfiguracion_Click(object sender, RoutedEventArgs e)
         {
-            //configura_puerto_serial();
-            //close_serial_port();
+            try
+            {
 
+
+                txtMensajePopup.Text = "CONFIGURACION EXITOSA";
+                mostrarPopupOk();
+
+                //close_serial_port();
+            }
+            catch (Exception ex)
+            {
+                //close_serial_port();
+                MessageBox.Show(ex.Message, "ATENCION", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+        }
+        private void btnGuardarConf_Puertos_Click(object sender, RoutedEventArgs e)
+        {
             try
             {
                 //CONFIGURACION DE PUERTO SERIE
-                string fecha_actual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
                 string port_name = cmbComPorts.Text;
                 string baud_rate = cmbBausRate.Text;
                 string data_bits = cmbDataBits.Text;
@@ -1041,50 +1089,8 @@ namespace TestMdfEntityFramework.Views
                 string paridad = cmbParity.Text;
                 string handshake = cmbHandShake.Text;
 
-                //string impresora = cmbImpresoras.Text;
-                string modo = cmbModoApp.Text;
-                string tipo_tarifa = cmbTipoTarifa.Text;
-
-                string empresa = cmbEmpresa.Text;
-                string corredor = cmbCorredor.Text;
-                string ruta = cmbRuta.Text;
-                string numero_unidad = cmbUnidad.Text;
-
-                // TARIFA
-                string cant_usuarios_perfil = cmbCantUsuariosPerfil.Text;
-                string texto_display_alcancia = txtTextoDisplayAlcancia.Text;
-
-
-
-                // MULTIMEDIA
-                int indice;
-                indice = cmbVoces.SelectedIndex;
-                string nombre = vocesInfo.ElementAt(indice).Name;
-                string voz = nombre;
-
-                string camara_default = cmbCamaras.Text;
-                string impresora_default = cmbImpresoras.Text;
-
-                string activar_voz = cmbActivarVoz.Text;
-                string activar_camara = cmbActivarCamara.Text;
-                string activar_impresora = cmbActivarImpresora.Text;
-
-                //APARIENCIA
-                string logo_home = cmbImagenesSubidas.Text;
-
-                // MANTENIMIENTO
-                string base_url = txtUrlBase.Text;
-
-
                 ServiceConfigVarios scv = new ServiceConfigVarios();
-
-                //valor de unidad antes de ser cambiada
-                config_varios cv_num_unidad_antes_cambio = scv.getEntityByClave("NUMERO_UNIDAD");
-                string unidad_antes_cambio = cv_num_unidad_antes_cambio.valor;
-
                 config_varios cv = new config_varios();
-
-                #region guardar config serial port
 
                 cv.clave = "PORT_NAME";
                 cv.valor = port_name;
@@ -1110,240 +1116,20 @@ namespace TestMdfEntityFramework.Views
                 cv.valor = handshake;
                 scv.updEntityByClave(cv);
 
-                #endregion
 
-                #region guardar otras config varias
-
-                cv.clave = "TIPO_TARIFA";
-                cv.valor = tipo_tarifa;
-                scv.updEntityByClave(cv);
-
-                cv.clave = "MODO";
-                cv.valor = modo;
-                scv.updEntityByClave(cv);
-
-                //cv.clave = "IMPRESORA_DEFAULT";
-                //cv.valor = impresora;
-                //scv.updEntityByClave(cv);
-
-                cv.clave = "EMPRESA";
-                cv.valor = empresa;
-                scv.updEntityByClave(cv);
-
-                cv.clave = "CORREDOR";
-                cv.valor = corredor;
-                scv.updEntityByClave(cv);
-
-                cv.clave = "VOZ";
-                cv.valor = voz;
-                scv.updEntityByClave(cv);
-
-                cv.clave = "RUTA";
-                cv.valor = ruta;
-                scv.updEntityByClave(cv);
-
-                ejecutar_commando_86_ruta(ruta);
-
-                cv.clave = "NUMERO_UNIDAD";
-                cv.valor = numero_unidad;
-                scv.updEntityByClave(cv);
-
-                ejecutar_commando_86_unidad(numero_unidad);
-
-
-
-                #endregion
-
-                #region Cambiar status en DB TISA
-                /*
-                 1 = DISPONIBLE PARA ASIGNAR A ALGUNA UNIDAD
-                 2 = ASIGNADA YA A ALGUNA UNIDAD
-                */
-
-                // Para Cambiar de status a 1 la unidad que sera liberada en el catalogo de TISA.
-                ServiceUnidades serv_unidades_cambio_status_1 = new ServiceUnidades();
-                ct_unidades unidad_1 = serv_unidades_cambio_status_1.getEntityByName(unidad_antes_cambio);
-                if (unidad_1 != null)
-                {
-                    ct_unidades cu_1 = new ct_unidades();
-                    cu_1.pkUnidad = unidad_1.pkUnidad;
-                    cu_1.fkEmpresa = unidad_1.fkEmpresa;
-                    cu_1.fkCorredor = unidad_1.fkCorredor;
-                    cu_1.nombre = unidad_1.nombre;
-                    cu_1.noSerieAVL = unidad_1.noSerieAVL;
-                    cu_1.economico = unidad_1.economico;
-                    cu_1.capacidad = unidad_1.capacidad;
-                    cu_1.validador = unidad_1.validador;
-                    cu_1.status = 1;
-                    cu_1.created_at = unidad_1.created_at;
-                    cu_1.updated_at = fecha_actual;
-                    cu_1.deleted_at = unidad_1.deleted_at;
-
-                    UnidadesController uc_1 = new UnidadesController();
-                    uc_1.UpdateUnidad(cu_1);
-                }
-
-
-
-
-                //Para Cambiar de status a 2 la unidad que sera asignada a la consola.
-                ServiceUnidades serv_unidades_cambio_status_2 = new ServiceUnidades();
-                ct_unidades unidad_2 = serv_unidades_cambio_status_2.getEntityByName(cv.valor);
-
-                if (unidad_2 != null)
-                {
-                    ct_unidades cu_2 = new ct_unidades();
-                    cu_2.pkUnidad = unidad_2.pkUnidad;
-                    cu_2.fkEmpresa = unidad_2.fkEmpresa;
-                    cu_2.fkCorredor = unidad_2.fkCorredor;
-                    cu_2.nombre = unidad_2.nombre;
-                    cu_2.noSerieAVL = unidad_2.noSerieAVL;
-                    cu_2.economico = unidad_2.economico;
-                    cu_2.capacidad = unidad_2.capacidad;
-                    cu_2.validador = unidad_2.validador;
-                    cu_2.status = 2;
-                    cu_2.created_at = unidad_2.created_at;
-                    cu_2.updated_at = fecha_actual;
-                    cu_2.deleted_at = unidad_2.deleted_at;
-
-                    UnidadesController uc_2 = new UnidadesController();
-                    uc_2.UpdateUnidad(cu_2);
-                }
-
-
-                #endregion
-
-
-
-
-
-                #region MULTIMEDIA
-
-                ServiceConfigVarios serv_conf_varios_multimedia = new ServiceConfigVarios();
-                config_varios conf_varios_multimedia = new config_varios();
-
-                // VOZ ACTIVA
-                conf_varios_multimedia.clave = "VOZ_ACTIVA";
-                conf_varios_multimedia.valor = activar_voz;
-                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
-
-                // CAMARA ACTIVA
-                conf_varios_multimedia.clave = "CAMARA_ACTIVA";
-                conf_varios_multimedia.valor = activar_camara;
-                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
-
-                // IMPRESORA ACTIVA
-                conf_varios_multimedia.clave = "IMPRESORA_ACTIVA";
-                conf_varios_multimedia.valor = activar_impresora;
-                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
-
-                // CAMARA DEFAULT
-                conf_varios_multimedia.clave = "CAMARA_DEFAULT";
-                conf_varios_multimedia.valor = camara_default;
-                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
-
-                // IMPRESORA DEFAULT
-                conf_varios_multimedia.clave = "IMPRESORA_DEFAULT";
-                conf_varios_multimedia.valor = impresora_default;
-                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
-
-
-
-
-                #endregion
-
-                #region APARIENCIA
-                ServiceConfigVarios serv_config_varios_apariencia = new ServiceConfigVarios();
-                config_varios cv_apariencia_logo_home = new config_varios();
-                cv_apariencia_logo_home.clave = "LOGO_HOME";
-                cv_apariencia_logo_home.valor = logo_home;
-                serv_config_varios_apariencia.updEntityByClave(cv_apariencia_logo_home);
-
-
-
-                #endregion
-
-                #region TARIFA
-
-                ServiceConfigVarios serv_conf_varios_tarifa = new ServiceConfigVarios();
-
-                config_varios conf_varios_tarifa = new config_varios();
-                conf_varios_tarifa.clave = "CANTIDAD_PERSONAS_PERFIL";
-                conf_varios_tarifa.valor = cant_usuarios_perfil;
-                serv_conf_varios_tarifa.updEntityByClave(conf_varios_tarifa);
-
-                config_varios conf_varios_tarifa_texto_display = new config_varios();
-                conf_varios_tarifa_texto_display.clave = "TEXTO_DISPLAY_ALCANCIA";
-                conf_varios_tarifa_texto_display.valor = texto_display_alcancia;
-                serv_conf_varios_tarifa.updEntityByClave(conf_varios_tarifa_texto_display);
-
-                // SE SETEA EN LA ALCANCIA EL MENSAJE A MOSTRAR EN DISPLAY
-                ejecutar_commando_84_set_mensaje_pantalla_alcancia(conf_varios_tarifa_texto_display.valor);
-
-
-                #endregion
-
-
-
-                #region MANTENIMIENTO
-
-                ServiceConfigVarios serv_conf_varios_mantenimiento = new ServiceConfigVarios();
-
-                config_varios conf_varios_mantenimiento = new config_varios();
-                conf_varios_mantenimiento.clave = "BASE_URL";
-                conf_varios_mantenimiento.valor = base_url;
-                serv_conf_varios_mantenimiento.updEntityByClave(conf_varios_mantenimiento);
-
-                #endregion
-
-
-                //MessageBox.Show("Configuracion Guardada con Exito", "INFO", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 txtMensajePopup.Text = "CONFIGURACION EXITOSA";
                 mostrarPopupOk();
 
-                close_serial_port();
-
+                //close_serial_port();
             }
             catch (Exception ex)
             {
-                close_serial_port();
+                //close_serial_port();
                 MessageBox.Show(ex.Message, "ATENCION", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-        }
-        private void btnGuardarConfiguracionDenominaciones_Click(object sender, RoutedEventArgs e)
-        {
-            #region DENOMINACIONES MONEDAS Y BILLETES
-
-            try
-            {
-                ServiceDenominaciones serv_denominaciones = new ServiceDenominaciones();
-                ct_denominaciones obj_denom = new ct_denominaciones();
-
-                //Ciclo para actualizar cada posicion con su denominacion
-                List<ct_denominaciones> list_denominaciones = serv_denominaciones.getEntities();
-                for (int i = 0; i < list_denominaciones.Count; i++)
-                {
-                    decimal posicion_actual = list_denominaciones[i].posicion != null ? Convert.ToDecimal(list_denominaciones[i].posicion) : -1;
-                    UInt32 valor_denominacion_centavos = (UInt32)(Convert.ToDecimal(list_denominaciones[i].valor) * 100);
-                    if (posicion_actual != -1)
-                    {
-                        ejecutar_commando_80_set_denominacion(posicion_actual, valor_denominacion_centavos);
-                    }
-                }
-
-                txtMensajePopup.Text = "CONFIGURACION EXITOSA";
-                mostrarPopupOk();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-
-
-            #endregion
+            
         }
         private void btnGuardarConfBoletos_Click(object sender, RoutedEventArgs e)
         {
@@ -1387,6 +1173,257 @@ namespace TestMdfEntityFramework.Views
             #endregion
 
         }
+        private void btnGuardarConf_Tarifa_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string tipo_tarifa = cmbTipoTarifa.Text;
+                string cant_usuarios_perfil = cmbCantUsuariosPerfil.Text;
+                string texto_display_alcancia = txtTextoDisplayAlcancia.Text;
+
+                ServiceConfigVarios scv = new ServiceConfigVarios();
+                config_varios cv = new config_varios();
+
+                cv.clave = "TIPO_TARIFA";
+                cv.valor = tipo_tarifa;
+                scv.updEntityByClave(cv);
+
+                ServiceConfigVarios serv_conf_varios_tarifa = new ServiceConfigVarios();
+
+                config_varios conf_varios_tarifa = new config_varios();
+                conf_varios_tarifa.clave = "CANTIDAD_PERSONAS_PERFIL";
+                conf_varios_tarifa.valor = cant_usuarios_perfil;
+                serv_conf_varios_tarifa.updEntityByClave(conf_varios_tarifa);
+
+                config_varios conf_varios_tarifa_texto_display = new config_varios();
+                conf_varios_tarifa_texto_display.clave = "TEXTO_DISPLAY_ALCANCIA";
+                conf_varios_tarifa_texto_display.valor = texto_display_alcancia;
+                serv_conf_varios_tarifa.updEntityByClave(conf_varios_tarifa_texto_display);
+
+                // SE SETEA EN LA ALCANCIA EL MENSAJE A MOSTRAR EN DISPLAY
+                ejecutar_commando_84_set_mensaje_pantalla_alcancia(conf_varios_tarifa_texto_display.valor);
+
+                txtMensajePopup.Text = "CONFIGURACION EXITOSA";
+                mostrarPopupOk();
+
+                //close_serial_port();
+            }
+            catch (Exception ex)
+            {
+                //close_serial_port();
+                MessageBox.Show(ex.Message, "ATENCION", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+        }
+        private void btnGuardarConf_Empresa_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string empresa = cmbEmpresa.Text;
+                string corredor = cmbCorredor.Text;
+                string ruta = cmbRuta.Text;
+                string numero_unidad = cmbUnidad.Text;
+
+                #region Cambiar status en DB TISA para la UNIDAD SELECCIONADA
+
+                string fecha_actual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                ServiceConfigVarios scv = new ServiceConfigVarios();
+
+                //valor de unidad antes de ser cambiada
+                config_varios cv_num_unidad_antes_cambio = scv.getEntityByClave("NUMERO_UNIDAD");
+                string unidad_antes_cambio = cv_num_unidad_antes_cambio.valor;
+
+                config_varios cv = new config_varios();
+
+
+                /*
+                 1 = DISPONIBLE PARA ASIGNAR A ALGUNA UNIDAD
+                 2 = ASIGNADA YA A ALGUNA UNIDAD
+                */
+
+                // Para Cambiar de status a 1 la unidad que sera liberada en el catalogo de TISA.
+                ServiceUnidades serv_unidades_cambio_status_1 = new ServiceUnidades();
+                ct_unidades unidad_1 = serv_unidades_cambio_status_1.getEntityByName(unidad_antes_cambio);
+                if (unidad_1 != null)
+                {
+                    ct_unidades cu_1 = new ct_unidades();
+                    cu_1.pkUnidad = unidad_1.pkUnidad;
+                    cu_1.fkEmpresa = unidad_1.fkEmpresa;
+                    cu_1.fkCorredor = unidad_1.fkCorredor;
+                    cu_1.nombre = unidad_1.nombre;
+                    cu_1.noSerieAVL = unidad_1.noSerieAVL;
+                    cu_1.economico = unidad_1.economico;
+                    cu_1.capacidad = unidad_1.capacidad;
+                    cu_1.validador = unidad_1.validador;
+                    cu_1.status = 1;
+                    cu_1.created_at = unidad_1.created_at;
+                    cu_1.updated_at = fecha_actual;
+                    cu_1.deleted_at = unidad_1.deleted_at;
+
+                    UnidadesController uc_1 = new UnidadesController();
+                    uc_1.UpdateUnidad(cu_1);
+                }
+
+                //Para Cambiar de status a 2 la unidad que sera asignada a la consola.
+                ServiceUnidades serv_unidades_cambio_status_2 = new ServiceUnidades();
+                ct_unidades unidad_2 = serv_unidades_cambio_status_2.getEntityByName(cv.valor);
+
+                if (unidad_2 != null)
+                {
+                    ct_unidades cu_2 = new ct_unidades();
+                    cu_2.pkUnidad = unidad_2.pkUnidad;
+                    cu_2.fkEmpresa = unidad_2.fkEmpresa;
+                    cu_2.fkCorredor = unidad_2.fkCorredor;
+                    cu_2.nombre = unidad_2.nombre;
+                    cu_2.noSerieAVL = unidad_2.noSerieAVL;
+                    cu_2.economico = unidad_2.economico;
+                    cu_2.capacidad = unidad_2.capacidad;
+                    cu_2.validador = unidad_2.validador;
+                    cu_2.status = 2;
+                    cu_2.created_at = unidad_2.created_at;
+                    cu_2.updated_at = fecha_actual;
+                    cu_2.deleted_at = unidad_2.deleted_at;
+
+                    UnidadesController uc_2 = new UnidadesController();
+                    uc_2.UpdateUnidad(cu_2);
+                }
+
+
+                #endregion
+
+                ServiceConfigVarios serv_cv = new ServiceConfigVarios();
+                config_varios cv2 = new config_varios();
+
+                cv2.clave = "EMPRESA";
+                cv2.valor = empresa;
+                serv_cv.updEntityByClave(cv2);
+
+                cv2.clave = "CORREDOR";
+                cv2.valor = corredor;
+                serv_cv.updEntityByClave(cv2);
+
+                cv2.clave = "RUTA";
+                cv2.valor = ruta;
+                serv_cv.updEntityByClave(cv2);
+
+                ejecutar_commando_86_ruta(ruta);
+
+                cv2.clave = "NUMERO_UNIDAD";
+                cv2.valor = numero_unidad;
+                serv_cv.updEntityByClave(cv2);
+
+                ejecutar_commando_86_unidad(numero_unidad);
+
+
+
+                txtMensajePopup.Text = "CONFIGURACION EXITOSA";
+                mostrarPopupOk();
+
+                //close_serial_port();
+            }
+            catch (Exception ex)
+            {
+                //close_serial_port();
+                MessageBox.Show(ex.Message, "ATENCION", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            
+        }
+        private void btnGuardarConf_Multimedia_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                int indice;
+                indice = cmbVoces.SelectedIndex;
+                string nombre = vocesInfo.ElementAt(indice).Name;
+                string voz = nombre;
+
+                string camara_default = cmbCamaras.Text;
+                string impresora_default = cmbImpresoras.Text;
+
+                string activar_voz = cmbActivarVoz.Text;
+                string activar_camara = cmbActivarCamara.Text;
+                string activar_impresora = cmbActivarImpresora.Text;
+
+                ServiceConfigVarios serv_conf_varios_multimedia = new ServiceConfigVarios();
+                config_varios conf_varios_multimedia = new config_varios();
+
+                conf_varios_multimedia.clave = "VOZ";
+                conf_varios_multimedia.valor = voz;
+                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
+
+                // VOZ ACTIVA
+                conf_varios_multimedia.clave = "VOZ_ACTIVA";
+                conf_varios_multimedia.valor = activar_voz;
+                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
+
+                // CAMARA ACTIVA
+                conf_varios_multimedia.clave = "CAMARA_ACTIVA";
+                conf_varios_multimedia.valor = activar_camara;
+                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
+
+                // IMPRESORA ACTIVA
+                conf_varios_multimedia.clave = "IMPRESORA_ACTIVA";
+                conf_varios_multimedia.valor = activar_impresora;
+                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
+
+                // CAMARA DEFAULT
+                conf_varios_multimedia.clave = "CAMARA_DEFAULT";
+                conf_varios_multimedia.valor = camara_default;
+                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
+
+                // IMPRESORA DEFAULT
+                conf_varios_multimedia.clave = "IMPRESORA_DEFAULT";
+                conf_varios_multimedia.valor = impresora_default;
+                serv_conf_varios_multimedia.updEntityByClave(conf_varios_multimedia);
+
+
+                txtMensajePopup.Text = "CONFIGURACION EXITOSA";
+                mostrarPopupOk();
+
+                //close_serial_port();
+            }
+            catch (Exception ex)
+            {
+                //close_serial_port();
+                MessageBox.Show(ex.Message, "ATENCION", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+        }
+        private void btnGuardarConfiguracionDenominaciones_Click(object sender, RoutedEventArgs e)
+        {
+            #region DENOMINACIONES MONEDAS Y BILLETES
+
+            try
+            {
+                ServiceDenominaciones serv_denominaciones = new ServiceDenominaciones();
+                ct_denominaciones obj_denom = new ct_denominaciones();
+
+                //Ciclo para actualizar cada posicion con su denominacion
+                List<ct_denominaciones> list_denominaciones = serv_denominaciones.getEntities();
+                for (int i = 0; i < list_denominaciones.Count; i++)
+                {
+                    decimal posicion_actual = list_denominaciones[i].posicion != null ? Convert.ToDecimal(list_denominaciones[i].posicion) : -1;
+                    UInt32 valor_denominacion_centavos = (UInt32)(Convert.ToDecimal(list_denominaciones[i].valor) * 100);
+                    if (posicion_actual != -1)
+                    {
+                        ejecutar_commando_80_set_denominacion(posicion_actual, valor_denominacion_centavos);
+                    }
+                }
+
+                txtMensajePopup.Text = "CONFIGURACION EXITOSA";
+                mostrarPopupOk();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+
+
+            #endregion
+        }
         private void btnGuardarConfiguracionUbicacion_Click(object sender, RoutedEventArgs e)
         {
             ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
@@ -1404,42 +1441,69 @@ namespace TestMdfEntityFramework.Views
             txtMensajePopup.Text = "CONFIGURACION EXITOSA";
             mostrarPopupOk();
         }
+        private void btnGuardarConf_Mensajes_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void btnGuardarConf_Apariencia_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string logo_home = cmbImagenesSubidas.Text;
+
+                ServiceConfigVarios serv_config_varios_apariencia = new ServiceConfigVarios();
+                config_varios cv_apariencia_logo_home = new config_varios();
+                cv_apariencia_logo_home.clave = "LOGO_HOME";
+                cv_apariencia_logo_home.valor = logo_home;
+                serv_config_varios_apariencia.updEntityByClave(cv_apariencia_logo_home);
+
+                txtMensajePopup.Text = "CONFIGURACION EXITOSA";
+                mostrarPopupOk();
+
+                //close_serial_port();
+            }
+            catch (Exception ex)
+            {
+                //close_serial_port();
+                MessageBox.Show(ex.Message, "ATENCION", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+        }
+        private void btnGuardarConf_Mantenimiento_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string base_url = txtUrlBase.Text;
+                string modo = cmbModoApp.Text;
+
+                ServiceConfigVarios serv_conf_varios_mantenimiento = new ServiceConfigVarios();
+                config_varios conf_varios_mantenimiento = new config_varios();
+
+                conf_varios_mantenimiento.clave = "BASE_URL";
+                conf_varios_mantenimiento.valor = base_url;
+                serv_conf_varios_mantenimiento.updEntityByClave(conf_varios_mantenimiento);
+
+                conf_varios_mantenimiento.clave = "MODO";
+                conf_varios_mantenimiento.valor = modo;
+                serv_conf_varios_mantenimiento.updEntityByClave(conf_varios_mantenimiento);
+
+                txtMensajePopup.Text = "CONFIGURACION EXITOSA";
+                mostrarPopupOk();
+
+                //close_serial_port();
+            }
+            catch (Exception ex)
+            {
+                //close_serial_port();
+                MessageBox.Show(ex.Message, "ATENCION", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+        }
 
         #endregion
 
         #region EVENTOS CONTROLES
-        private void Configuracion_OnLoad(object sender, RoutedEventArgs e)
-        {
-            //MuestraValoresConfigSerial();
 
-            if (validaPuertoCOMConfigurado())
-            {
-                configura_puerto_serial();
-            }
-
-            //EVENTOS PARA POPUP OK
-            SetPopupDlgCenter();
-            InitializeAnimations();
-
-            try
-            {
-                if (isValidComPortAndConnected())
-                {
-                    SeteaValoresEnCombosConValoresDBLocal();
-                    SeteaValoresCheckboxConValoresDBLocal();
-                }
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message,"ATENCION !!!");
-            }
-        }
-        private void Configuracionv2_OnUnload(object sender, RoutedEventArgs e)
-        {
-            close_serial_port();
-        }
-        
         private void btnAgregar_TarifaFija_Click(object sender, RoutedEventArgs e)
         {
             string valor_tarifa = txtValor_TarifaMontoFijo.Text.ToString().Trim();
@@ -1854,6 +1918,11 @@ namespace TestMdfEntityFramework.Views
                     , Convert.ToInt32(cv_stop_bits.valor) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
                     );
                     puertoSerie1.Handshake = cv_handshake.valor == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+
+                    close_serial_port();
+                    //dispose_serial_port();
+
+                    open_serial_port(); //EMD 2024-05-06
                 }
             }
             catch
@@ -1861,7 +1930,7 @@ namespace TestMdfEntityFramework.Views
                 MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
             }
 
-            close_serial_port();
+            //close_serial_port();
 
         }
         private void open_serial_port()
@@ -1875,7 +1944,7 @@ namespace TestMdfEntityFramework.Views
             }
             catch (Exception ex)
             {
-                configura_puerto_serial();
+                //configura_puerto_serial();
 
             }
         }
@@ -1884,6 +1953,13 @@ namespace TestMdfEntityFramework.Views
             if (puertoSerie1.IsOpen == true)
             {
                 puertoSerie1.Close();
+            }
+        }
+        private void dispose_serial_port()
+        {
+            if (puertoSerie1.IsOpen == false)
+            {
+                puertoSerie1.Dispose();
             }
         }
         private void MuestraValoresConfigSerial()
@@ -1931,7 +2007,7 @@ namespace TestMdfEntityFramework.Views
 
         private void ejecutar_commando_86_ruta(string nombre_ruta)
         {
-            close_serial_port();
+            //close_serial_port();
 
             const decimal ByteInicio = 1;
             const decimal AddressConsola = 1;
@@ -1966,6 +2042,9 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
             BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
 
+            //close_serial_port();
+            //dispose_serial_port();
+
             open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
 
@@ -1983,7 +2062,7 @@ namespace TestMdfEntityFramework.Views
         }
         private void ejecutar_commando_86_unidad(string nombre_unidad)
         {
-            close_serial_port();
+            //close_serial_port();
 
             const decimal ByteInicio = 1;
             const decimal AddressConsola = 1;
@@ -2017,6 +2096,9 @@ namespace TestMdfEntityFramework.Views
 
             BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
             BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+            //close_serial_port();
+            //dispose_serial_port();
 
             open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
@@ -2076,6 +2158,9 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
             BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
 
+            //close_serial_port();
+            //dispose_serial_port();
+
             open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
 
@@ -2131,6 +2216,9 @@ namespace TestMdfEntityFramework.Views
 
             BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
             BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+            //close_serial_port();
+            //dispose_serial_port();
 
             open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
@@ -2190,6 +2278,9 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
             BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
 
+            //close_serial_port();
+            //dispose_serial_port();
+
             open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
 
@@ -2237,6 +2328,9 @@ namespace TestMdfEntityFramework.Views
 
                 BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
                 BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+                //close_serial_port();
+                //dispose_serial_port();
 
                 open_serial_port();
                 puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
@@ -2293,6 +2387,9 @@ namespace TestMdfEntityFramework.Views
                 BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
                 BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
 
+                //close_serial_port();
+                //dispose_serial_port();
+
                 open_serial_port();
                 puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
 
@@ -2343,6 +2440,9 @@ namespace TestMdfEntityFramework.Views
 
             BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
             BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+            //close_serial_port();
+            //dispose_serial_port();
 
             open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);

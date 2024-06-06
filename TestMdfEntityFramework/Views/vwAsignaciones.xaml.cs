@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -21,12 +22,22 @@ namespace TestMdfEntityFramework.Views
     /// </summary>
     public partial class vwAsignaciones : UserControl
     {
+        //POPUP OK
+        private double left, top, right, bottom, centerX, centerY;
+        private DoubleAnimation bottomToCenterAnimiation, topToCenterAnimation,
+            leftToCenterAnimation, rightToCenterAnimation;
+        private Storyboard bottomToCenterStoryboard, topToCenterStoryboard,
+            leftToCenterStoryboard, rightToCenterStoryboard;
         public vwAsignaciones()
         {
             InitializeComponent();
         }
         private void vwAsignaciones_OnLoad(object sender, RoutedEventArgs e)
         {
+            //EVENTOS PARA POPUP OK
+            SetPopupDlgCenter();
+            InitializeAnimations();
+
             LlenaComboAsignaciones();
             SetearAsignacionActivaEnControles();
         }
@@ -76,7 +87,21 @@ namespace TestMdfEntityFramework.Views
                 cv.updated_at = update_at;
                 scv.updEntityByClave(cv);
 
-                MessageBox.Show("ASIGNACION ACTIVADA CON EXITO", "INFO", MessageBoxButton.OK, MessageBoxImage.Information);
+                //ASIGNAR EL FK_ASIGNACION_ACTIVA a la variable del principal
+                //OBTENER CONFIGURACIONES VARIAS DEL SISTEMA Y OPERACION ACTUAL
+                ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+                config_varios cv_asign = serv_config_varios.getEntityByClave("ASIGNACION_ACTIVA");
+
+                ServiceAsignaciones serv_asign = new ServiceAsignaciones();
+                sy_asignaciones asig = serv_asign.getEntityByFolio(cv_asign.valor);
+
+                Principal.FK_ASIGNACION_ACTIVA = cv_asign.valor != "" ? asig.pkAsignacion : 0;
+
+                //MessageBox.Show("ASIGNACION ACTIVADA CON EXITO", "INFO", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                txtMensajePopup.Text = "ASIGNACION ACTIVADA";
+                mostrarPopupOk();
+
             }
             catch (Exception ex)
             {
@@ -136,6 +161,169 @@ namespace TestMdfEntityFramework.Views
 
         }
 
-        
+
+        #region METODOS GRID POPUP
+        private void ocultarPopupOk()
+        {
+            try
+            {
+                SetPopupDlgCenter();
+                bottomToCenterAnimiation.From = bottom;
+                bottomToCenterAnimiation.To = centerY;
+
+                Canvas.SetTop(popupBd, bottom);
+
+                popupGrid.Visibility = Visibility.Hidden;
+
+                bottomToCenterStoryboard.Begin();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private void mostrarPopupOk()
+        {
+            try
+            {
+                SetPopupDlgCenter();
+                bottomToCenterAnimiation.From = bottom;
+                bottomToCenterAnimiation.To = centerY;
+
+                Canvas.SetTop(popupBd, bottom);
+
+                popupGrid.Visibility = Visibility.Visible;
+
+                bottomToCenterStoryboard.Begin();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private void SetPopupDlgCenter()
+        {
+            try
+            {
+                left = -(popupBd.ActualWidth);
+                top = -(popupBd.ActualHeight);
+                right = (popupGrid.ActualWidth);
+                bottom = (popupGrid.ActualHeight);
+
+                centerX = (popupGrid.ActualWidth / 2) - popupBd.ActualWidth / 2;
+                centerY = (popupGrid.ActualHeight / 2) - popupBd.ActualHeight / 2;
+
+                Canvas.SetLeft(popupBd, centerX);
+                Canvas.SetTop(popupBd, centerY);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        private void InitializeAnimations()
+        {
+            try
+            {
+                #region bottom to center animation
+                bottomToCenterAnimiation = new DoubleAnimation()
+                {
+                    From = bottom,
+                    To = centerY,
+                    Duration = TimeSpan.FromMilliseconds(250),
+                    FillBehavior = FillBehavior.Stop,
+                };
+
+                Storyboard.SetTarget(bottomToCenterAnimiation, popupBd);
+                Storyboard.SetTargetProperty(bottomToCenterAnimiation, new PropertyPath(Canvas.TopProperty));
+
+                bottomToCenterStoryboard = new Storyboard();
+                bottomToCenterStoryboard.Children.Add(bottomToCenterAnimiation);
+
+                bottomToCenterStoryboard.Completed += OnStoryboardCompleted;
+                #endregion
+
+                #region top to center animation 
+                topToCenterAnimation = new DoubleAnimation()
+                {
+                    From = top,
+                    To = centerY,
+                    Duration = TimeSpan.FromMilliseconds(250),
+                    FillBehavior = FillBehavior.Stop,
+                };
+
+                Storyboard.SetTarget(topToCenterAnimation, popupBd);
+                Storyboard.SetTargetProperty(topToCenterAnimation, new PropertyPath(Canvas.TopProperty));
+
+                topToCenterStoryboard = new Storyboard();
+                topToCenterStoryboard.Children.Add(topToCenterAnimation);
+
+                topToCenterStoryboard.Completed += OnStoryboardCompleted;
+                #endregion
+
+                #region left to center animation
+                leftToCenterAnimation = new DoubleAnimation()
+                {
+                    From = left,
+                    To = centerX,
+                    Duration = TimeSpan.FromMilliseconds(250),
+                    FillBehavior = FillBehavior.Stop,
+                };
+
+                Storyboard.SetTarget(leftToCenterAnimation, popupBd);
+                Storyboard.SetTargetProperty(leftToCenterAnimation, new PropertyPath(Canvas.LeftProperty));
+
+                leftToCenterStoryboard = new Storyboard();
+                leftToCenterStoryboard.Children.Add(leftToCenterAnimation);
+
+                leftToCenterStoryboard.Completed += OnStoryboardCompleted;
+                #endregion
+
+                #region right to center animation
+                rightToCenterAnimation = new DoubleAnimation()
+                {
+                    From = right,
+                    To = centerX,
+                    Duration = TimeSpan.FromMilliseconds(250),
+                    FillBehavior = FillBehavior.Stop,
+                };
+
+                Storyboard.SetTarget(rightToCenterAnimation, popupBd);
+                Storyboard.SetTargetProperty(rightToCenterAnimation, new PropertyPath(Canvas.LeftProperty));
+
+                rightToCenterStoryboard = new Storyboard();
+                rightToCenterStoryboard.Children.Add(rightToCenterAnimation);
+
+                rightToCenterStoryboard.Completed += OnStoryboardCompleted;
+
+                #endregion
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        private void OnStoryboardCompleted(object sender, EventArgs e)
+        {
+            Canvas.SetLeft(popupBd, centerX);
+            Canvas.SetTop(popupBd, centerY);
+        }
+        private void popupGrid_LostFocus(object sender, RoutedEventArgs e)
+        {
+            ocultarPopupOk();
+        }
+        private void popupGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            ocultarPopupOk();
+        }
+        private void popupGrid_TouchDown(object sender, TouchEventArgs e)
+        {
+            ocultarPopupOk();
+        }
+        #endregion
+
+
     }
 }

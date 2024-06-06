@@ -550,7 +550,7 @@ namespace TestMdfEntityFramework
                 MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
             }
 
-            close_serial_port();
+           // close_serial_port();
 
         }
         private void open_serial_port()

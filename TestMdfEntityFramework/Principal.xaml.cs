@@ -22,8 +22,8 @@ namespace TestMdfEntityFramework
     /// </summary>
     public partial class Principal : Window
     {
-        string ASIGNACION_ACTIVA = "";
-        long FK_ASIGNACION_ACTIVA = 0;
+        public static string ASIGNACION_ACTIVA = "";
+        public static long FK_ASIGNACION_ACTIVA = 0;
         string MODO_APP = "";
 
         //SERIAL PORT
@@ -1018,7 +1018,7 @@ namespace TestMdfEntityFramework
                 MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
             }
 
-            close_serial_port();
+            //close_serial_port();
 
         }
         private void open_serial_port()

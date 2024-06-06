@@ -413,8 +413,8 @@
                             HorizontalAlignment="Center"
                             Background="GreenYellow"
                             Margin="0,0,0,0"
-                            Style="{DynamicResource BTNSTYLE}" 
-                            Click="btnGuardarConfiguracion_Click">
+                            Style="{DynamicResource BTNSTYLE}" Click="btnGuardarConf_Puertos_Click" 
+                            >
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="10"></ColumnDefinition>
@@ -1007,8 +1007,8 @@
                             HorizontalAlignment="Center"
                             Background="GreenYellow"
                             Margin="0,0,0,0"
-                            Style="{DynamicResource BTNSTYLE}" 
-                            Click="btnGuardarConfiguracion_Click">
+                            Style="{DynamicResource BTNSTYLE}" Click="btnGuardarConf_Tarifa_Click" 
+                            >
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="10"></ColumnDefinition>
@@ -1162,8 +1162,8 @@
                             HorizontalAlignment="Center"
                             Background="GreenYellow"
                             Margin="0,0,0,0"
-                            Style="{DynamicResource BTNSTYLE}" 
-                            Click="btnGuardarConfiguracion_Click">
+                            Style="{DynamicResource BTNSTYLE}" Click="btnGuardarConf_Empresa_Click" 
+                            >
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="10"></ColumnDefinition>
@@ -1337,8 +1337,8 @@
                             HorizontalAlignment="Center"
                             Background="GreenYellow"
                             Margin="0,0,0,0"
-                            Style="{DynamicResource BTNSTYLE}" 
-                            Click="btnGuardarConfiguracion_Click">
+                            Style="{DynamicResource BTNSTYLE}" Click="btnGuardarConf_Multimedia_Click" 
+                            >
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="10"></ColumnDefinition>
@@ -1816,8 +1816,8 @@
                             HorizontalAlignment="Center"
                             Background="GreenYellow"
                             Margin="0,0,0,0"
-                            Style="{DynamicResource BTNSTYLE}" 
-                            Click="btnGuardarConfiguracion_Click">
+                            Style="{DynamicResource BTNSTYLE}" Click="btnGuardarConf_Mensajes_Click" 
+                            >
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="10"></ColumnDefinition>
@@ -1906,8 +1906,8 @@
                             HorizontalAlignment="Center"
                             Background="GreenYellow"
                             Margin="0,0,0,0"
-                            Style="{DynamicResource BTNSTYLE}" 
-                            Click="btnGuardarConfiguracion_Click">
+                            Style="{DynamicResource BTNSTYLE}" Click="btnGuardarConf_Apariencia_Click" 
+                            >
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="10"></ColumnDefinition>
@@ -2035,8 +2035,8 @@
                             HorizontalAlignment="Center"
                             Background="GreenYellow"
                             Margin="0,0,0,0"
-                            Style="{DynamicResource BTNSTYLE}" 
-                            Click="btnGuardarConfiguracion_Click">
+                            Style="{DynamicResource BTNSTYLE}" Click="btnGuardarConf_Mantenimiento_Click" 
+                            >
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="10"></ColumnDefinition>

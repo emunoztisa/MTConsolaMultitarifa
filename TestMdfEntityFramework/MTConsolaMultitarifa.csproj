@@ -136,6 +136,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Clases\CLocation.cs" />
+    <Compile Include="Clases\ComandosAlcancia.cs" />
     <Compile Include="Clases\ConfigPort.cs" />
     <Compile Include="Clases\Perfiles.cs" />
     <Compile Include="Clases\SincronizacionTISA.cs" />

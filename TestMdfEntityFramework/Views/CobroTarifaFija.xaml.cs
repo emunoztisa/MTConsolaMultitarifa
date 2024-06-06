@@ -227,7 +227,7 @@ namespace TestMdfEntityFramework.Views
         }
         private void CobroTarifaFija_OnUnload(object sender, RoutedEventArgs e)
         {
-            close_serial_port();
+            //close_serial_port();
 
         }
         private void btnTarifa1_Click(object sender, RoutedEventArgs e)

@@ -42,6 +42,8 @@ namespace TestMdfEntityFramework.Views
         byte[] BufferSendData = new byte[80];
         byte[] RecievedDataGlobal = new byte[80];
 
+        //ARREGLO DE CANTIDAD DE PIEZAS POR DENOMINACION
+        int[] arrPiezasDenominaciones = new int[13];
 
         //POPUP OK
         private double left, top, right, bottom, centerX, centerY;
@@ -114,13 +116,18 @@ namespace TestMdfEntityFramework.Views
             //delegado_limpiar_campos_despues_de_venta_boleto = new delegate_limpiarCamposDespuesDeVentaBoleto(LimpiarCamposDespuesDeVentaBoleto);
             //delegado_limpiar_campos_despues_de_venta_boleto();
 
-            configura_puerto_serial(); // UTILIZA ENTITY FRAMEWORK CON CONEXION A database.mdf
+            //configura_puerto_serial(); // UTILIZA ENTITY FRAMEWORK CON CONEXION A database.mdf
 
         }
 
         #region EVENTOS BOTONES Y VENTANAS
         private void CobroMultitarifaV1_Load(object sender, RoutedEventArgs e)
         {
+            if (validaPuertoCOMConfigurado())
+            {
+                configura_puerto_serial();
+            }
+
             asign_activa = ObtenerAsignacionActiva();
 
             LlenaComboLugarOrigen();
@@ -142,6 +149,7 @@ namespace TestMdfEntityFramework.Views
         private void CobroMultitarifaV1_Unload(object sender, RoutedEventArgs e)
         {
             close_serial_port();
+            dispose_serial_port();
         }
 
         //private void btnCobrar_Click(object sender, RoutedEventArgs e)
@@ -340,6 +348,8 @@ namespace TestMdfEntityFramework.Views
         {
             try
             {
+                //recalcular_tarifa(sender);
+
                 bloqueaCamposMientrasIngresaMonedas();
 
                 //inicializa_timer_wait();
@@ -493,7 +503,11 @@ namespace TestMdfEntityFramework.Views
 
                 ClearBufferRecievedDataGlobal();
 
+                //close_serial_port();
+                //dispose_serial_port();
+
                 //ESCRIBIR EN EL PUERTO COM DE LA ALCANCIA
+                Task.WaitAll(new Task[] { Task.Delay(100) });
                 open_serial_port();
                 puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
 
@@ -528,6 +542,70 @@ namespace TestMdfEntityFramework.Views
             }
 
         }
+        #endregion
+
+        #region VALIDACIONES
+        private bool validaPuertoCOMConfigurado()
+        {
+            bool isConfigured = false;
+
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_port_name = serv_config_varios.getEntityByClave("PORT_NAME");
+            if (cv_port_name.valor != null && cv_port_name.valor != "")
+            {
+                isConfigured = true;
+            }
+            else
+            {
+                isConfigured = false;
+            }
+
+            return isConfigured;
+        }
+        private bool isValidComPortAndConnected()
+        {
+            bool isValid;
+            try
+            {
+                open_serial_port();
+                isValid = true;
+            }
+            catch (Exception ex)
+            {
+                isValid = false;
+            }
+            return isValid;
+        }
+        private bool validaDispositivoConectadoEnPuertoCOM()
+        {
+            bool hayDispositivoConectado = false;
+
+            try
+            {
+                if (puertoSerie1.IsOpen == false)
+                {
+                    //close_serial_port();
+                    //open_serial_port();
+                    //puertoSerie1.Dispose();
+
+                    //puertoSerie1.Open();
+
+                    hayDispositivoConectado = true;
+                }
+                else
+                {
+                    hayDispositivoConectado = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                hayDispositivoConectado = true;
+                MessageBox.Show(ex.Message);
+            }
+
+            return hayDispositivoConectado;
+        }
+
         #endregion
 
         #region ENTITY DB LOCAL
@@ -1073,9 +1151,23 @@ namespace TestMdfEntityFramework.Views
         {
             try
             {
-                var currentSelectedIndex = ((ComboBox)sender).SelectedIndex;
-                string textSelected = ((ComboBox)sender).Items[currentSelectedIndex].ToString();
-                string nombreCombo = ((ComboBox)sender).Name;
+                //string nombreBoton = "";
+
+                string nombreCombo = "";
+                string textSelected = "";
+
+                //if ((Button)sender != null) 
+                //{
+                //    nombreBoton = ((ComboBox)sender).Name;
+                //}
+                //else if((ComboBox)sender != null)
+                //{
+                    var currentSelectedIndex = ((ComboBox)sender).SelectedIndex;
+                    textSelected = ((ComboBox)sender).Items[currentSelectedIndex].ToString();
+                    nombreCombo = ((ComboBox)sender).Name;
+
+                //}
+
 
                 switch (nombreCombo)
                 {
@@ -1623,7 +1715,10 @@ namespace TestMdfEntityFramework.Views
                     );
                 puertoSerie1.Handshake = cv_handshake.valor == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
 
+                close_serial_port();
+                //dispose_serial_port();
 
+                open_serial_port(); //EMD 2024-05-06
 
                 //ServiceConfigPort scp = new ServiceConfigPort();
                 //List<config_port> list = scp.getEntities();
@@ -1658,6 +1753,13 @@ namespace TestMdfEntityFramework.Views
                 puertoSerie1.Close();
             }
         }
+        private void dispose_serial_port()
+        {
+            if (puertoSerie1.IsOpen == false)
+            {
+                puertoSerie1.Dispose();
+            }
+        }
         #endregion
 
         #region METODOS - TIMERS
@@ -1679,8 +1781,9 @@ namespace TestMdfEntityFramework.Views
                     //puertoSerie1.Dispose();
                     //open_serial_port();
 
-                    //solicitar_status_alcancia();
-                    solicitar_status_alcancia_commando_05();
+
+                    // solicitar_status_alcancia_commando_05(); // EMD 2024-05-06
+                    ejecutar_commando_07_status_desgloce_depositado_monedas_billetes();
 
                     //string RecievedData;
                     timerWait.IsEnabled = true;
@@ -1688,11 +1791,13 @@ namespace TestMdfEntityFramework.Views
                     // delay para esperar 8 de respuesta
                     // 30 funciona en debug de visual studio
                     // 100 para app instalada en raspberry
-                    Task.WaitAll(new Task[] { Task.Delay(30) });
+                    //Task.WaitAll(new Task[] { Task.Delay(30) });
+                    Task.WaitAll(new Task[] { Task.Delay(50) });
 
                     //RecievedData = puertoSerie1.ReadExisting();
 
-                    puertoSerie1.Read(RecievedDataGlobal, 0, 32);
+                    //puertoSerie1.Read(RecievedDataGlobal, 0, 32);
+                    puertoSerie1.Read(RecievedDataGlobal, 0, 50);
 
                     int status = Convert.ToInt32(RecievedDataGlobal[5]);
                     ESTATUS = status.ToString();
@@ -1755,6 +1860,8 @@ namespace TestMdfEntityFramework.Views
 
                         // TODO: ejecutar_commando_02_ultima_venta para obtener los totales cobrado y pagado
                         ejecutar_commando_02_ultima_venta();
+
+                    ClearBufferRecievedDataGlobal(); //EMD 2024-06-05
 
                         Task.WaitAll(new Task[] { Task.Delay(100) });
                         puertoSerie1.Read(RecievedDataGlobal, 0, 50);
@@ -1838,6 +1945,10 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[5] = crc1;
             BufferSendData[6] = crc2;
 
+            //close_serial_port();
+            //dispose_serial_port();
+
+            open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, 7);
             //timerWait.Enabled = true;
         }
@@ -1916,6 +2027,8 @@ namespace TestMdfEntityFramework.Views
         {
             ejecutar_commando_06_cancelar_venta();
 
+            ClearBufferRecievedDataGlobal();
+
             Task.WaitAll(new Task[] { Task.Delay(200) });
             puertoSerie1.Read(RecievedDataGlobal, 0, 50);
 
@@ -1982,6 +2095,9 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
 
             BufferSendData[K_posicionCantidadDatos] = (byte)(CantidadDatos);
+
+            //close_serial_port();
+            //dispose_serial_port();
 
             open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
@@ -2103,6 +2219,31 @@ namespace TestMdfEntityFramework.Views
                 varCantTemp <<= 8;
                 varCantTemp |= RecievedDataGlobal[i];
             }
+            return varCantTemp;
+        }
+        private uint VarByteToUInteger32_comand_07(byte[] RecievedDataGlobal)
+        {
+            uint varCantTemp = 0;
+            for (int i = 9; i >= 6; i--) // para iterar por las posiciones de ReceivedData, donde sabemos viene el monto actual ingresado.
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            return varCantTemp;
+        }
+
+        private uint VarByteToUInteger32_comand_07_tipo_moneda_billete(byte[] RecievedDataGlobal, int posicion)
+        {
+            //for (int i = 19; i >= 18; i--) aqui inicia el desgloce de cantidad de piezas de monedas y billetes ingresados.
+            int x = posicion;
+
+            uint varCantTemp = 0;
+            for (int i = x; i >= (x-1); i--) // para iterar por las posiciones de ReceivedData, donde sabemos viene el monto actual ingresado.
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            varCantTemp <<= 16; // se hace el corrimiento de los 16 bits que pone ceros implicitamente, para completar la variable entera de 32 bits.
             return varCantTemp;
         }
         static byte[] ToBCD_DT(DateTime d)
@@ -2263,8 +2404,41 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
             BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
 
+            //close_serial_port();
+            //dispose_serial_port();
+
             open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
+        }
+
+        private void ejecutar_commando_07_status_desgloce_depositado_monedas_billetes()
+        {
+            const byte ByteInicio = 1;
+            const byte AddressConsola = 1;
+            const byte AddressAlcancia = 2;
+            const byte cantidadDatos = 1;
+            const byte numeroComando = 7;
+            const byte crc1 = 41;
+            const byte crc2 = 42;
+
+            //timerPoll.Enabled = false;
+            byte[] BufferSendData = new byte[7];
+            BufferSendData[0] = ByteInicio;
+            BufferSendData[1] = AddressAlcancia;
+            BufferSendData[2] = AddressConsola;
+            BufferSendData[3] = cantidadDatos;
+            BufferSendData[4] = numeroComando;
+            BufferSendData[5] = crc1;
+            BufferSendData[6] = crc2;
+
+            ClearBufferRecievedDataGlobal();
+
+            //close_serial_port();
+            //dispose_serial_port();
+
+            open_serial_port();
+            puertoSerie1.Write(BufferSendData, 0, 7);
+            //timerWait.Enabled = true;
         }
         private uint getTotalCobradoBoleto()
         {

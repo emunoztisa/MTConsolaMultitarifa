@@ -83,11 +83,12 @@
                 <ColumnDefinition Width="88"/>
                 <ColumnDefinition Width="88"/>
                 <ColumnDefinition Width="15"/>
-                <ColumnDefinition Width="88"/>
-                <ColumnDefinition Width="88"/>
-                <ColumnDefinition Width="88"/>
-                <ColumnDefinition Width="88"/>
-                <ColumnDefinition Width="88"/>
+                <ColumnDefinition Width="73"/>
+                <ColumnDefinition Width="73"/>
+                <ColumnDefinition Width="73"/>
+                <ColumnDefinition Width="73"/>
+                <ColumnDefinition Width="73"/>
+                <ColumnDefinition Width="73"/>
                 <ColumnDefinition Width="10"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -134,7 +135,7 @@
             <Button x:Name="btnCancelarVenta"
                     Grid.Row="0" 
                     Grid.Column="8" 
-                    Grid.ColumnSpan="5"
+                    Grid.ColumnSpan="4"
                     Grid.RowSpan="2"
                     Margin="30,10,30,10"
                     Style="{DynamicResource BTNSTYLE}" 
@@ -163,21 +164,22 @@
             <Image Grid.Column="9" Grid.Row="2" Width="80" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" Source="/SCS/IMG/MONEDAS/5Pesos.png" />
             <Image Grid.Column="10" Grid.Row="2" Width="80" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" Source="/SCS/IMG/MONEDAS/2Pesos.png" />
             <Image Grid.Column="11" Grid.Row="2" Width="80" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" Source="/SCS/IMG/MONEDAS/1Pesos.png" />
+            <Image Grid.Column="12" Grid.Row="2" Width="80" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" Source="/SCS/IMG/MONEDAS/50centavos.png" />
 
             <!--#endregion-->
 
             <!--#region  CANTIDAD BILLETES Y MONEDAS INGRESADOS -->
-            <TextBlock x:Name="lblCant1000Pesos" Grid.Row="3" Grid.Column="1"  Text="" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <TextBlock x:Name="lblCant500Pesos"  Grid.Row="3" Grid.Column="2"  Text="" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <TextBlock x:Name="lblCant200Pesos"  Grid.Row="3" Grid.Column="3"  Text="" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <TextBlock x:Name="lblCant100Pesos"  Grid.Row="3" Grid.Column="4"  Text="" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <TextBlock x:Name="lblCant50Pesos"   Grid.Row="3" Grid.Column="5"  Text="" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <TextBlock x:Name="lblCant20Pesos"   Grid.Row="3" Grid.Column="7"  Text="" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <TextBlock x:Name="lblCant10Pesos"   Grid.Row="3" Grid.Column="8"  Text="" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <TextBlock x:Name="lblCant5Pesos"    Grid.Row="3" Grid.Column="9"  Text="" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <TextBlock x:Name="lblCant2Pesos"    Grid.Row="3" Grid.Column="10" Text="" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <TextBlock x:Name="lblCant1Pesos"    Grid.Row="3" Grid.Column="11" Text="" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            
+            <TextBlock x:Name="lblCant1000Pesos" Grid.Row="3" Grid.Column="1"  Text="0" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="lblCant500Pesos"  Grid.Row="3" Grid.Column="2"  Text="0" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="lblCant200Pesos"  Grid.Row="3" Grid.Column="3"  Text="0" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="lblCant100Pesos"  Grid.Row="3" Grid.Column="4"  Text="0" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="lblCant50Pesos"   Grid.Row="3" Grid.Column="5"  Text="0" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="lblCant20Pesos"   Grid.Row="3" Grid.Column="7"  Text="0" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="lblCant10Pesos"   Grid.Row="3" Grid.Column="8"  Text="0" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="lblCant5Pesos"    Grid.Row="3" Grid.Column="9"  Text="0" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="lblCant2Pesos"    Grid.Row="3" Grid.Column="10" Text="0" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="lblCant1Pesos"    Grid.Row="3" Grid.Column="11" Text="0" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="lblCant50Centavos"    Grid.Row="3" Grid.Column="12" Text="0" Foreground="YellowGreen" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             
             <!--#endregion-->
 
@@ -218,11 +220,11 @@
             <ComboBox x:Name="cmbLugarDestino" 
                       Grid.Row="5" 
                       Grid.Column="7" 
-                      Grid.ColumnSpan="10"
+                      Grid.ColumnSpan="6"
                       Background="Transparent"
                       BorderBrush="White" 
                       FontSize="20" 
-                      Margin="0,5,25,5" 
+                      Margin="0,5,5,5" 
                       SelectionChanged="cmbLugarDestino_SelectionChanged"
                       >
             </ComboBox>
@@ -340,7 +342,7 @@
             <ComboBox x:Name="cmbPerfilCuatro" 
                       Grid.Row="9" 
                       Grid.Column="7" 
-                      Grid.ColumnSpan="4"
+                      Grid.ColumnSpan="5"
                       Background="Transparent"
                       BorderBrush="White" 
                       FontSize="20" 
@@ -349,7 +351,7 @@
             </ComboBox>
             <ComboBox x:Name="cmbCantCuatro" 
                       Grid.Row="9" 
-                      Grid.Column="11" 
+                      Grid.Column="12" 
                       Background="Transparent"
                       BorderBrush="White" 
                       FontSize="20" 
@@ -362,7 +364,7 @@
             <ComboBox x:Name="cmbPerfilCinco" 
                       Grid.Row="11" 
                       Grid.Column="7" 
-                      Grid.ColumnSpan="4"
+                      Grid.ColumnSpan="5"
                       Background="Transparent"
                       BorderBrush="White" 
                       FontSize="20" 
@@ -371,7 +373,7 @@
             </ComboBox>
             <ComboBox x:Name="cmbCantCinco" 
                       Grid.Row="11" 
-                      Grid.Column="11" 
+                      Grid.Column="12" 
                       Background="Transparent"
                       BorderBrush="White" 
                       FontSize="20" 
@@ -384,7 +386,7 @@
             <ComboBox x:Name="cmbPerfilSeis" 
                       Grid.Row="13" 
                       Grid.Column="7" 
-                      Grid.ColumnSpan="4"
+                      Grid.ColumnSpan="5"
                       Background="Transparent"
                       BorderBrush="White" 
                       FontSize="20" 
@@ -392,7 +394,7 @@
             </ComboBox>
             <ComboBox x:Name="cmbCantSeis" 
                       Grid.Row="13" 
-                      Grid.Column="11" 
+                      Grid.Column="12" 
                       Background="Transparent"
                       BorderBrush="White" 
                       FontSize="20" 
@@ -456,7 +458,7 @@
             <!--#region BOTON COBRAR -->
             <Button x:Name="btnCobrar"
                     Grid.Row="15" Grid.Column="8" 
-                    Grid.ColumnSpan="4"
+                    Grid.ColumnSpan="5"
                     Margin="30,5,30,5"
                     Style="{DynamicResource BTNSTYLE}" 
                     Click="btnCobrar_Click"

@@ -439,7 +439,7 @@ namespace TestMdfEntityFramework.Views
 
         private void CobroTarifaFijaBotones_OnUnload(object sender, RoutedEventArgs e)
         {
-            close_serial_port();
+            //close_serial_port();
         }
 
         private void Btn_CancelarVenta_Click(object sender, RoutedEventArgs e)
@@ -574,8 +574,9 @@ namespace TestMdfEntityFramework.Views
                 BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
                 BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
 
-                close_serial_port();
-                dispose_serial_port();
+                //close_serial_port();
+                //dispose_serial_port();
+
                 open_serial_port();
                 puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
                 //close_serial_port();
@@ -921,6 +922,10 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[5] = crc1;
             BufferSendData[6] = crc2;
 
+            //close_serial_port();
+            //dispose_serial_port();
+
+            open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, 7);
             //timerWait.Enabled = true;
         }
@@ -944,6 +949,10 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[5] = crc1;
             BufferSendData[6] = crc2;
 
+            //close_serial_port();
+            //dispose_serial_port();
+
+            open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, 7);
         }
         private void agregar_folio_to_buffer_send_data_v2(string folio)
@@ -1032,8 +1041,9 @@ namespace TestMdfEntityFramework.Views
 
             BufferSendData[K_posicionCantidadDatos] = (byte)(CantidadDatos);
 
-            close_serial_port();
-            dispose_serial_port();
+            //close_serial_port();
+            //dispose_serial_port();
+
             open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
         }
@@ -1059,8 +1069,9 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
             BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
 
-            close_serial_port();
-            dispose_serial_port();
+            //close_serial_port();
+            //dispose_serial_port();
+
             open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
         }
