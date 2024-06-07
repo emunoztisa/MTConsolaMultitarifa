@@ -26,6 +26,22 @@ namespace TestMdfEntityFramework
         public Nullable<decimal> total_efectivo_acumulado { get; set; }
         public Nullable<decimal> total_tarifas { get; set; }
         public Nullable<decimal> total_efectivo_rst { get; set; }
+        public string efectivo_moneda { get; set; }
+        public string efectivo_billete { get; set; }
+        public string cant_mon_tipo_0 { get; set; }
+        public string cant_mon_tipo_1 { get; set; }
+        public string cant_mon_tipo_2 { get; set; }
+        public string cant_mon_tipo_3 { get; set; }
+        public string cant_mon_tipo_4 { get; set; }
+        public string cant_mon_tipo_5 { get; set; }
+        public string cant_mon_tipo_6 { get; set; }
+        public string cant_bill_tipo_0 { get; set; }
+        public string cant_bill_tipo_1 { get; set; }
+        public string cant_bill_tipo_2 { get; set; }
+        public string cant_bill_tipo_3 { get; set; }
+        public string cant_bill_tipo_4 { get; set; }
+        public string cant_bill_tipo_5 { get; set; }
+        public string cant_bill_tipo_6 { get; set; }
         public Nullable<int> enviado { get; set; }
         public Nullable<int> confirmadoTISA { get; set; }
         public string modo { get; set; }

@@ -315,6 +315,22 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_taqui
           <Property Name="total_efectivo_acumulado" Type="decimal" Precision="18" Scale="2" />
           <Property Name="total_tarifas" Type="decimal" Precision="18" Scale="2" />
           <Property Name="total_efectivo_rst" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="efectivo_moneda" Type="nvarchar" MaxLength="20" />
+          <Property Name="efectivo_billete" Type="nvarchar" MaxLength="20" />
+          <Property Name="cant_mon_tipo_0" Type="nvarchar" MaxLength="20" />
+          <Property Name="cant_mon_tipo_1" Type="nvarchar" MaxLength="20" />
+          <Property Name="cant_mon_tipo_2" Type="nvarchar" MaxLength="20" />
+          <Property Name="cant_mon_tipo_3" Type="nvarchar" MaxLength="20" />
+          <Property Name="cant_mon_tipo_4" Type="nvarchar" MaxLength="20" />
+          <Property Name="cant_mon_tipo_5" Type="nvarchar" MaxLength="20" />
+          <Property Name="cant_mon_tipo_6" Type="nvarchar" MaxLength="20" />
+          <Property Name="cant_bill_tipo_0" Type="nvarchar" MaxLength="20" />
+          <Property Name="cant_bill_tipo_1" Type="nvarchar" MaxLength="20" />
+          <Property Name="cant_bill_tipo_2" Type="nvarchar" MaxLength="20" />
+          <Property Name="cant_bill_tipo_3" Type="nvarchar" MaxLength="20" />
+          <Property Name="cant_bill_tipo_4" Type="nvarchar" MaxLength="20" />
+          <Property Name="cant_bill_tipo_5" Type="nvarchar" MaxLength="20" />
+          <Property Name="cant_bill_tipo_6" Type="nvarchar" MaxLength="20" />
           <Property Name="enviado" Type="int" />
           <Property Name="confirmadoTISA" Type="int" />
           <Property Name="modo" Type="nvarchar" MaxLength="50" />
@@ -514,7 +530,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="sy_asignaciones" EntityType="databaseModel.sy_asignaciones" />
           <EntitySet Name="ct_unidades" EntityType="databaseModel.ct_unidades" />
           <EntitySet Name="sy_boletos_detalle" EntityType="databaseModel.sy_boletos_detalle" />
-          <EntitySet Name="sy_cortes" EntityType="databaseModel.sy_cortes" />
           <EntitySet Name="sy_boletos" EntityType="databaseModel.sy_boletos" />
           <EntitySet Name="sy_mensajes" EntityType="databaseModel.sy_mensajes" />
           <EntitySet Name="sy_ubicacion" EntityType="databaseModel.sy_ubicacion" />
@@ -523,6 +538,7 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="users" EntityType="databaseModel.users" />
           <EntitySet Name="ct_tarifas_montos_fijos" EntityType="databaseModel.ct_tarifas_montos_fijos" />
           <EntitySet Name="sy_boletos_tarifa_fija" EntityType="databaseModel.sy_boletos_tarifa_fija" />
+          <EntitySet Name="sy_cortes" EntityType="databaseModel.sy_cortes" />
         </EntityContainer>
         <EntityType Name="config_varios">
           <Key>
@@ -778,29 +794,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="sy_cortes">
-          <Key>
-            <PropertyRef Name="pkCorte" />
-          </Key>
-          <Property Name="pkCorte" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="pkCorteTISA" Type="Int64" />
-          <Property Name="fkAsignacion" Type="Int64" />
-          <Property Name="fkLugarOrigen" Type="Int64" />
-          <Property Name="fkLugarDestino" Type="Int64" />
-          <Property Name="fkStatus" Type="Int64" />
-          <Property Name="folio" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="fecha" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="hora" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="total_efectivo_acumulado" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="total_tarifas" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="total_efectivo_rst" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="enviado" Type="Int32" />
-          <Property Name="confirmadoTISA" Type="Int32" />
-          <Property Name="modo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityType Name="sy_boletos">
           <Key>
             <PropertyRef Name="pkBoleto" />
@@ -931,6 +924,45 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="created_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="updated_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="deleted_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="sy_cortes">
+          <Key>
+            <PropertyRef Name="pkCorte" />
+          </Key>
+          <Property Name="pkCorte" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="pkCorteTISA" Type="Int64" />
+          <Property Name="fkAsignacion" Type="Int64" />
+          <Property Name="fkLugarOrigen" Type="Int64" />
+          <Property Name="fkLugarDestino" Type="Int64" />
+          <Property Name="fkStatus" Type="Int64" />
+          <Property Name="folio" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="fecha" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="hora" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="total_efectivo_acumulado" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="total_tarifas" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="total_efectivo_rst" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="efectivo_moneda" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="efectivo_billete" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="cant_mon_tipo_0" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="cant_mon_tipo_1" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="cant_mon_tipo_2" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="cant_mon_tipo_3" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="cant_mon_tipo_4" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="cant_mon_tipo_5" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="cant_mon_tipo_6" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="cant_bill_tipo_0" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="cant_bill_tipo_1" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="cant_bill_tipo_2" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="cant_bill_tipo_3" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="cant_bill_tipo_4" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="cant_bill_tipo_5" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="cant_bill_tipo_6" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="enviado" Type="Int32" />
+          <Property Name="confirmadoTISA" Type="Int32" />
+          <Property Name="modo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1207,30 +1239,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="sy_cortes">
-            <EntityTypeMapping TypeName="databaseModel.sy_cortes">
-              <MappingFragment StoreEntitySet="sy_cortes">
-                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="modo" ColumnName="modo" />
-                <ScalarProperty Name="confirmadoTISA" ColumnName="confirmadoTISA" />
-                <ScalarProperty Name="enviado" ColumnName="enviado" />
-                <ScalarProperty Name="total_efectivo_rst" ColumnName="total_efectivo_rst" />
-                <ScalarProperty Name="total_tarifas" ColumnName="total_tarifas" />
-                <ScalarProperty Name="total_efectivo_acumulado" ColumnName="total_efectivo_acumulado" />
-                <ScalarProperty Name="hora" ColumnName="hora" />
-                <ScalarProperty Name="fecha" ColumnName="fecha" />
-                <ScalarProperty Name="folio" ColumnName="folio" />
-                <ScalarProperty Name="fkStatus" ColumnName="fkStatus" />
-                <ScalarProperty Name="fkLugarDestino" ColumnName="fkLugarDestino" />
-                <ScalarProperty Name="fkLugarOrigen" ColumnName="fkLugarOrigen" />
-                <ScalarProperty Name="fkAsignacion" ColumnName="fkAsignacion" />
-                <ScalarProperty Name="pkCorteTISA" ColumnName="pkCorteTISA" />
-                <ScalarProperty Name="pkCorte" ColumnName="pkCorte" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="sy_boletos">
             <EntityTypeMapping TypeName="databaseModel.sy_boletos">
               <MappingFragment StoreEntitySet="sy_boletos">
@@ -1367,6 +1375,46 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
                 <ScalarProperty Name="fkAsignacion" ColumnName="fkAsignacion" />
                 <ScalarProperty Name="pkBoletoTISA" ColumnName="pkBoletoTISA" />
                 <ScalarProperty Name="pkBoleto" ColumnName="pkBoleto" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sy_cortes">
+            <EntityTypeMapping TypeName="databaseModel.sy_cortes">
+              <MappingFragment StoreEntitySet="sy_cortes">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="modo" ColumnName="modo" />
+                <ScalarProperty Name="confirmadoTISA" ColumnName="confirmadoTISA" />
+                <ScalarProperty Name="enviado" ColumnName="enviado" />
+                <ScalarProperty Name="cant_bill_tipo_6" ColumnName="cant_bill_tipo_6" />
+                <ScalarProperty Name="cant_bill_tipo_5" ColumnName="cant_bill_tipo_5" />
+                <ScalarProperty Name="cant_bill_tipo_4" ColumnName="cant_bill_tipo_4" />
+                <ScalarProperty Name="cant_bill_tipo_3" ColumnName="cant_bill_tipo_3" />
+                <ScalarProperty Name="cant_bill_tipo_2" ColumnName="cant_bill_tipo_2" />
+                <ScalarProperty Name="cant_bill_tipo_1" ColumnName="cant_bill_tipo_1" />
+                <ScalarProperty Name="cant_bill_tipo_0" ColumnName="cant_bill_tipo_0" />
+                <ScalarProperty Name="cant_mon_tipo_6" ColumnName="cant_mon_tipo_6" />
+                <ScalarProperty Name="cant_mon_tipo_5" ColumnName="cant_mon_tipo_5" />
+                <ScalarProperty Name="cant_mon_tipo_4" ColumnName="cant_mon_tipo_4" />
+                <ScalarProperty Name="cant_mon_tipo_3" ColumnName="cant_mon_tipo_3" />
+                <ScalarProperty Name="cant_mon_tipo_2" ColumnName="cant_mon_tipo_2" />
+                <ScalarProperty Name="cant_mon_tipo_1" ColumnName="cant_mon_tipo_1" />
+                <ScalarProperty Name="cant_mon_tipo_0" ColumnName="cant_mon_tipo_0" />
+                <ScalarProperty Name="efectivo_billete" ColumnName="efectivo_billete" />
+                <ScalarProperty Name="efectivo_moneda" ColumnName="efectivo_moneda" />
+                <ScalarProperty Name="total_efectivo_rst" ColumnName="total_efectivo_rst" />
+                <ScalarProperty Name="total_tarifas" ColumnName="total_tarifas" />
+                <ScalarProperty Name="total_efectivo_acumulado" ColumnName="total_efectivo_acumulado" />
+                <ScalarProperty Name="hora" ColumnName="hora" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="folio" ColumnName="folio" />
+                <ScalarProperty Name="fkStatus" ColumnName="fkStatus" />
+                <ScalarProperty Name="fkLugarDestino" ColumnName="fkLugarDestino" />
+                <ScalarProperty Name="fkLugarOrigen" ColumnName="fkLugarOrigen" />
+                <ScalarProperty Name="fkAsignacion" ColumnName="fkAsignacion" />
+                <ScalarProperty Name="pkCorteTISA" ColumnName="pkCorteTISA" />
+                <ScalarProperty Name="pkCorte" ColumnName="pkCorte" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

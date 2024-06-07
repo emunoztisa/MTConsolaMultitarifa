@@ -59,7 +59,7 @@ namespace TestMdfEntityFramework.Controllers
 
             return list_temp;
         }
-        public List<sy_cortes> GetBoletosWithJoins()
+        public List<sy_cortes> GetCortesWithJoins()
         {
             List<sy_cortes> list_temp = new List<sy_cortes>();
 
@@ -129,6 +129,26 @@ namespace TestMdfEntityFramework.Controllers
             req.total_efectivo_acumulado = (decimal)obj.total_efectivo_acumulado;
             req.total_tarifas = (decimal)obj.total_tarifas;
             req.total_efectivo_rst = (decimal)obj.total_efectivo_rst;
+
+            req.efectivo_moneda = obj.efectivo_moneda;
+            req.efectivo_billete = obj.efectivo_billete;
+
+            req.cant_mon_tipo_0 = obj.cant_mon_tipo_0;
+            req.cant_mon_tipo_1 = obj.cant_mon_tipo_1;
+            req.cant_mon_tipo_2 = obj.cant_mon_tipo_2;
+            req.cant_mon_tipo_3 = obj.cant_mon_tipo_3;
+            req.cant_mon_tipo_4 = obj.cant_mon_tipo_4;
+            req.cant_mon_tipo_5 = obj.cant_mon_tipo_5;
+            req.cant_mon_tipo_6 = obj.cant_mon_tipo_6;
+
+            req.cant_bill_tipo_0 = obj.cant_bill_tipo_0;
+            req.cant_bill_tipo_1 = obj.cant_bill_tipo_1;
+            req.cant_bill_tipo_2 = obj.cant_bill_tipo_2;
+            req.cant_bill_tipo_3 = obj.cant_bill_tipo_3;
+            req.cant_bill_tipo_4 = obj.cant_bill_tipo_4;
+            req.cant_bill_tipo_5 = obj.cant_bill_tipo_5;
+            req.cant_bill_tipo_6 = obj.cant_bill_tipo_6;
+
             req.enviado = obj.enviado != null ? (int)obj.enviado : 0;
             req.confirmadoTISA = obj.confirmadoTISA != null ? (int)obj.confirmadoTISA : 0;
             req.created_at = obj.created_at;

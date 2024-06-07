@@ -48,11 +48,16 @@ namespace TestMdfEntityFramework.Views
         {
             InitializeComponent();
 
-            configura_puerto_serial();
+            //configura_puerto_serial();
         }
 
         private void Reportes_Load(object sender, RoutedEventArgs e)
         {
+            if (validaPuertoCOMConfigurado())
+            {
+                configura_puerto_serial();
+            }
+
             //EVENTOS PARA POPUP OK
             SetPopupDlgCenter();
             InitializeAnimations();
@@ -60,17 +65,22 @@ namespace TestMdfEntityFramework.Views
 
         private void Reportes_OnUnload(object sender, RoutedEventArgs e)
         {
-            //close_serial_port();
+            close_serial_port();
+            dispose_serial_port();
         }
 
         private void btnCorteCaja_Click(object sender, RoutedEventArgs e)
         {
             if (validaDispositivoConectadoEnPuertoCOM())
             {
-                ejecutar_commando_03_corte_ventas_realizadas();
+                //ejecutar_commando_03_corte_ventas_realizadas();
+                ejecutar_commando_08_corte_ventas_realizadas_con_desglose_monedas_billetes();
 
-                Task.WaitAll(new Task[] { Task.Delay(200) });
-                puertoSerie1.Read(RecievedDataGlobal, 0, 50);
+                //Task.WaitAll(new Task[] { Task.Delay(200) });
+                //puertoSerie1.Read(RecievedDataGlobal, 0, 50);
+
+                Task.WaitAll(new Task[] { Task.Delay(300) });
+                puertoSerie1.Read(RecievedDataGlobal, 0, 80);
 
                 if (RecievedDataGlobal != null)
                 {
@@ -175,6 +185,51 @@ namespace TestMdfEntityFramework.Views
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
 
         }
+        private void ejecutar_commando_08_corte_ventas_realizadas_con_desglose_monedas_billetes()
+        {
+            DateTime varFechaHora = DateTime.Now;
+            byte[] BCDDateTime = ToBCD_DT(varFechaHora);
+
+            const decimal Comando = 8;
+            const decimal CRC1 = 193;
+            const decimal CRC2 = 194;
+
+            int CantidadDatos = 0;
+
+            ClearBufferSendData();
+
+            BufferSendData[0] = decimal.ToByte(ByteInicio);
+            BufferSendData[1] = decimal.ToByte(AddressAlcancia);
+            BufferSendData[2] = decimal.ToByte(AddressConsola);
+
+            BufferSendData[4] = decimal.ToByte(Comando);
+            CantidadDatos += 1;
+
+            // Metodo para consultar el siguiente corte de alcancia a asignar
+            string folio_corte = obtener_siguiente_folio_corte(); //"COR_000001_000001";
+
+            ingresa_folio_en_buffer_send_data(folio_corte);
+            CantidadDatos += 17;
+
+            BufferSendData[22] = BCDDateTime[0];
+            BufferSendData[23] = BCDDateTime[1];
+            BufferSendData[24] = BCDDateTime[2];
+            BufferSendData[25] = BCDDateTime[3];
+            BufferSendData[26] = BCDDateTime[4];
+            BufferSendData[27] = BCDDateTime[5];
+            CantidadDatos += 6;
+
+            BufferSendData[K_offsetDatos + CantidadDatos] = decimal.ToByte(CRC1);
+            BufferSendData[K_offsetDatos + CantidadDatos + 1] = decimal.ToByte(CRC2);
+
+            BufferSendData[K_posicionCantidadDatos] = (byte)(CantidadDatos);
+
+            //close_serial_port();
+            //dispose_serial_port();
+
+            open_serial_port();
+            puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + 2);
+        }
 
         private string obtener_siguiente_folio_corte()
         {
@@ -252,6 +307,29 @@ namespace TestMdfEntityFramework.Views
             obj_corte.total_tarifas = strTarifaRst != null && strTarifaRst != "" ? (varTotalTarifasRst/100) : 0;
             obj_corte.total_efectivo_rst = strEfectivoRst != null && strEfectivoRst != "" ? (varTotalEfectivoRst/100) : 0;
 
+            //DESGLOSE DE CANTIDAD DE BILLETES POR DENOMINACION
+            //Agregar la cantidad de piezas por denominacion al corte
+            string[] arrCantPiezasPorDenominacion = VarByteToUInteger32_comand_08_tipo_moneda_billete(RecievedDataGlobal_local);
+
+            obj_corte.cant_mon_tipo_0 = arrCantPiezasPorDenominacion[0];
+            obj_corte.cant_mon_tipo_1 = arrCantPiezasPorDenominacion[1];
+            obj_corte.cant_mon_tipo_2 = arrCantPiezasPorDenominacion[2];
+            obj_corte.cant_mon_tipo_3 = arrCantPiezasPorDenominacion[3];
+            obj_corte.cant_mon_tipo_4 = arrCantPiezasPorDenominacion[4];
+            //obj_corte.cant_mon_tipo_5 = arrCantPiezasPorDenominacion[5];
+            //obj_corte.cant_mon_tipo_6 = arrCantPiezasPorDenominacion[6];
+
+            obj_corte.cant_bill_tipo_0 = arrCantPiezasPorDenominacion[7];
+            obj_corte.cant_bill_tipo_1 = arrCantPiezasPorDenominacion[8];
+            obj_corte.cant_bill_tipo_2 = arrCantPiezasPorDenominacion[9];
+            obj_corte.cant_bill_tipo_3 = arrCantPiezasPorDenominacion[10];
+            obj_corte.cant_bill_tipo_4 = arrCantPiezasPorDenominacion[11];
+            obj_corte.cant_bill_tipo_5 = arrCantPiezasPorDenominacion[12];
+            //obj_corte.cant_bill_tipo_6 = arrCantPiezasPorDenominacion[13];
+
+            obj_corte.efectivo_moneda = arrCantPiezasPorDenominacion[14];
+            obj_corte.efectivo_billete = arrCantPiezasPorDenominacion[15];
+
             ServiceCortes serv_cortes = new ServiceCortes();
             serv_cortes.addEntity(obj_corte);
         }
@@ -277,6 +355,175 @@ namespace TestMdfEntityFramework.Views
             }
             return varFolioTemporal;
         }
+        private string[] VarByteToUInteger32_comand_08_tipo_moneda_billete(byte[] RecievedDataGlobal)
+        {
+
+            string[] arrPiezasDenominaciones = new string[16];
+            decimal num_cien = 100;
+            uint varCantTemp = 0;
+
+            //EFECTIVO MONEDAS
+            varCantTemp = 0;
+            for (int i = 43; i >= 40; i--) // para iterar por las posiciones de ReceivedData, donde sabemos viene el monto actual ingresado.
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string efectivo_moneda = (varCantTemp / num_cien).ToString();
+            arrPiezasDenominaciones[14] = efectivo_moneda;
+
+            //EFECTIVO BILLETES
+            varCantTemp = 0;
+            for (int i = 47; i >= 44; i--) // para iterar por las posiciones de ReceivedData, donde sabemos viene el monto actual ingresado.
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string efectivo_billete = (varCantTemp / num_cien).ToString();
+            arrPiezasDenominaciones[15] = efectivo_billete;
+
+            //Cantidad Monedas 50 centavos
+            varCantTemp <<= 16;                 // se hace el corrimiento de los 16 bits que pone ceros implicitamente, para completar la variable entera de 32 bits.
+            for (int i = 49; i >= 48; i--)    // para iterar por las posiciones de ReceivedData, donde sabemos viene el monto actual ingresado.
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            //string cantidad_piezas_50_centavos = (varCantTemp / num_cien).ToString();
+            string cantidad_piezas_50_centavos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[0] = cantidad_piezas_50_centavos;
+
+            //Cantidad Monedas 1 Peso
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 51; i >= 50; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_1_peso = (varCantTemp).ToString();
+            arrPiezasDenominaciones[1] = cantidad_piezas_1_peso;
+
+            //Cantidad Monedas 2 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 53; i >= 52; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_2_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[2] = cantidad_piezas_2_pesos;
+
+            //Cantidad Monedas 5 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 55; i >= 54; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_5_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[3] = cantidad_piezas_5_pesos;
+
+            //Cantidad Monedas 10 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 57; i >= 56; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_10_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[4] = cantidad_piezas_10_pesos;
+
+
+            /*
+             AQUI OTRAS DENOMINACIONES PARA MONEDAS en las posiciones 5 y 6 del arreglo.
+             */
+
+
+            //Cantidad Monedas 20 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 63; i >= 62; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_20_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[7] = cantidad_piezas_20_pesos;
+
+            //Cantidad Monedas 50 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 65; i >= 64; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_50_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[8] = cantidad_piezas_50_pesos;
+
+            //Cantidad Monedas 100 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 67; i >= 66; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_100_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[9] = cantidad_piezas_100_pesos;
+
+            //Cantidad Monedas 200 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 69; i >= 68; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_200_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[10] = cantidad_piezas_200_pesos;
+
+            //Cantidad Monedas 500 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 71; i >= 70; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_500_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[11] = cantidad_piezas_500_pesos;
+
+            //Cantidad Monedas 1000 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 73; i >= 72; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_1000_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[12] = cantidad_piezas_1000_pesos;
+
+            //aqui abajo se pondria otra denominacion en la posicion 13 del arreglo
+            ////Cantidad Monedas 5000 Pesos
+            //varCantTemp = 0;
+            //varCantTemp <<= 16;
+            //for (int i = 75; i >= 74; i--)
+            //{
+            //    varCantTemp <<= 8;
+            //    varCantTemp |= RecievedDataGlobal[i];
+            //}
+            //string cantidad_piezas_5000_pesos = (varCantTemp).ToString();
+            //arrPiezasDenominaciones[13] = cantidad_piezas_5000_pesos;
+
+
+            return arrPiezasDenominaciones;
+        }
 
         private string StringToBCD(int indexBuffer)
         {
@@ -293,26 +540,7 @@ namespace TestMdfEntityFramework.Views
             return TextoFechaHora;
         }
 
-        private bool validaDispositivoConectadoEnPuertoCOM()
-        {
-            bool hayDispositivoConectado = false;
-
-            try
-            {
-                if (puertoSerie1.IsOpen == false)
-                {
-                    puertoSerie1.Open();
-                    hayDispositivoConectado = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                hayDispositivoConectado = false;
-                MessageBox.Show(ex.Message);
-            }
-
-            return hayDispositivoConectado;
-        }
+        
 
         public void configura_puerto_serial()
         {
@@ -334,6 +562,9 @@ namespace TestMdfEntityFramework.Views
                     , Convert.ToInt32(cv_stop_bits.valor) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
                     );
                 puertoSerie1.Handshake = cv_handshake.valor == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+
+                close_serial_port(); //EMD 2024-05-07
+                open_serial_port(); //EMD 2024-05-07
             }
             catch
             {
@@ -560,7 +791,69 @@ namespace TestMdfEntityFramework.Views
         }
         #endregion
 
+        #region VALIDACIONES
+        private bool validaPuertoCOMConfigurado()
+        {
+            bool isConfigured = false;
 
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_port_name = serv_config_varios.getEntityByClave("PORT_NAME");
+            if (cv_port_name.valor != null && cv_port_name.valor != "")
+            {
+                isConfigured = true;
+            }
+            else
+            {
+                isConfigured = false;
+            }
+
+            return isConfigured;
+        }
+        private bool isValidComPortAndConnected()
+        {
+            bool isValid;
+            try
+            {
+                open_serial_port();
+                isValid = true;
+            }
+            catch (Exception ex)
+            {
+                isValid = false;
+            }
+            return isValid;
+        }
+        private bool validaDispositivoConectadoEnPuertoCOM()
+        {
+            bool hayDispositivoConectado = false;
+
+            try
+            {
+                if (puertoSerie1.IsOpen == false)
+                {
+                    //close_serial_port();
+                    //open_serial_port();
+                    //puertoSerie1.Dispose();
+
+                    //puertoSerie1.Open();
+
+                    hayDispositivoConectado = true;
+                }
+                else
+                {
+                    hayDispositivoConectado = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                hayDispositivoConectado = true;
+                MessageBox.Show(ex.Message);
+            }
+
+            return hayDispositivoConectado;
+        }
+
+        #endregion
 
 
 

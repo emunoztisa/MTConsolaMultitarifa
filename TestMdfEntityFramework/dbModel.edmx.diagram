@@ -24,7 +24,6 @@
         <EntityTypeShape EntityType="databaseModel.sy_asignaciones" Width="1.5" PointX="13.75" PointY="4" />
         <EntityTypeShape EntityType="databaseModel.ct_unidades" Width="1.5" PointX="13.5" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.sy_boletos_detalle" Width="1.5" PointX="3.75" PointY="6" />
-        <EntityTypeShape EntityType="databaseModel.sy_cortes" Width="1.5" PointX="12" PointY="4" />
         <EntityTypeShape EntityType="databaseModel.sy_boletos" Width="1.5" PointX="2.125" PointY="6" />
         <EntityTypeShape EntityType="databaseModel.sy_mensajes" Width="1.5" PointX="5.5" PointY="8.875" />
         <EntityTypeShape EntityType="databaseModel.sy_ubicacion" Width="1.5" PointX="7.125" PointY="9" />
@@ -33,6 +32,7 @@
         <EntityTypeShape EntityType="databaseModel.users" Width="1.5" PointX="0.5" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.ct_tarifas_montos_fijos" Width="1.5" PointX="8.625" PointY="6" />
         <EntityTypeShape EntityType="databaseModel.sy_boletos_tarifa_fija" Width="1.5" PointX="9.375" PointY="9.75" />
+        <EntityTypeShape EntityType="databaseModel.sy_cortes" Width="1.5" PointX="12" PointY="3.875" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

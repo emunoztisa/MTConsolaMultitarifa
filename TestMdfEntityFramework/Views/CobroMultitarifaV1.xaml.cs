@@ -43,7 +43,7 @@ namespace TestMdfEntityFramework.Views
         byte[] RecievedDataGlobal = new byte[80];
 
         //ARREGLO DE CANTIDAD DE PIEZAS POR DENOMINACION
-        int[] arrPiezasDenominaciones = new int[13];
+        
 
         //POPUP OK
         private double left, top, right, bottom, centerX, centerY;
@@ -72,6 +72,11 @@ namespace TestMdfEntityFramework.Views
         private string MONTO_INGRESADO = "0";
         delegate void delegate_actualizalblMontoIngresado();
         delegate_actualizalblMontoIngresado delegado_actualiza_lbl_monto_ingresado = null;
+
+        //private string MONTO_INGRESADO = "0";
+        string[] arrPiezasDenominaciones = new string[13];
+        delegate void delegate_actualizalblDenominaciones();
+        delegate_actualizalblDenominaciones delegado_actualiza_lbl_denominaciones = null;
 
         delegate void delegate_limpiarCamposDespuesDeVentaBoleto();
         delegate_limpiarCamposDespuesDeVentaBoleto delegado_limpiar_campos_despues_de_venta_boleto = null;
@@ -112,6 +117,9 @@ namespace TestMdfEntityFramework.Views
 
             delegado_actualiza_lbl_monto_ingresado = new delegate_actualizalblMontoIngresado(actualizalblMontoIngresado);
             delegado_actualiza_lbl_monto_ingresado();
+
+            delegado_actualiza_lbl_denominaciones = new delegate_actualizalblDenominaciones(actualizalblDenominaciones);
+            delegado_actualiza_lbl_denominaciones();
 
             //delegado_limpiar_campos_despues_de_venta_boleto = new delegate_limpiarCamposDespuesDeVentaBoleto(LimpiarCamposDespuesDeVentaBoleto);
             //delegado_limpiar_campos_despues_de_venta_boleto();
@@ -348,7 +356,12 @@ namespace TestMdfEntityFramework.Views
         {
             try
             {
-                //recalcular_tarifa(sender);
+                ComboBox combo = new ComboBox();
+                combo.Name = "cmb";
+                combo.Items.Add("boton cobrar presionado");
+                combo.SelectedIndex = 0;
+
+                recalcular_tarifa(combo);
 
                 bloqueaCamposMientrasIngresaMonedas();
 
@@ -1382,7 +1395,7 @@ namespace TestMdfEntityFramework.Views
         private uint obtenerMontoIngresadoActual(byte[] RecievedDataGlobal)
         {
             uint monto_actual_ingresado = 0;
-            monto_actual_ingresado = VarByteToUInteger32_comand_05(RecievedDataGlobal);
+            monto_actual_ingresado = VarByteToUInteger32_comand_07(RecievedDataGlobal);
             return monto_actual_ingresado;
         }
 
@@ -1781,7 +1794,6 @@ namespace TestMdfEntityFramework.Views
                     //puertoSerie1.Dispose();
                     //open_serial_port();
 
-
                     // solicitar_status_alcancia_commando_05(); // EMD 2024-05-06
                     ejecutar_commando_07_status_desgloce_depositado_monedas_billetes();
 
@@ -1799,14 +1811,23 @@ namespace TestMdfEntityFramework.Views
                     //puertoSerie1.Read(RecievedDataGlobal, 0, 32);
                     puertoSerie1.Read(RecievedDataGlobal, 0, 50);
 
-                    int status = Convert.ToInt32(RecievedDataGlobal[5]);
-                    ESTATUS = status.ToString();
+                    if(RecievedDataGlobal[4] == 7)
+                    {
+                        int status = Convert.ToInt32(RecievedDataGlobal[5]);
+                        ESTATUS = status.ToString();
 
-                    //uint monto_ingresado = obtenerMontoIngresadoActual(RecievedDataGlobal);
-                    decimal monto_ingresado = obtenerMontoIngresadoActual(RecievedDataGlobal);
-                    decimal num_cien = 100;
-                    MONTO_INGRESADO = (monto_ingresado / num_cien).ToString();
+                        //uint monto_ingresado = obtenerMontoIngresadoActual(RecievedDataGlobal);
+                        decimal monto_ingresado = obtenerMontoIngresadoActual(RecievedDataGlobal);
+                        decimal num_cien = 100;
+                        MONTO_INGRESADO = (monto_ingresado / num_cien).ToString();
 
+                        //Para llenar el arreglo donde vienen las cantidades de piezas ingresadas por denominacion
+                        VarByteToUInteger32_comand_07_tipo_moneda_billete(RecievedDataGlobal);
+                    }
+                    else
+                    {
+                        byte[] received = RecievedDataGlobal;
+                    }
                 }
                 //open_serial_port();
             }
@@ -1843,10 +1864,13 @@ namespace TestMdfEntityFramework.Views
                 //Actualiza Monto Ingresado
                 delegado_actualiza_lbl_monto_ingresado();
 
+                //Actualiza las cantidades de piezas ingresadas por denominacion
+                delegado_actualiza_lbl_denominaciones();
+
                 detiene_timers();
 
                 //INSERTAR BOLETO EN LA BASE DE DATOS LOCAL
-                Task.WaitAll(new Task[] { Task.Delay(500) });
+                Task.WaitAll(new Task[] { Task.Delay(100) });
                 if (CANTIDAD_VECES_INSERTA_BOLETO == 0)
                 {
                     uint total_cobrado = 0;
@@ -1887,6 +1911,9 @@ namespace TestMdfEntityFramework.Views
                 //Actualiza Monto Ingresado
                 delegado_actualiza_lbl_monto_ingresado();
 
+                //Actualiza las cantidades de piezas ingresadas por denominacion
+                delegado_actualiza_lbl_denominaciones();
+
                 bloqueaCamposMientrasIngresaMonedas();
             }
         }
@@ -1910,11 +1937,13 @@ namespace TestMdfEntityFramework.Views
         }
         void ClearBufferRecievedDataGlobal()
         {
+            puertoSerie1.DiscardInBuffer();
             for (int i = 0; i < RecievedDataGlobal.Length; i++)
             {
                 RecievedDataGlobal[i] = 0;
             }
         }
+
         #endregion
 
         #region METODOS - ALCANCIA
@@ -2232,19 +2261,151 @@ namespace TestMdfEntityFramework.Views
             return varCantTemp;
         }
 
-        private uint VarByteToUInteger32_comand_07_tipo_moneda_billete(byte[] RecievedDataGlobal, int posicion)
+        private void VarByteToUInteger32_comand_07_tipo_moneda_billete(byte[] RecievedDataGlobal)
         {
             //for (int i = 19; i >= 18; i--) aqui inicia el desgloce de cantidad de piezas de monedas y billetes ingresados.
-            int x = posicion;
-
+            decimal num_cien = 100;
             uint varCantTemp = 0;
-            for (int i = x; i >= (x-1); i--) // para iterar por las posiciones de ReceivedData, donde sabemos viene el monto actual ingresado.
+
+            //Cantidad Monedas 50 centavos
+            varCantTemp <<= 16;                 // se hace el corrimiento de los 16 bits que pone ceros implicitamente, para completar la variable entera de 32 bits.
+            for (int i = 19; i >= 18; i--)    // para iterar por las posiciones de ReceivedData, donde sabemos viene el monto actual ingresado.
             {
                 varCantTemp <<= 8;
                 varCantTemp |= RecievedDataGlobal[i];
             }
-            varCantTemp <<= 16; // se hace el corrimiento de los 16 bits que pone ceros implicitamente, para completar la variable entera de 32 bits.
-            return varCantTemp;
+            //string cantidad_piezas_50_centavos = (varCantTemp / num_cien).ToString();
+            string cantidad_piezas_50_centavos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[0] = cantidad_piezas_50_centavos;
+
+            //Cantidad Monedas 1 Peso
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 21; i >= 20; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_1_peso = (varCantTemp).ToString();
+            arrPiezasDenominaciones[1] = cantidad_piezas_1_peso;
+
+            //Cantidad Monedas 2 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 23; i >= 22; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_2_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[2] = cantidad_piezas_2_pesos;
+
+            //Cantidad Monedas 5 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 25; i >= 24; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_5_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[3] = cantidad_piezas_5_pesos;
+
+            //Cantidad Monedas 10 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 27; i >= 26; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_10_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[4] = cantidad_piezas_10_pesos;
+
+
+            /*
+             AQUI OTRAS DENOMINACIONES PARA MONEDAS en las posiciones 5 y 6 del arreglo.
+             */
+
+
+            //Cantidad Monedas 20 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 33; i >= 32; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_20_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[7] = cantidad_piezas_20_pesos;
+
+            //Cantidad Monedas 50 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 35; i >= 34; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_50_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[8] = cantidad_piezas_50_pesos;
+
+            //Cantidad Monedas 100 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 37; i >= 36; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_100_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[9] = cantidad_piezas_100_pesos;
+
+            //Cantidad Monedas 200 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 39; i >= 38; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_200_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[10] = cantidad_piezas_200_pesos;
+
+            //Cantidad Monedas 500 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 41; i >= 40; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_500_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[11] = cantidad_piezas_500_pesos;
+
+            //Cantidad Monedas 1000 Pesos
+            varCantTemp = 0;
+            varCantTemp <<= 16;
+            for (int i = 43; i >= 42; i--)
+            {
+                varCantTemp <<= 8;
+                varCantTemp |= RecievedDataGlobal[i];
+            }
+            string cantidad_piezas_1000_pesos = (varCantTemp).ToString();
+            arrPiezasDenominaciones[12] = cantidad_piezas_1000_pesos;
+
+            //aqui abajo se pondria otra denominacion en la posicion 13 del arreglo
+            ////Cantidad Monedas 5000 Pesos
+            //varCantTemp = 0;
+            //varCantTemp <<= 16;
+            //for (int i = 43; i >= 42; i--)
+            //{
+            //    varCantTemp <<= 8;
+            //    varCantTemp |= RecievedDataGlobal[i];
+            //}
+            //string cantidad_piezas_5000_pesos = (varCantTemp).ToString();
+            //arrPiezasDenominaciones[13] = cantidad_piezas_5000_pesos;
+
         }
         static byte[] ToBCD_DT(DateTime d)
         {
@@ -2284,6 +2445,21 @@ namespace TestMdfEntityFramework.Views
             lblMontoIngresado.Text = MONTO_INGRESADO;
         }
 
+        private void actualizalblDenominaciones()
+        {
+            lblCant50Centavos.Text = arrPiezasDenominaciones[0];
+            lblCant1Pesos.Text = arrPiezasDenominaciones[1];
+            lblCant2Pesos.Text = arrPiezasDenominaciones[2];
+            lblCant5Pesos.Text = arrPiezasDenominaciones[3];
+            lblCant10Pesos.Text = arrPiezasDenominaciones[4];
+            lblCant20Pesos.Text = arrPiezasDenominaciones[7];
+            lblCant50Pesos.Text = arrPiezasDenominaciones[8];
+            lblCant100Pesos.Text = arrPiezasDenominaciones[9];
+            lblCant200Pesos.Text = arrPiezasDenominaciones[10];
+            lblCant500Pesos.Text = arrPiezasDenominaciones[11];
+            lblCant1000Pesos.Text = arrPiezasDenominaciones[12];
+        }
+
         private void LimpiarCamposDespuesDeVentaBoleto()
         {
             try
@@ -2309,6 +2485,28 @@ namespace TestMdfEntityFramework.Views
 
                 lblMontoCalculado.Text = "";
                 lblMontoIngresado.Text = "";
+
+                // se limpia el arreglo con la cantidad de las denominaciones ingresadas en la venta anterior
+                for (int i = 0; i < arrPiezasDenominaciones.Length; i++)
+                {
+                    arrPiezasDenominaciones[i] = "0";
+                }
+
+                // se limpian los labels de cantidad de piezas por denominacion ingresados
+                lblCant50Centavos.Text = "0";
+                lblCant1Pesos.Text = "0";
+                lblCant2Pesos.Text = "0";
+                lblCant5Pesos.Text = "0";
+                lblCant10Pesos.Text = "0";
+                lblCant20Pesos.Text = "0";
+                lblCant50Pesos.Text = "0";
+                lblCant100Pesos.Text = "0";
+                lblCant200Pesos.Text = "0";
+                lblCant500Pesos.Text = "0";
+                lblCant1000Pesos.Text = "0";
+                
+
+                
             }
             catch (Exception ex)
             {
@@ -2431,14 +2629,12 @@ namespace TestMdfEntityFramework.Views
             BufferSendData[5] = crc1;
             BufferSendData[6] = crc2;
 
-            ClearBufferRecievedDataGlobal();
-
-            //close_serial_port();
-            //dispose_serial_port();
-
             open_serial_port();
+            ClearBufferRecievedDataGlobal();
+            //puertoSerie1.DiscardInBuffer(); // IMPORTANTE PARA QUE LIMPIE EL BUFFER DEL PUERTO SERIE !!!
+            
             puertoSerie1.Write(BufferSendData, 0, 7);
-            //timerWait.Enabled = true;
+            
         }
         private uint getTotalCobradoBoleto()
         {
