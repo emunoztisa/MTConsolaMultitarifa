@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:TestMdfEntityFramework.Views"
              mc:Ignorable="d" 
              d:DesignHeight="544" d:DesignWidth="670"
-             Background="Transparent" Loaded="vwAsignaciones_OnLoad">
+             Background="Transparent" Loaded="vwAsignaciones_OnLoad" Unloaded="vwAsignaciones_Unloaded" >
     <UserControl.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">

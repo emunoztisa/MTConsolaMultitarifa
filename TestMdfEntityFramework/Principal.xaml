@@ -246,7 +246,9 @@
                             Foreground="White" 
                             VerticalAlignment="Center" 
                             HorizontalAlignment="Center" 
-                            Cursor="Hand" 
+                            Cursor="Hand"
+                            IsEnabled="False"
+                            Visibility="Hidden"
                             Style="{DynamicResource BTNHEADERSTYLE}" Click="btnCuenta_Click" >
                         <Grid>
                             <Grid.ColumnDefinitions>

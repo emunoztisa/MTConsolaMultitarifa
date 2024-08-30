@@ -131,6 +131,8 @@ namespace TestMdfEntityFramework.Views
         #region EVENTOS BOTONES Y VENTANAS
         private void CobroMultitarifaV1_Load(object sender, RoutedEventArgs e)
         {
+            deshabilitaBotonCobrar();
+
             if (validaPuertoCOMConfigurado())
             {
                 configura_puerto_serial();
@@ -617,6 +619,128 @@ namespace TestMdfEntityFramework.Views
             }
 
             return hayDispositivoConectado;
+        }
+
+        private bool sePuedeCobrar(object sender)
+        {
+            bool sePuede = false;
+            try
+            {
+                string nombreCombo = "";
+                string textSelected = "";
+
+                var currentSelectedIndex = ((ComboBox)sender).SelectedIndex;
+                textSelected = ((ComboBox)sender).Items[currentSelectedIndex].ToString();
+                nombreCombo = ((ComboBox)sender).Name;
+
+                switch (nombreCombo)
+                {
+                    case "cmbLugarOrigen":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            lugOri = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbLugarDestino":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            lugDes = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbPerfilUno":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            perfil1 = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbPerfilDos":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            perfil2 = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbPerfilTres":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            perfil3 = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbPerfilCuatro":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            perfil4 = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbPerfilCinco":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            perfil5 = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbPerfilSeis":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            perfil6 = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                        }
+                        break;
+                    case "cmbCantUno":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            cant1 = Convert.ToInt32(((ComboBox)sender).SelectedValue);
+                        }
+                        break;
+                    case "cmbCantDos":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            cant2 = Convert.ToInt32(((ComboBox)sender).SelectedValue);
+                        }
+                        break;
+                    case "cmbCantTres":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            cant3 = Convert.ToInt32(((ComboBox)sender).SelectedValue);
+                        }
+                        break;
+                    case "cmbCantCuatro":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            cant4 = Convert.ToInt32(((ComboBox)sender).SelectedValue);
+                        }
+                        break;
+                    case "cmbCantCinco":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            cant5 = Convert.ToInt32(((ComboBox)sender).SelectedValue);
+                        }
+                        break;
+                    case "cmbCantSeis":
+                        if (((ComboBox)sender) != null && textSelected != "")
+                        {
+                            cant6 = Convert.ToInt32(((ComboBox)sender).SelectedValue);
+                        }
+                        break;
+                }
+
+
+                if (lugOri != "" && lugDes != "")
+                {
+                    if (perfil1 != "" & cant1 != 0
+                        || perfil2 != "" & cant2 != 0
+                        || perfil3 != "" & cant3 != 0
+                        || perfil4 != "" & cant4 != 0
+                        || perfil5 != "" & cant5 != 0
+                        || perfil6 != "" & cant6 != 0
+                        )
+                    {
+                        sePuede = true;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                sePuede = false;
+            }
+            return sePuede;
         }
 
         #endregion
@@ -1386,6 +1510,9 @@ namespace TestMdfEntityFramework.Views
                 }
 
                 lblMontoCalculado.Text = tarifa_a_cobrar.ToString().Trim();
+
+                //PARA HABILITAR O DESHABILITAR EL BOTON DE COBRAR EN CASO DE NO LLENARSE LOS CAMPOS CORRESPONDIENTES
+                if (sePuedeCobrar(sender)){habilitaBotonCobrar();} else { deshabilitaBotonCobrar(); }
             }
             catch (Exception ex)
             {
@@ -1397,6 +1524,15 @@ namespace TestMdfEntityFramework.Views
             uint monto_actual_ingresado = 0;
             monto_actual_ingresado = VarByteToUInteger32_comand_07(RecievedDataGlobal);
             return monto_actual_ingresado;
+        }
+
+        private void habilitaBotonCobrar()
+        {
+            btnCobrar.IsEnabled = true;
+        }
+        private void deshabilitaBotonCobrar()
+        {
+            btnCobrar.IsEnabled = false;
         }
 
         #endregion
@@ -1732,20 +1868,9 @@ namespace TestMdfEntityFramework.Views
                 //dispose_serial_port();
 
                 open_serial_port(); //EMD 2024-05-06
-
-                //ServiceConfigPort scp = new ServiceConfigPort();
-                //List<config_port> list = scp.getEntities();
-
-                //this.puertoSerie1 = new System.IO.Ports.SerialPort
-                //    ("" + list[0].port_name
-                //    , Convert.ToInt32(list[0].baud_rate)
-                //    , list[0].parity == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
-                //    , Convert.ToInt32(list[0].data_bits)
-                //    , Convert.ToInt32(list[0].stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
-                //    );
-                //puertoSerie1.Handshake = Handshake.None;
+  
             }
-            catch
+            catch(Exception ex)
             {
                 MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
                 btnCobrar.IsEnabled = false;
@@ -1868,6 +1993,8 @@ namespace TestMdfEntityFramework.Views
                 delegado_actualiza_lbl_denominaciones();
 
                 detiene_timers();
+
+                deshabilitaBotonCobrar();
 
                 //INSERTAR BOLETO EN LA BASE DE DATOS LOCAL
                 Task.WaitAll(new Task[] { Task.Delay(100) });

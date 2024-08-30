@@ -203,6 +203,28 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_taqui
           <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
           <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="ct_usuarios">
+          <Key>
+            <PropertyRef Name="pkUsuario" />
+          </Key>
+          <Property Name="pkUsuario" Type="bigint" Nullable="false" />
+          <Property Name="fkPuesto" Type="bigint" Nullable="false" />
+          <Property Name="fkStatus" Type="bigint" Nullable="false" />
+          <Property Name="nombre" Type="nvarchar" MaxLength="100" />
+          <Property Name="usuario" Type="nvarchar" MaxLength="50" />
+          <Property Name="contrasena" Type="nvarchar" MaxLength="200" />
+          <Property Name="token" Type="text" />
+          <Property Name="tipo_usuario" Type="nvarchar" MaxLength="50" />
+          <Property Name="enviado" Type="int" />
+          <Property Name="confirmado" Type="int" />
+          <Property Name="modo" Type="int" />
+          <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+          <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+          <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+          <Property Name="created_id" Type="bigint" />
+          <Property Name="updated_id" Type="bigint" />
+          <Property Name="deleted_id" Type="bigint" />
+        </EntityType>
         <EntityType Name="opciones_generales">
           <Key>
             <PropertyRef Name="pkOpcionGeneral" />
@@ -342,7 +364,7 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_taqui
           <Key>
             <PropertyRef Name="pkEmpresaCorredorOperador" />
           </Key>
-          <Property Name="pkEmpresaCorredorOperador" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="pkEmpresaCorredorOperador" Type="bigint" Nullable="false" />
           <Property Name="fkEmpresa" Type="bigint" Nullable="false" />
           <Property Name="fkCorredor" Type="bigint" Nullable="false" />
           <Property Name="fkOperador" Type="bigint" Nullable="false" />
@@ -355,14 +377,14 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_taqui
           <Key>
             <PropertyRef Name="pkLugarRuta" />
           </Key>
-          <Property Name="pkLugarRuta" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="pkLugarRuta" Type="bigint" Nullable="false" />
           <Property Name="fkLugar" Type="bigint" Nullable="false" />
           <Property Name="fkRuta" Type="bigint" Nullable="false" />
           <Property Name="orden" Type="int" Nullable="false" />
           <Property Name="status" Type="int" />
-          <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
-          <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
           <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+          <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+          <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="sy_mensajes">
           <Key>
@@ -432,7 +454,7 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="user" Type="nvarchar" MaxLength="100" />
           <Property Name="contrasena" Type="nvarchar" MaxLength="200" />
           <Property Name="token" Type="text" />
-          <Property Name="tipo_usuario" Type="nvarchar" MaxLength="100" />
+          <Property Name="m_surname" Type="nvarchar" MaxLength="100" />
           <Property Name="created_at" Type="nvarchar" MaxLength="30" />
           <Property Name="updated_at" Type="nvarchar" MaxLength="30" />
           <Property Name="deleted_at" Type="nvarchar" MaxLength="30" />
@@ -450,6 +472,7 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="ct_rutas" EntityType="Self.ct_rutas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ct_tarifas_montos_fijos" EntityType="Self.ct_tarifas_montos_fijos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ct_unidades" EntityType="Self.ct_unidades" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ct_usuarios" EntityType="Self.ct_usuarios" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="opciones_generales" EntityType="Self.opciones_generales" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_asignaciones" EntityType="Self.sy_asignaciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_boletos" EntityType="Self.sy_boletos" Schema="dbo" store:Type="Tables" />
@@ -514,9 +537,7 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="config_varios" EntityType="databaseModel.config_varios" />
           <EntitySet Name="opciones_generales" EntityType="databaseModel.opciones_generales" />
           <EntitySet Name="ct_andadores" EntityType="databaseModel.ct_andadores" />
-          <EntitySet Name="sy_lugar_ruta" EntityType="databaseModel.sy_lugar_ruta" />
           <EntitySet Name="sy_tarifas" EntityType="databaseModel.sy_tarifas" />
-          <EntitySet Name="sy_empresa_corredor_operador" EntityType="databaseModel.sy_empresa_corredor_operador" />
           <EntitySet Name="ct_alcancias" EntityType="databaseModel.ct_alcancias" />
           <EntitySet Name="ct_consolas" EntityType="databaseModel.ct_consolas" />
           <EntitySet Name="ct_taquillas" EntityType="databaseModel.ct_taquillas" />
@@ -535,10 +556,13 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="sy_ubicacion" EntityType="databaseModel.sy_ubicacion" />
           <EntitySet Name="ct_denominaciones" EntityType="databaseModel.ct_denominaciones" />
           <EntitySet Name="ct_imagenes_subidas" EntityType="databaseModel.ct_imagenes_subidas" />
-          <EntitySet Name="users" EntityType="databaseModel.users" />
           <EntitySet Name="ct_tarifas_montos_fijos" EntityType="databaseModel.ct_tarifas_montos_fijos" />
           <EntitySet Name="sy_boletos_tarifa_fija" EntityType="databaseModel.sy_boletos_tarifa_fija" />
           <EntitySet Name="sy_cortes" EntityType="databaseModel.sy_cortes" />
+          <EntitySet Name="sy_lugar_ruta" EntityType="databaseModel.sy_lugar_ruta" />
+          <EntitySet Name="sy_empresa_corredor_operador" EntityType="databaseModel.sy_empresa_corredor_operador" />
+          <EntitySet Name="users" EntityType="databaseModel.users" />
+          <EntitySet Name="ct_usuarios" EntityType="databaseModel.ct_usuarios" />
         </EntityContainer>
         <EntityType Name="config_varios">
           <Key>
@@ -577,19 +601,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="sy_lugar_ruta">
-          <Key>
-            <PropertyRef Name="pkLugarRuta" />
-          </Key>
-          <Property Name="pkLugarRuta" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="fkLugar" Type="Int64" Nullable="false" />
-          <Property Name="fkRuta" Type="Int64" Nullable="false" />
-          <Property Name="orden" Type="Int32" Nullable="false" />
-          <Property Name="status" Type="Int32" />
-          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityType Name="sy_tarifas">
           <Key>
             <PropertyRef Name="pkTarifa" />
@@ -599,19 +610,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="fkLugarDestino" Type="Int64" Nullable="false" />
           <Property Name="fkPerfil" Type="Int64" Nullable="false" />
           <Property Name="monto" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
-          <Property Name="status" Type="Int32" />
-          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="sy_empresa_corredor_operador">
-          <Key>
-            <PropertyRef Name="pkEmpresaCorredorOperador" />
-          </Key>
-          <Property Name="pkEmpresaCorredorOperador" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="fkEmpresa" Type="Int64" Nullable="false" />
-          <Property Name="fkCorredor" Type="Int64" Nullable="false" />
-          <Property Name="fkOperador" Type="Int64" Nullable="false" />
           <Property Name="status" Type="Int32" />
           <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -876,19 +874,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="users">
-          <Key>
-            <PropertyRef Name="pkUser" />
-          </Key>
-          <Property Name="pkUser" Type="Int64" Nullable="false" />
-          <Property Name="user" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="contrasena" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="tipo_usuario" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="created_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="updated_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="deleted_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityType Name="ct_tarifas_montos_fijos">
           <Key>
             <PropertyRef Name="pkTarifaMontoFijo" />
@@ -964,6 +949,67 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="sy_lugar_ruta">
+          <Key>
+            <PropertyRef Name="pkLugarRuta" />
+          </Key>
+          <Property Name="pkLugarRuta" Type="Int64" Nullable="false" />
+          <Property Name="fkLugar" Type="Int64" Nullable="false" />
+          <Property Name="fkRuta" Type="Int64" Nullable="false" />
+          <Property Name="orden" Type="Int32" Nullable="false" />
+          <Property Name="status" Type="Int32" />
+          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="sy_empresa_corredor_operador">
+          <Key>
+            <PropertyRef Name="pkEmpresaCorredorOperador" />
+          </Key>
+          <Property Name="pkEmpresaCorredorOperador" Type="Int64" Nullable="false" />
+          <Property Name="fkEmpresa" Type="Int64" Nullable="false" />
+          <Property Name="fkCorredor" Type="Int64" Nullable="false" />
+          <Property Name="fkOperador" Type="Int64" Nullable="false" />
+          <Property Name="status" Type="Int32" />
+          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="users">
+          <Key>
+            <PropertyRef Name="pkUser" />
+          </Key>
+          <Property Name="pkUser" Type="Int64" Nullable="false" />
+          <Property Name="user" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="contrasena" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="m_surname" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="created_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="updated_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="deleted_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ct_usuarios">
+          <Key>
+            <PropertyRef Name="pkUsuario" />
+          </Key>
+          <Property Name="pkUsuario" Type="Int64" Nullable="false" />
+          <Property Name="fkPuesto" Type="Int64" Nullable="false" />
+          <Property Name="fkStatus" Type="Int64" Nullable="false" />
+          <Property Name="nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="usuario" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="contrasena" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="tipo_usuario" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="enviado" Type="Int32" />
+          <Property Name="confirmado" Type="Int32" />
+          <Property Name="modo" Type="Int32" />
+          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="created_id" Type="Int64" />
+          <Property Name="updated_id" Type="Int64" />
+          <Property Name="deleted_id" Type="Int64" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1010,20 +1056,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="sy_lugar_ruta">
-            <EntityTypeMapping TypeName="databaseModel.sy_lugar_ruta">
-              <MappingFragment StoreEntitySet="sy_lugar_ruta">
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
-                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
-                <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="orden" ColumnName="orden" />
-                <ScalarProperty Name="fkRuta" ColumnName="fkRuta" />
-                <ScalarProperty Name="fkLugar" ColumnName="fkLugar" />
-                <ScalarProperty Name="pkLugarRuta" ColumnName="pkLugarRuta" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="sy_tarifas">
             <EntityTypeMapping TypeName="databaseModel.sy_tarifas">
               <MappingFragment StoreEntitySet="sy_tarifas">
@@ -1036,20 +1068,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
                 <ScalarProperty Name="fkLugarDestino" ColumnName="fkLugarDestino" />
                 <ScalarProperty Name="fkLugarOrigen" ColumnName="fkLugarOrigen" />
                 <ScalarProperty Name="pkTarifa" ColumnName="pkTarifa" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="sy_empresa_corredor_operador">
-            <EntityTypeMapping TypeName="databaseModel.sy_empresa_corredor_operador">
-              <MappingFragment StoreEntitySet="sy_empresa_corredor_operador">
-                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="fkOperador" ColumnName="fkOperador" />
-                <ScalarProperty Name="fkCorredor" ColumnName="fkCorredor" />
-                <ScalarProperty Name="fkEmpresa" ColumnName="fkEmpresa" />
-                <ScalarProperty Name="pkEmpresaCorredorOperador" ColumnName="pkEmpresaCorredorOperador" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1326,20 +1344,6 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="users">
-            <EntityTypeMapping TypeName="databaseModel.users">
-              <MappingFragment StoreEntitySet="users">
-                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="tipo_usuario" ColumnName="tipo_usuario" />
-                <ScalarProperty Name="token" ColumnName="token" />
-                <ScalarProperty Name="contrasena" ColumnName="contrasena" />
-                <ScalarProperty Name="user" ColumnName="user" />
-                <ScalarProperty Name="pkUser" ColumnName="pkUser" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="ct_tarifas_montos_fijos">
             <EntityTypeMapping TypeName="databaseModel.ct_tarifas_montos_fijos">
               <MappingFragment StoreEntitySet="ct_tarifas_montos_fijos">
@@ -1418,6 +1422,71 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="sy_lugar_ruta">
+            <EntityTypeMapping TypeName="databaseModel.sy_lugar_ruta">
+              <MappingFragment StoreEntitySet="sy_lugar_ruta">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="orden" ColumnName="orden" />
+                <ScalarProperty Name="fkRuta" ColumnName="fkRuta" />
+                <ScalarProperty Name="fkLugar" ColumnName="fkLugar" />
+                <ScalarProperty Name="pkLugarRuta" ColumnName="pkLugarRuta" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sy_empresa_corredor_operador">
+            <EntityTypeMapping TypeName="databaseModel.sy_empresa_corredor_operador">
+              <MappingFragment StoreEntitySet="sy_empresa_corredor_operador">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="fkOperador" ColumnName="fkOperador" />
+                <ScalarProperty Name="fkCorredor" ColumnName="fkCorredor" />
+                <ScalarProperty Name="fkEmpresa" ColumnName="fkEmpresa" />
+                <ScalarProperty Name="pkEmpresaCorredorOperador" ColumnName="pkEmpresaCorredorOperador" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="users">
+            <EntityTypeMapping TypeName="databaseModel.users">
+              <MappingFragment StoreEntitySet="users">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="m_surname" ColumnName="m_surname" />
+                <ScalarProperty Name="token" ColumnName="token" />
+                <ScalarProperty Name="contrasena" ColumnName="contrasena" />
+                <ScalarProperty Name="user" ColumnName="user" />
+                <ScalarProperty Name="pkUser" ColumnName="pkUser" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ct_usuarios">
+            <EntityTypeMapping TypeName="databaseModel.ct_usuarios">
+              <MappingFragment StoreEntitySet="ct_usuarios">
+                <ScalarProperty Name="deleted_id" ColumnName="deleted_id" />
+                <ScalarProperty Name="updated_id" ColumnName="updated_id" />
+                <ScalarProperty Name="created_id" ColumnName="created_id" />
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="modo" ColumnName="modo" />
+                <ScalarProperty Name="confirmado" ColumnName="confirmado" />
+                <ScalarProperty Name="enviado" ColumnName="enviado" />
+                <ScalarProperty Name="tipo_usuario" ColumnName="tipo_usuario" />
+                <ScalarProperty Name="token" ColumnName="token" />
+                <ScalarProperty Name="contrasena" ColumnName="contrasena" />
+                <ScalarProperty Name="usuario" ColumnName="usuario" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="fkStatus" ColumnName="fkStatus" />
+                <ScalarProperty Name="fkPuesto" ColumnName="fkPuesto" />
+                <ScalarProperty Name="pkUsuario" ColumnName="pkUsuario" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -1433,7 +1502,7 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
         <DesignerProperty Name="EnablePluralization" Value="false" />
-        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="False" />
         <DesignerProperty Name="UseLegacyProvider" Value="false" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
       </DesignerInfoPropertySet>

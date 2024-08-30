@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -96,7 +97,67 @@ namespace TestMdfEntityFramework
         }
 
         #region METODOS y FUNCIONES
+
         private void SincronizaUsuarios()
+        {
+            Comun mc = new Comun();
+
+            // SE OBTIENEN LOS USUARIOS DESDE EL SERVICIO
+            UsuariosController usuarios_controller = new UsuariosController();
+            List<ct_usuarios> usuarios_list = usuarios_controller.Get_MT();
+            string cuenta_admin = mc.obtenerValorDeAppConfig("ADMIN_CONSOLA_ALCANCIA");
+
+            ServiceComun_Usuarios usuarios_dblocal = new ServiceComun_Usuarios();
+            try
+            {
+                for (int i = 0; i < usuarios_list.Count; i++)
+                {
+                    ct_usuarios us = new ct_usuarios();
+                    us.pkUsuario = usuarios_list[i].pkUsuario;
+                    us.fkPuesto = usuarios_list[i].fkPuesto;
+                    us.fkStatus = usuarios_list[i].fkStatus;
+                    us.nombre = usuarios_list[i].nombre;
+                    us.usuario = usuarios_list[i].usuario;
+                    us.contrasena = mc.EncriptarCadena(usuarios_list[i].contrasena);
+                    us.token = usuarios_list[i].token;
+                    us.tipo_usuario = usuarios_list[i].tipo_usuario;
+                    us.enviado = usuarios_list[i].enviado;
+                    us.confirmado = usuarios_list[i].confirmado;
+                    us.modo = usuarios_list[i].modo;
+                    us.created_at = usuarios_list[i].created_at;
+                    us.updated_at = usuarios_list[i].updated_at;
+                    us.deleted_at = usuarios_list[i].deleted_at;
+                    us.created_id = usuarios_list[i].created_id;
+                    us.updated_id = usuarios_list[i].updated_id;
+                    us.deleted_id = usuarios_list[i].deleted_id;
+
+                    ct_usuarios user_existente = usuarios_dblocal.getEntityByUser(usuarios_list[i].usuario);
+                    if (user_existente != null && user_existente.usuario != "")
+                    {
+                        //YA EXISTE EL USUARIO EN LA DB LOCAL
+                        //UPDATE
+                        if (usuarios_list[i].usuario != cuenta_admin)
+                        {
+
+                            //ACTUALIZAR usuario con todo el token ya seteado.
+                            usuarios_dblocal.updEntity(us);
+                        }
+                    }
+                    else
+                    {
+                        //NO EXISTE EL USUARIO EN LA DB LOCAL
+                        //INSERTAR
+                        usuarios_dblocal.addEntity(us);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ATENCION");
+
+            }
+        }
+        private void SincronizaUsuarios_OLD()
         {
             Comun mc = new Comun();
 
@@ -114,6 +175,7 @@ namespace TestMdfEntityFramework
                     us.pkUser = i + 1;
                     us.user = users_list[i].email;
                     us.contrasena = mc.EncriptarCadena(users_list[i].electoralid);
+                    us.m_surname = users_list[i].m_surname;
                     us.created_at = users_list[i].created_at;
                     us.updated_at = users_list[i].updated_at;
                     us.deleted_at = users_list[i].deleted_at;
@@ -146,72 +208,7 @@ namespace TestMdfEntityFramework
 
 
         }
-        private bool validaUsuario()
-        {
-            bool val = false;
-
-            //AQUI LAS VALIDACIONES PARA SABER SI DEBE O NO ACCEDER EL USUARIO
-            //if(txtUsuario.Text.ToString().Trim() == "admin" && txtContrasena.Password.ToString().Trim() == "root"){val = true;}
-
-            Comun mc = new Comun();
-
-            LoginController lc = new LoginController();
-
-            string usuario = txtUsuario.Text.ToString().Trim();
-            string password = txtContrasena.Password.ToString().Trim();
-
-            ServiceUsers serv_users = new ServiceUsers();
-            users user_actual = serv_users.getEntityByUser(usuario);
-
-            if (user_actual != null && user_actual.user != "")
-            {
-                if (password == mc.DesencriptarCadena(user_actual.contrasena))
-                {
-                    // ACTUALIZAR EN LA BASE DE DATOS CON EL USUARIO ACTUAL CONECTADO
-                    ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
-                    config_varios cv_usuario_actual = new config_varios();
-                    cv_usuario_actual.clave = "USUARIO_ACTUAL";
-                    cv_usuario_actual.valor = user_actual.user;
-                    serv_conf_varios.updEntityByClave(cv_usuario_actual);
-
-                    val = true;
-
-                    //Obtiene el token desde TISA en caso de no tener seteado ninguno en la base de datos local.
-                    if (user_actual.token == null && user_actual.token != "")
-                    {
-                        string password_desencriptado = mc.DesencriptarCadena(user_actual.contrasena);
-                        Comun comun = new Comun();
-                        if (comun.HayConexionInternet())
-                        {
-                            ResLogin resLogin = lc.login(usuario, password_desencriptado);
-                            if (resLogin.GetToken() != null && resLogin.GetToken() != "")
-                            {
-                                //validacion si tiene el perfil que se requiere para poder mostrar la opcion de configuracion
-                                int cont = 0;
-                                foreach (var item in resLogin.perfiles)
-                                {
-                                    if (item.fkRole == 95 || item.fkRole == 96)
-                                    {
-                                        cont++;
-                                    }
-                                }
-
-                                if (cont >= 2) { user_actual.tipo_usuario = "INSTALL_CONFIG"; }
-                                else { user_actual.tipo_usuario = "OPERADOR"; }
-
-                                user_actual.token = resLogin.token;
-                                val = true;
-                                serv_users.updEntity(user_actual);
-
-
-                            }
-                        }
-                    }
-                }
-            }
-
-            return val;
-        }
+        
         private void SettearValoresProduccion()
         {
             txtUsuario.Text = "";
@@ -278,7 +275,135 @@ namespace TestMdfEntityFramework
         }
         private void btnEntrar_Click(object sender, RoutedEventArgs e)
         {
-            if (validaUsuario())
+            //Ingresar_OLD();
+
+            Ingresar();
+
+        }
+
+        private void Ingresar()
+        {
+            Comun comun = new Comun();
+            Session session = new Session();
+
+            if (comun.HayConexionInternet())
+            {
+
+                ResLogin reslogin = validaUsuario();
+                session.SetResLogin(reslogin);
+
+                if (reslogin.response && reslogin.token != null)
+                {
+                    Principal prin = new Principal();
+
+                    //VARIABLE QUE PODRA SER UTILIZADA ENTRE FORMULARIOS
+                    LoginInfo li = new LoginInfo();
+                    li.SetPkUsuarioLogueado(obtenerPkUsuarioLogueado(txtUsuario.Text));
+
+                    this.Close();
+                    prin.Show();
+                    
+
+                }
+                else
+                {
+                    txtMensajePopup.Text = "El usuario no existe o no tiene permisos para acceder";
+                    txtMensajePopup.FontSize = 10;
+                    imgPopup.Source = new BitmapImage(new Uri(@"/SCS/IMG/equis_roja.png", UriKind.Relative));
+                    mostrarPopupOk();
+                }
+            }
+            else
+            {
+                txtMensajePopup.Text = "NO HAY CONEXION INTERNET";
+                txtMensajePopup.FontSize = 10;
+                imgPopup.Source = new BitmapImage(new Uri(@"/SCS/IMG/equis_roja.png", UriKind.Relative));
+                mostrarPopupOk();
+            }
+        }
+
+        private ResLogin validaUsuario()
+        {
+            bool val = false;
+            ResLogin resLogin = new ResLogin();
+
+            //AQUI LAS VALIDACIONES PARA SABER SI DEBE O NO ACCEDER EL USUARIO
+            //if(txtUsuario.Text.ToString().Trim() == "admin" && txtContrasena.Password.ToString().Trim() == "root"){val = true;}
+
+            Comun mc = new Comun();
+
+            LoginController lc = new LoginController();
+
+            string usuario = txtUsuario.Text.ToString().Trim();
+            string password = txtContrasena.Password.ToString().Trim();
+
+            ServiceComun_Usuarios serv_usuarios = new ServiceComun_Usuarios();
+            ct_usuarios user_actual = serv_usuarios.getEntityByUser(usuario);
+
+            if (user_actual != null && user_actual.usuario != "")
+            {
+                if (password == mc.DesencriptarCadena(user_actual.contrasena))
+                {
+                    // ACTUALIZAR EN LA BASE DE DATOS CON EL USUARIO ACTUAL CONECTADO
+                    ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
+                    config_varios cv_usuario_actual = new config_varios();
+                    cv_usuario_actual.clave = "USUARIO_ACTUAL";
+                    cv_usuario_actual.valor = user_actual.usuario;
+                    serv_conf_varios.updEntityByClave(cv_usuario_actual);
+
+                    val = true;
+
+                    //Obtiene el token desde TISA en caso de no tener seteado ninguno en la base de datos local.
+                    if (user_actual.token == null && user_actual.token != "")
+                    {
+                        string password_desencriptado = mc.DesencriptarCadena(user_actual.contrasena);
+                        Comun comun = new Comun();
+                        //if (comun.HayConexionInternet())
+                        //{
+                        resLogin = lc.login(usuario, password_desencriptado);
+                        if (resLogin.GetToken() != null && resLogin.GetToken() != "")
+                        {
+                            ////validacion si tiene el perfil que se requiere para poder mostrar la opcion de configuracion
+                            //int cont = 0;
+                            //foreach (var item in resLogin.perfiles)
+                            //{
+                            //    if (item.fkRole == 96)
+                            //    {
+                            //        cont++;
+                            //    }
+                            //}
+
+                            //if (cont >= 2) { user_actual.tipo_usuario = "INSTALL_CONFIG"; }
+                            //else { user_actual.tipo_usuario = "OPERADOR"; }
+
+                            user_actual.token = resLogin.token;
+                            val = true;
+                            serv_usuarios.updEntity(user_actual);
+
+
+                        }
+                        //}
+                    }
+                }
+            }
+
+            return resLogin;
+        }
+        private long obtenerPkUsuarioLogueado(string usuario_logueado)
+        {
+            long pk = 0;
+            ServiceComun_Usuarios serv_comun_usuarios = new ServiceComun_Usuarios();
+            ct_usuarios cT_Usuarios = serv_comun_usuarios.getEntityByUser(usuario_logueado);
+            if (cT_Usuarios != null)
+            {
+                pk = cT_Usuarios.pkUsuario;
+            }
+            return pk;
+        }
+
+        private void Ingresar_OLD()
+        {
+            if (validaUsuario_OLD())
             {
                 Comun comun = new Comun();
                 if (comun.HayConexionInternet())
@@ -305,9 +430,73 @@ namespace TestMdfEntityFramework
                 //MessageBox.Show("El usuario no existe o no tiene permisos para acceder","ATENCION");
             }
         }
+        private bool validaUsuario_OLD()
+        {
+            bool val = false;
+
+            //AQUI LAS VALIDACIONES PARA SABER SI DEBE O NO ACCEDER EL USUARIO
+            //if(txtUsuario.Text.ToString().Trim() == "admin" && txtContrasena.Password.ToString().Trim() == "root"){val = true;}
+
+            Comun mc = new Comun();
+
+            LoginController lc = new LoginController();
+
+            string usuario = txtUsuario.Text.ToString().Trim();
+            string password = txtContrasena.Password.ToString().Trim();
+
+            ServiceUsers serv_users = new ServiceUsers();
+            users user_actual = serv_users.getEntityByUser(usuario);
+
+            if (user_actual != null && user_actual.user != "")
+            {
+                if (password == mc.DesencriptarCadena(user_actual.contrasena))
+                {
+                    // ACTUALIZAR EN LA BASE DE DATOS CON EL USUARIO ACTUAL CONECTADO
+                    ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
+                    config_varios cv_usuario_actual = new config_varios();
+                    cv_usuario_actual.clave = "USUARIO_ACTUAL";
+                    cv_usuario_actual.valor = user_actual.user;
+                    serv_conf_varios.updEntityByClave(cv_usuario_actual);
+
+                    val = true;
+
+                    //Obtiene el token desde TISA en caso de no tener seteado ninguno en la base de datos local.
+                    if (user_actual.token == null && user_actual.token != "")
+                    {
+                        string password_desencriptado = mc.DesencriptarCadena(user_actual.contrasena);
+                        Comun comun = new Comun();
+                        if (comun.HayConexionInternet())
+                        {
+                            ResLogin resLogin = lc.login(usuario, password_desencriptado);
+                            if (resLogin.GetToken() != null && resLogin.GetToken() != "")
+                            {
+                                ////validacion si tiene el perfil que se requiere para poder mostrar la opcion de configuracion
+                                //int cont = 0;
+                                //foreach (var item in resLogin.perfiles)
+                                //{
+                                //    if (item.fkRole == 95 || item.fkRole == 96)
+                                //    {
+                                //        cont++;
+                                //    }
+                                //}
+
+                                //if (cont >= 2) { user_actual.m_surname = "INSTALL_CONFIG"; }
+                                //else { user_actual.m_surname = "OPERADOR"; }
 
 
+                                user_actual.token = resLogin.token;
+                                val = true;
+                                serv_users.updEntity(user_actual);
 
+
+                            }
+                        }
+                    }
+                }
+            }
+
+            return val;
+        }
         #endregion
 
         #region METODOS GRID POPUP

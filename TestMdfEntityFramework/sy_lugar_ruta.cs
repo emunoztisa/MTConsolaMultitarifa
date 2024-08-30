@@ -19,8 +19,8 @@ namespace TestMdfEntityFramework
         public long fkRuta { get; set; }
         public int orden { get; set; }
         public Nullable<int> status { get; set; }
-        public string deleted_at { get; set; }
-        public string updated_at { get; set; }
         public string created_at { get; set; }
+        public string updated_at { get; set; }
+        public string deleted_at { get; set; }
     }
 }

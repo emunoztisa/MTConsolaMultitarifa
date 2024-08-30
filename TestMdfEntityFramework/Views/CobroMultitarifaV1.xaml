@@ -244,7 +244,7 @@
                        Grid.RowSpan="3"
                        />
             <TextBlock Grid.Row="7" 
-                       Grid.Column="3"
+                       Grid.Column="5"
                        Text="CANT" 
                        Foreground="White" 
                        FontSize="20" 
@@ -262,7 +262,7 @@
                        HorizontalAlignment="Center"
                        />
             <TextBlock Grid.Row="7" 
-                       Grid.Column="11"
+                       Grid.Column="12"
                        Text="CANT" 
                        Foreground="White" 
                        FontSize="20" 

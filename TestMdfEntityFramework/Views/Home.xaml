@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:TestMdfEntityFramework.Views"
              mc:Ignorable="d" 
              d:DesignHeight="550" d:DesignWidth="950"
-             Background="Transparent">
+             Background="Transparent" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded">
     <Border CornerRadius="0,0,0,0">
         <Border.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">

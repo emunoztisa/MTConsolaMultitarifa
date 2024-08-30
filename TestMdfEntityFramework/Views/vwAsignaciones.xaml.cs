@@ -22,6 +22,10 @@ namespace TestMdfEntityFramework.Views
     /// </summary>
     public partial class vwAsignaciones : UserControl
     {
+        //SERIAL PORT
+        System.IO.Ports.SerialPort puertoSerie1 = new System.IO.Ports.SerialPort();
+        String[] listado_puerto = System.IO.Ports.SerialPort.GetPortNames();
+
         //POPUP OK
         private double left, top, right, bottom, centerX, centerY;
         private DoubleAnimation bottomToCenterAnimiation, topToCenterAnimation,
@@ -34,6 +38,11 @@ namespace TestMdfEntityFramework.Views
         }
         private void vwAsignaciones_OnLoad(object sender, RoutedEventArgs e)
         {
+            if (validaPuertoCOMConfigurado())
+            {
+                configura_puerto_serial();
+            }
+
             //EVENTOS PARA POPUP OK
             SetPopupDlgCenter();
             InitializeAnimations();
@@ -41,6 +50,13 @@ namespace TestMdfEntityFramework.Views
             LlenaComboAsignaciones();
             SetearAsignacionActivaEnControles();
         }
+        private void vwAsignaciones_Unloaded(object sender, RoutedEventArgs e)
+        {
+            close_serial_port();
+            //dispose_serial_port();
+        }
+
+        
 
         private void SetearAsignacionActivaEnControles()
         {
@@ -108,6 +124,91 @@ namespace TestMdfEntityFramework.Views
                 MessageBox.Show(ex.Message);
             }
             
+        }
+        private bool validaPuertoCOMConfigurado()
+        {
+            bool isConfigured = false;
+
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_port_name = serv_config_varios.getEntityByClave("PORT_NAME");
+            if (cv_port_name.valor != null && cv_port_name.valor != "")
+            {
+                isConfigured = true;
+            }
+            else
+            {
+                isConfigured = false;
+            }
+
+            return isConfigured;
+        }
+        public void configura_puerto_serial()
+        {
+            try
+            {
+                ServiceConfigVarios scv = new ServiceConfigVarios();
+                config_varios cv_port_name = scv.getEntityByClave("PORT_NAME");
+                config_varios cv_baud_rate = scv.getEntityByClave("BAUD_RATE");
+                config_varios cv_paridad = scv.getEntityByClave("PARIDAD");
+                config_varios cv_data_bits = scv.getEntityByClave("DATA_BITS");
+                config_varios cv_stop_bits = scv.getEntityByClave("STOP_BITS");
+                config_varios cv_handshake = scv.getEntityByClave("HANDSHAKE");
+
+                if (cv_port_name.valor != "")
+                {
+                    //MessageBox.Show(cv_port_name.valor);
+
+                    this.puertoSerie1 = new System.IO.Ports.SerialPort
+                    ("" + cv_port_name.valor
+                    , Convert.ToInt32(cv_baud_rate.valor)
+                    , cv_paridad.valor == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                    , Convert.ToInt32(cv_data_bits.valor)
+                    , Convert.ToInt32(cv_stop_bits.valor) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                    );
+                    puertoSerie1.Handshake = cv_handshake.valor == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+
+                    close_serial_port();
+                    //dispose_serial_port();
+
+                    open_serial_port(); //EMD 2024-05-06
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
+            }
+
+            //close_serial_port();
+
+        }
+        private void open_serial_port()
+        {
+            try
+            {
+                if (puertoSerie1.IsOpen == false)
+                {
+                    puertoSerie1.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+                //configura_puerto_serial();
+
+            }
+        }
+        private void close_serial_port()
+        {
+            if (puertoSerie1.IsOpen == true)
+            {
+                puertoSerie1.Close();
+            }
+        }
+        private void dispose_serial_port()
+        {
+            if (puertoSerie1.IsOpen == false)
+            {
+                puertoSerie1.Dispose();
+            }
         }
 
         private void cmbAsignaciones_SeleccionChanged(object sender, SelectionChangedEventArgs e)

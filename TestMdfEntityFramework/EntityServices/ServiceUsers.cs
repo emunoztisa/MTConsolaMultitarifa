@@ -55,6 +55,7 @@ namespace TestMdfEntityFramework.EntityServices
             {
                 us.user = entity.user;
                 us.contrasena = entity.contrasena;
+                us.m_surname = entity.m_surname;
                 us.token = entity.token;
                 us.created_at = entity.created_at;
                 us.updated_at = entity.updated_at;

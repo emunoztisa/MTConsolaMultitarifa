@@ -12,15 +12,24 @@ namespace TestMdfEntityFramework
     using System;
     using System.Collections.Generic;
     
-    public partial class users
+    public partial class ct_usuarios
     {
-        public long pkUser { get; set; }
-        public string user { get; set; }
+        public long pkUsuario { get; set; }
+        public long fkPuesto { get; set; }
+        public long fkStatus { get; set; }
+        public string nombre { get; set; }
+        public string usuario { get; set; }
         public string contrasena { get; set; }
         public string token { get; set; }
-        public string m_surname { get; set; }
+        public string tipo_usuario { get; set; }
+        public Nullable<int> enviado { get; set; }
+        public Nullable<int> confirmado { get; set; }
+        public Nullable<int> modo { get; set; }
         public string created_at { get; set; }
         public string updated_at { get; set; }
         public string deleted_at { get; set; }
+        public Nullable<long> created_id { get; set; }
+        public Nullable<long> updated_id { get; set; }
+        public Nullable<long> deleted_id { get; set; }
     }
 }

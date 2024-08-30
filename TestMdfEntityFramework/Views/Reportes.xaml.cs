@@ -286,6 +286,13 @@ namespace TestMdfEntityFramework.Views
             obj_corte.fkLugarDestino = 0;
             obj_corte.fkStatus = 1;
 
+            //PARA ASIGNAR EL fkAsignacion que esta actualmente en la aplicacion.
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            config_varios cv_asign = serv_config_varios.getEntityByClave("ASIGNACION_ACTIVA");
+            ServiceAsignaciones serv_asignaciones = new ServiceAsignaciones();
+            sy_asignaciones asign = serv_asignaciones.getEntityByFolio(cv_asign.valor.ToString().Trim());
+            obj_corte.fkAsignacion = asign.pkAsignacion;
+
             obj_corte.folio = GetFolioCorteSrting(RecievedDataGlobal_local);
 
             string varStrFechaHora = StringToBCD(22);

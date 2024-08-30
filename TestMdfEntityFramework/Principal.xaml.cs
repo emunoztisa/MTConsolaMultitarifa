@@ -558,19 +558,13 @@ namespace TestMdfEntityFramework
             //Se insertan en la base local
             ServiceTarifas serv = new ServiceTarifas();
 
-            if ((serv.getEntities()).Count > 0)
+            for (int i = 0; i < list.Count; i++)
             {
-                for (int i = 0; i < list.Count; i++)
+                if (serv.getEntity(list[i].pkTarifa) != null)
                 {
-                    if (serv.getEntity(list[i].pkTarifa) != null)
-                    {
-                        serv.updEntity(list[i]);
-                    }
+                    serv.updEntity(list[i]);
                 }
-            }
-            else
-            {
-                for (int i = 0; i < list.Count; i++)
+                else
                 {
                     serv.addEntity(list[i]);
                 }
@@ -855,16 +849,20 @@ namespace TestMdfEntityFramework
             }
 
             //se sincronizan los mensajes desde TISA hacia la unidad
-            List<sy_mensajes> list_msn_desde_tisa = mensajes_controller.GetMensajesConsolaDesdeTISA(FK_ASIGNACION_ACTIVA);
-            foreach (var item in list_msn_desde_tisa)
+            if(FK_ASIGNACION_ACTIVA != null && FK_ASIGNACION_ACTIVA != 0)
             {
-                // se pone la bandera de enviado a 1 para que no se vuelva a consultar de nuevo este mensaje desde TISA
-                item.enviado = 1;
-                mensajes_controller.UpdateMensaje(item);
+                List<sy_mensajes> list_msn_desde_tisa = mensajes_controller.GetMensajesConsolaDesdeTISA(FK_ASIGNACION_ACTIVA);
+                foreach (var item in list_msn_desde_tisa)
+                {
+                    // se pone la bandera de enviado a 1 para que no se vuelva a consultar de nuevo este mensaje desde TISA
+                    item.enviado = 1;
+                    mensajes_controller.UpdateMensaje(item);
 
-                // insertar en la base de datos local
-                serv_mensajes.addEntity(item);
+                    // insertar en la base de datos local
+                    serv_mensajes.addEntity(item);
+                }
             }
+            
 
         }
         private void Sincronizar_Ubicacion()
@@ -934,18 +932,114 @@ namespace TestMdfEntityFramework
             ServiceConfigVarios serv_config_varios_user = new ServiceConfigVarios();
             config_varios cv_user = serv_config_varios_user.getEntityByClave("USUARIO_ACTUAL");
 
+            ServiceComun_Usuarios serv_usuarios = new ServiceComun_Usuarios();
+            ct_usuarios obj_usuario_actual = serv_usuarios.getEntityByUser(cv_user.valor);
+
+            switch (obj_usuario_actual.tipo_usuario)
+            {
+                case "OPERADOR":
+                    //BOTON MENU - ASIGNAR TARIFA
+                    btnCobroTarifa.IsEnabled = true;
+                    btnCobroTarifa.Visibility = Visibility.Visible;
+                    //BOTON MENU - CORTES
+                    btnReportes.IsEnabled = false;
+                    btnReportes.Visibility = Visibility.Hidden;
+                    //BOTON MENU - MENSAJES
+                    btnMensajes.IsEnabled = true;
+                    btnMensajes.Visibility = Visibility.Visible;
+                    //BOTON MENU - CONFIGURACIONES
+                    btnConfiguraciones.IsEnabled = false;
+                    btnConfiguraciones.Visibility = Visibility.Hidden;
+                    break;
+                case "CORTES":
+                    //BOTON MENU - ASIGNAR TARIFA
+                    btnCobroTarifa.IsEnabled = false;
+                    btnCobroTarifa.Visibility = Visibility.Hidden;
+                    //BOTON MENU - CORTES
+                    btnReportes.IsEnabled = true;
+                    btnReportes.Visibility = Visibility.Visible;
+                    //BOTON MENU - MENSAJES
+                    btnMensajes.IsEnabled = true;
+                    btnMensajes.Visibility = Visibility.Visible;
+                    //BOTON MENU - CONFIGURACIONES
+                    btnConfiguraciones.IsEnabled = false;
+                    btnConfiguraciones.Visibility = Visibility.Hidden;
+                    break;
+                case "INSTALL_CONFIG":
+                    //BOTON MENU - ASIGNAR TARIFA
+                    btnCobroTarifa.IsEnabled = true;
+                    btnCobroTarifa.Visibility = Visibility.Visible;
+                    //BOTON MENU - CORTES
+                    btnReportes.IsEnabled = true;
+                    btnReportes.Visibility = Visibility.Visible;
+                    //BOTON MENU - MENSAJES
+                    btnMensajes.IsEnabled = true;
+                    btnMensajes.Visibility = Visibility.Visible;
+                    //BOTON MENU - CONFIGURACIONES
+                    btnConfiguraciones.IsEnabled = true;
+                    btnConfiguraciones.Visibility = Visibility.Visible;
+                    break;
+
+
+
+            }
+        }
+
+        private void validar_tipo_usuario_OLD()
+        {
+            ServiceConfigVarios serv_config_varios_user = new ServiceConfigVarios();
+            config_varios cv_user = serv_config_varios_user.getEntityByClave("USUARIO_ACTUAL");
+
             ServiceUsers serv_users = new ServiceUsers();
             users obj_user_actual = serv_users.getEntityByUser(cv_user.valor);
 
-            if (obj_user_actual.tipo_usuario == "INSTALL_CONFIG")
+            switch (obj_user_actual.m_surname)
             {
-                btnConfiguraciones.IsEnabled = true;
-                btnConfiguraciones.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                btnConfiguraciones.IsEnabled = false;
-                btnConfiguraciones.Visibility = Visibility.Hidden;
+                case "OPERADOR":
+                    //BOTON MENU - ASIGNAR TARIFA
+                    btnCobroTarifa.IsEnabled = true;
+                    btnCobroTarifa.Visibility = Visibility.Visible;
+                    //BOTON MENU - CORTES
+                    btnReportes.IsEnabled = false;
+                    btnReportes.Visibility = Visibility.Hidden;
+                    //BOTON MENU - MENSAJES
+                    btnMensajes.IsEnabled = true;
+                    btnMensajes.Visibility = Visibility.Visible;
+                    //BOTON MENU - CONFIGURACIONES
+                    btnConfiguraciones.IsEnabled = false;
+                    btnConfiguraciones.Visibility = Visibility.Hidden;
+                    break;
+                case "CORTES":
+                    //BOTON MENU - ASIGNAR TARIFA
+                    btnCobroTarifa.IsEnabled = false;
+                    btnCobroTarifa.Visibility = Visibility.Hidden;
+                    //BOTON MENU - CORTES
+                    btnReportes.IsEnabled = true;
+                    btnReportes.Visibility = Visibility.Visible;
+                    //BOTON MENU - MENSAJES
+                    btnMensajes.IsEnabled = true;
+                    btnMensajes.Visibility = Visibility.Visible;
+                    //BOTON MENU - CONFIGURACIONES
+                    btnConfiguraciones.IsEnabled = false;
+                    btnConfiguraciones.Visibility = Visibility.Hidden;
+                    break;
+                case "INSTALL_CONFIG":
+                    //BOTON MENU - ASIGNAR TARIFA
+                    btnCobroTarifa.IsEnabled = true;
+                    btnCobroTarifa.Visibility = Visibility.Visible;
+                    //BOTON MENU - CORTES
+                    btnReportes.IsEnabled = true;
+                    btnReportes.Visibility = Visibility.Visible;
+                    //BOTON MENU - MENSAJES
+                    btnMensajes.IsEnabled = true;
+                    btnMensajes.Visibility = Visibility.Visible;
+                    //BOTON MENU - CONFIGURACIONES
+                    btnConfiguraciones.IsEnabled = true;
+                    btnConfiguraciones.Visibility = Visibility.Visible;
+                    break;
+               
+               
+
             }
         }
         private void Cambia_Imagen_Evalua_Conexion_Internet()

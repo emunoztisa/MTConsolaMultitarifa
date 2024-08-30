@@ -157,7 +157,7 @@
                 <GradientStop Color="White" Offset="1"/>
             </LinearGradientBrush>
         </Border.Background>
-        <Grid>
+        <Grid >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5"></ColumnDefinition>
                 <ColumnDefinition Width="150"></ColumnDefinition>

@@ -114,6 +114,7 @@ namespace TestMdfEntityFramework.Controllers
                     reg.email = item.email; // user
                     reg.electoralid = item.electoralid; // contrasena
                     reg.password = item.password; //
+                    reg.m_surname = item.m_surname;
                     reg.created_at = item.created_at;
                     reg.updated_at = item.updated_at;
                     reg.deleted_at = item.deleted_at;
@@ -151,6 +152,7 @@ namespace TestMdfEntityFramework.Controllers
                             reg.email = item.email; // user
                             reg.electoralid = item.electoralid; // contrasena
                             reg.password = item.password; //
+                            reg.m_surname = item.m_surname;
                             reg.created_at = item.created_at;
                             reg.updated_at = item.updated_at;
                             reg.deleted_at = item.deleted_at;

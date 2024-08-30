@@ -8,9 +8,7 @@
         <EntityTypeShape EntityType="databaseModel.config_varios" Width="1.5" PointX="3.75" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.opciones_generales" Width="1.5" PointX="2.125" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.ct_andadores" Width="1.5" PointX="3.75" PointY="3.375" />
-        <EntityTypeShape EntityType="databaseModel.sy_lugar_ruta" Width="1.5" PointX="5.375" PointY="6" />
         <EntityTypeShape EntityType="databaseModel.sy_tarifas" Width="1.5" PointX="7" PointY="6" />
-        <EntityTypeShape EntityType="databaseModel.sy_empresa_corredor_operador" Width="1.5" PointX="0.5" PointY="6" />
         <EntityTypeShape EntityType="databaseModel.ct_alcancias" Width="1.5" PointX="2.125" PointY="3.375" />
         <EntityTypeShape EntityType="databaseModel.ct_consolas" Width="1.5" PointX="8.75" PointY="3.375" />
         <EntityTypeShape EntityType="databaseModel.ct_taquillas" Width="1.5" PointX="7.125" PointY="3.375" />
@@ -29,10 +27,13 @@
         <EntityTypeShape EntityType="databaseModel.sy_ubicacion" Width="1.5" PointX="7.125" PointY="9" />
         <EntityTypeShape EntityType="databaseModel.ct_denominaciones" Width="1.5" PointX="0.5" PointY="8.875" />
         <EntityTypeShape EntityType="databaseModel.ct_imagenes_subidas" Width="1.5" PointX="5.5" PointY="3.25" />
-        <EntityTypeShape EntityType="databaseModel.users" Width="1.5" PointX="0.5" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.ct_tarifas_montos_fijos" Width="1.5" PointX="8.625" PointY="6" />
         <EntityTypeShape EntityType="databaseModel.sy_boletos_tarifa_fija" Width="1.5" PointX="9.375" PointY="9.75" />
         <EntityTypeShape EntityType="databaseModel.sy_cortes" Width="1.5" PointX="12" PointY="3.875" />
+        <EntityTypeShape EntityType="databaseModel.sy_lugar_ruta" Width="1.5" PointX="5.375" PointY="6" />
+        <EntityTypeShape EntityType="databaseModel.sy_empresa_corredor_operador" Width="1.5" PointX="0.5" PointY="6" />
+        <EntityTypeShape EntityType="databaseModel.users" Width="1.5" PointX="0.5" PointY="0.5" />
+        <EntityTypeShape EntityType="databaseModel.ct_usuarios" Width="1.5" PointX="0.75" PointY="12.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

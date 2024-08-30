@@ -139,6 +139,7 @@
     <Compile Include="Clases\ComandosAlcancia.cs" />
     <Compile Include="Clases\ConfigPort.cs" />
     <Compile Include="Clases\Perfiles.cs" />
+    <Compile Include="Clases\Session.cs" />
     <Compile Include="Clases\SincronizacionTISA.cs" />
     <Compile Include="Clases\TipoTarifa.cs" />
     <Compile Include="Clases\User.cs" />
@@ -169,6 +170,7 @@
     <Compile Include="Controllers\UbicacionController.cs" />
     <Compile Include="Controllers\UnidadesController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\UsuariosController.cs" />
     <Compile Include="ct_alcancias.cs">
       <DependentUpon>dbModel.tt</DependentUpon>
     </Compile>
@@ -211,6 +213,9 @@
     <Compile Include="ct_unidades.cs">
       <DependentUpon>dbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ct_usuarios.cs">
+      <DependentUpon>dbModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="dbModel.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -221,6 +226,7 @@
     <Compile Include="EntityServices\ServiceBoletos.cs" />
     <Compile Include="EntityServices\ServiceBoletosDetalles.cs" />
     <Compile Include="EntityServices\ServiceBoletosTarifaFija.cs" />
+    <Compile Include="EntityServices\ServiceComun_Usuarios.cs" />
     <Compile Include="EntityServices\ServiceConfigVarios.cs" />
     <Compile Include="EntityServices\ServiceConsolas.cs" />
     <Compile Include="EntityServices\ServiceCorredores.cs" />
@@ -259,6 +265,7 @@
     <Compile Include="Requests\ReqMensajes.cs" />
     <Compile Include="Requests\ReqUbicacion.cs" />
     <Compile Include="Requests\ReqUnidades.cs" />
+    <Compile Include="Requests\ReqUsuarios.cs" />
     <Compile Include="Responses\ResAndadores.cs" />
     <Compile Include="Responses\ResAsignaciones.cs" />
     <Compile Include="Responses\ResBoletos.cs" />
@@ -288,6 +295,7 @@
     <Compile Include="Responses\ResUbicacion.cs" />
     <Compile Include="Responses\ResUnidades.cs" />
     <Compile Include="Responses\ResUsers.cs" />
+    <Compile Include="Responses\ResUsuarios.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="sy_asignaciones.cs">
       <DependentUpon>dbModel.tt</DependentUpon>

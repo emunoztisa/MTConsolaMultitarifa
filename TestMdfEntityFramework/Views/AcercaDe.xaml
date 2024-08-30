@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:TestMdfEntityFramework.Views"
              mc:Ignorable="d" 
              d:DesignHeight="544" d:DesignWidth="670"
-             Background="Transparent">
+             Background="Transparent" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded">
     <UserControl.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
@@ -114,9 +114,9 @@
                        VerticalAlignment="Center"/>
             <TextBlock Grid.Row="2"
                        Grid.Column="3"
-                       Text="1.0.0"
+                       Text="1.0.0.0"
                        Foreground="White"
-                       FontSize="30"
+                       FontSize="20"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
             <!--#endregion-->
@@ -131,7 +131,24 @@
                        VerticalAlignment="Center"/>
             <TextBlock Grid.Row="3"
                        Grid.Column="3"
-                       Text="Tarjetas Integrales SA de CV"
+                       Text="TARJETAS INTEGRALES SA DE CV"
+                       Foreground="White"
+                       FontSize="20"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+            <!--#endregion-->
+
+            <!--#region Author-->
+            <TextBlock Grid.Row="4"
+                       Grid.Column="1"
+                       Text="Departamento"
+                       Foreground="White"
+                       FontSize="30"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="4"
+                       Grid.Column="3"
+                       Text="SISTEMAS"
                        Foreground="White"
                        FontSize="20"
                        HorizontalAlignment="Center"

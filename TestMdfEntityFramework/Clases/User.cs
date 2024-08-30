@@ -11,6 +11,7 @@ namespace TestMdfEntityFramework.Clases
         public string email;
         public string electoralid;
         public string password;
+        public string m_surname;
         public string created_at;
         public string updated_at;
         public string deleted_at;
