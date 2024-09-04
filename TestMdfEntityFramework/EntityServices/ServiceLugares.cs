@@ -36,7 +36,7 @@ namespace TestMdfEntityFramework.EntityServices
 
         public override ct_lugares getEntity(object pk)
         {
-            return em.ct_lugares.Where(q => (Int64)q.pkLugar == (Int64)pk).FirstOrDefault<ct_lugares>();
+            return em.ct_lugares.Where(q => q.pkLugar.ToString().Trim() == pk.ToString().Trim()).FirstOrDefault<ct_lugares>();
         }
 
         public override void updEntity(ct_lugares entity)

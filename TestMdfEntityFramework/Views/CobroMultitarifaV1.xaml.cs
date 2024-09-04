@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using TestMdfEntityFramework.Clases;
 using TestMdfEntityFramework.EntityServices;
 using TestMdfEntityFramework.Utils;
 
@@ -43,7 +44,7 @@ namespace TestMdfEntityFramework.Views
         byte[] RecievedDataGlobal = new byte[80];
 
         //ARREGLO DE CANTIDAD DE PIEZAS POR DENOMINACION
-        
+
 
         //POPUP OK
         private double left, top, right, bottom, centerX, centerY;
@@ -722,7 +723,7 @@ namespace TestMdfEntityFramework.Views
                 }
 
 
-                if (lugOri != "" && lugDes != "")
+                if (lugOri != "" && lugDes != "" && lugOri != "0" && lugDes != "0")
                 {
                     if (perfil1 != "" & cant1 != 0
                         || perfil2 != "" & cant2 != 0
@@ -760,7 +761,81 @@ namespace TestMdfEntityFramework.Views
 
             return Convert.ToInt32(cv_cantidad.valor);
         }
-        private List<string> getCatalogoPerfiles()
+
+        private void LlenaCatalogoPerfiles()
+        {
+            ServicePerfiles serv = new ServicePerfiles();
+            List<ct_perfiles> list = serv.getEntities();
+
+            cmbPerfilUno.Items.Add(new
+            {
+                value = 0,
+                text = ""
+            });
+            cmbPerfilDos.Items.Add(new
+            {
+                value = 0,
+                text = ""
+            });
+            cmbPerfilTres.Items.Add(new
+            {
+                value = 0,
+                text = ""
+            });
+            cmbPerfilCuatro.Items.Add(new
+            {
+                value = 0,
+                text = ""
+            });
+            cmbPerfilCinco.Items.Add(new
+            {
+                value = 0,
+                text = ""
+            });
+            cmbPerfilSeis.Items.Add(new
+            {
+                value = 0,
+                text = ""
+            });
+
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                cmbPerfilUno.Items.Add(new
+                {
+                    value = list[i].pkPerfil,
+                    text = list[i].nombre.ToString()
+                });
+                cmbPerfilDos.Items.Add(new
+                {
+                    value = list[i].pkPerfil,
+                    text = list[i].nombre.ToString()
+                });
+                cmbPerfilTres.Items.Add(new
+                {
+                    value = list[i].pkPerfil,
+                    text = list[i].nombre.ToString()
+                });
+                cmbPerfilCuatro.Items.Add(new
+                {
+                    value = list[i].pkPerfil,
+                    text = list[i].nombre.ToString()
+                }); 
+                cmbPerfilCinco.Items.Add(new
+                {
+                    value = list[i].pkPerfil,
+                    text = list[i].nombre.ToString()
+                }); 
+                cmbPerfilSeis.Items.Add(new
+                {
+                    value = list[i].pkPerfil,
+                    text = list[i].nombre.ToString()
+                });
+
+
+            }
+        }
+        private List<string> getCatalogoPerfiles_OLD()
         {
             ServicePerfiles serv = new ServicePerfiles();
             List<ct_perfiles> list = serv.getEntities();
@@ -772,7 +847,7 @@ namespace TestMdfEntityFramework.Views
             return list2;
 
         }
-        private List<string> getCatalogoLugares_PorRuta()
+        private List<string> getCatalogoLugares_PorRuta_OLD()
         {
             ServiceLugares serv = new ServiceLugares();
             List<ct_lugares> list_l = serv.getEntities();
@@ -789,11 +864,80 @@ namespace TestMdfEntityFramework.Views
                     if (item_lr.fkLugar == item_l.pkLugar)
                     {
                         list2.Add(item_l.nombre);
+
                     }
                 }
-
             }
             return list2;
+        }
+       
+        private void getCatalogoLugares_PorRutaOrigen()
+        {
+            ServiceLugares serv = new ServiceLugares();
+            List<ct_lugares> list_l = serv.getEntities();
+
+            ServiceLugarRuta slr = new ServiceLugarRuta();
+            List<sy_lugar_ruta> list_lr = slr.getEntityByFkRuta(asign_activa.fkRuta);
+
+
+            List<ct_lugares> list2 = new List<ct_lugares>();
+            if (list_lr.Count > 0)
+            {
+                cmbLugarOrigen.Items.Add(new
+                {
+                    value = 0,
+                    text = ""
+                });
+                foreach (var item_lr in list_lr)
+                {
+                    foreach (var item_l in list_l)
+                    {
+                        if (item_lr.fkLugar == item_l.pkLugar)
+                        {
+                           
+                            cmbLugarOrigen.Items.Add(new
+                            {
+                                value = item_l.pkLugar,
+                                text = item_l.nombre.ToString()
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        private void getCatalogoLugares_PorRutaDestino()
+        {
+            ServiceLugares serv = new ServiceLugares();
+            List<ct_lugares> list_l = serv.getEntities();
+
+            ServiceLugarRuta slr = new ServiceLugarRuta();
+            List<sy_lugar_ruta> list_lr = slr.getEntityByFkRuta(asign_activa.fkRuta);
+
+
+            List<ct_lugares> list2 = new List<ct_lugares>();
+            if (list_lr.Count > 0)
+            {
+                cmbLugarDestino.Items.Add(new
+                {
+                    value = 0,
+                    text = ""
+                });
+                foreach (var item_lr in list_lr)
+                {
+                    foreach (var item_l in list_l)
+                    {
+                        if (item_lr.fkLugar == item_l.pkLugar)
+                        {
+
+                            cmbLugarDestino.Items.Add(new
+                            {
+                                value = item_l.pkLugar,
+                                text = item_l.nombre.ToString()
+                            });
+                        }
+                    }
+                }
+            }
         }
         private sy_asignaciones ObtenerAsignacionActiva()
         {
@@ -836,13 +980,17 @@ namespace TestMdfEntityFramework.Views
                 {
                     //obtener los fk de lugar origen y destino
                     ServiceLugares serv_lug = new ServiceLugares();
-                    ct_lugares fkLugarOrigen = serv_lug.getEntityByNombre(lugOri);
-                    ct_lugares fkLugarDestino = serv_lug.getEntityByNombre(lugDes);
+                    //ct_lugares fkLugarOrigen = serv_lug.getEntityByNombre(lugOri);
+                    //ct_lugares fkLugarDestino = serv_lug.getEntityByNombre(lugDes);
+
+                    ct_lugares fkLugarOrigen = serv_lug.getEntity(lugOri);
+                    ct_lugares fkLugarDestino = serv_lug.getEntity(lugDes);
 
                     // Validacion si hay por lo menos un perfil y cantidad para insertar el boleto
                     if ((perfil1 != "" && cant1 != 0) || (perfil2 != "" && cant2 != 0) ||
                         (perfil3 != "" && cant3 != 0) || (perfil4 != "" && cant4 != 0) ||
-                        (perfil5 != "" && cant5 != 0) || (perfil6 != "" && cant6 != 0)) {
+                        (perfil5 != "" && cant5 != 0) || (perfil6 != "" && cant6 != 0))
+                    {
 
                         //Obtener el Folio siguiente para el boleto a insertar
                         string siguienteFolioAInsertar = ObtenerSiguienteFolioAInsertarEnDbLocal();
@@ -898,7 +1046,8 @@ namespace TestMdfEntityFramework.Views
                                 {
                                     //obtener los fk de perfil
                                     ServicePerfiles serv_perf = new ServicePerfiles();
-                                    ct_perfiles fkPerfil1 = serv_perf.getEntityByNombre(perfil1);
+                                    //ct_perfiles fkPerfil1 = serv_perf.getEntityByNombre(perfil1);
+                                    ct_perfiles fkPerfil1 = serv_perf.getEntity(perfil1);
 
                                     //sumar monto a tarifa a cobrar
                                     sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil1.pkPerfil);
@@ -919,7 +1068,8 @@ namespace TestMdfEntityFramework.Views
                                 {
                                     //obtener los fk de perfil
                                     ServicePerfiles serv_perf = new ServicePerfiles();
-                                    ct_perfiles fkPerfil2 = serv_perf.getEntityByNombre(perfil2);
+                                    //ct_perfiles fkPerfil2 = serv_perf.getEntityByNombre(perfil2);
+                                    ct_perfiles fkPerfil2 = serv_perf.getEntity(perfil2);
 
                                     //sumar monto a tarifa a cobrar
                                     sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil2.pkPerfil);
@@ -939,7 +1089,8 @@ namespace TestMdfEntityFramework.Views
                                 {
                                     //obtener los fk de perfil
                                     ServicePerfiles serv_perf = new ServicePerfiles();
-                                    ct_perfiles fkPerfil3 = serv_perf.getEntityByNombre(perfil3);
+                                    //ct_perfiles fkPerfil3 = serv_perf.getEntityByNombre(perfil3);
+                                    ct_perfiles fkPerfil3 = serv_perf.getEntity(perfil3);
 
                                     //sumar monto a tarifa a cobrar
                                     sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil3.pkPerfil);
@@ -959,7 +1110,8 @@ namespace TestMdfEntityFramework.Views
                                 {
                                     //obtener los fk de perfil
                                     ServicePerfiles serv_perf = new ServicePerfiles();
-                                    ct_perfiles fkPerfil4 = serv_perf.getEntityByNombre(perfil4);
+                                    //ct_perfiles fkPerfil4 = serv_perf.getEntityByNombre(perfil4);
+                                    ct_perfiles fkPerfil4 = serv_perf.getEntity(perfil4);
 
                                     //sumar monto a tarifa a cobrar
                                     sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil4.pkPerfil);
@@ -979,7 +1131,8 @@ namespace TestMdfEntityFramework.Views
                                 {
                                     //obtener los fk de perfil
                                     ServicePerfiles serv_perf = new ServicePerfiles();
-                                    ct_perfiles fkPerfil5 = serv_perf.getEntityByNombre(perfil5);
+                                    //ct_perfiles fkPerfil5 = serv_perf.getEntityByNombre(perfil5);
+                                    ct_perfiles fkPerfil5 = serv_perf.getEntity(perfil5);
 
                                     //sumar monto a tarifa a cobrar
                                     sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil5.pkPerfil);
@@ -999,7 +1152,8 @@ namespace TestMdfEntityFramework.Views
                                 {
                                     //obtener los fk de perfil
                                     ServicePerfiles serv_perf = new ServicePerfiles();
-                                    ct_perfiles fkPerfil6 = serv_perf.getEntityByNombre(perfil6);
+                                    //ct_perfiles fkPerfil6 = serv_perf.getEntityByNombre(perfil6);
+                                    ct_perfiles fkPerfil6 = serv_perf.getEntity(perfil6);
 
                                     //sumar monto a tarifa a cobrar
                                     sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil6.pkPerfil);
@@ -1100,44 +1254,113 @@ namespace TestMdfEntityFramework.Views
         #region METODOS PROPIOS
         private void LlenaComboLugarOrigen()
         {
-            List<string> list = getCatalogoLugares_PorRuta();
-            foreach (var imp in list)
-            {
-                cmbLugarOrigen.Items.Add(imp);
-            }
+            getCatalogoLugares_PorRutaOrigen();
+
+            //List<string> list = getCatalogoLugares_PorRuta();
+            //foreach (var imp in list)
+            //{
+            //    cmbLugarOrigen.Items.Add(imp);
+            //}
         }
         private void LlenaComboLugarDestino()
         {
-            List<string> list = getCatalogoLugares_PorRuta();
-            foreach (var imp in list)
-            {
-                cmbLugarDestino.Items.Add(imp);
-            }
+            getCatalogoLugares_PorRutaDestino();
+
+            //List<string> list = getCatalogoLugares_PorRuta();
+            //foreach (var imp in list)
+            //{
+            //    cmbLugarDestino.Items.Add(imp);
+            //}
         }
         private void LlenaCombosPerfiles()
         {
-            List<string> list = getCatalogoPerfiles();
-            foreach (var imp in list)
-            {
-                cmbPerfilUno.Items.Add(imp);
-                cmbPerfilDos.Items.Add(imp);
-                cmbPerfilTres.Items.Add(imp);
-                cmbPerfilCuatro.Items.Add(imp);
-                cmbPerfilCinco.Items.Add(imp);
-                cmbPerfilSeis.Items.Add(imp);
-            }
+            LlenaCatalogoPerfiles();
+
+            //List<string> list = getCatalogoPerfiles();
+            //foreach (var imp in list)
+            //{
+            //    cmbPerfilUno.Items.Add(imp);
+            //    cmbPerfilDos.Items.Add(imp);
+            //    cmbPerfilTres.Items.Add(imp);
+            //    cmbPerfilCuatro.Items.Add(imp);
+            //    cmbPerfilCinco.Items.Add(imp);
+            //    cmbPerfilSeis.Items.Add(imp);
+            //}
         }
         private void LlenaCombosPerfilesCantidad()
         {
+            cmbCantUno.Items.Add(new
+            {
+                value = 0,
+                text = ""
+            }); ;
+            cmbCantDos.Items.Add(new
+            {
+                value = 0,
+                text = ""
+            });
+            cmbCantTres.Items.Add(new
+            {
+                value = 0,
+                text = ""
+            });
+            cmbCantCuatro.Items.Add(new
+            {
+                value = 0,
+                text = ""
+            });
+            cmbCantCinco.Items.Add(new
+            {
+                value = 0,
+                text = ""
+            });
+            cmbCantSeis.Items.Add(new
+            {
+                value = 0,
+                text = ""
+            });
+
             int cant = getCantidadPersonasPerfil();
             for (int i = 1; i <= cant; i++)
             {
-                cmbCantUno.Items.Add(i);
-                cmbCantDos.Items.Add(i);
-                cmbCantTres.Items.Add(i);
-                cmbCantCuatro.Items.Add(i);
-                cmbCantCinco.Items.Add(i);
-                cmbCantSeis.Items.Add(i);
+                cmbCantUno.Items.Add(new
+                {
+                    value = i,
+                    text = i.ToString()
+                }); ;
+                cmbCantDos.Items.Add(new
+                {
+                    value = i,
+                    text = i.ToString()
+                });
+                cmbCantTres.Items.Add(new
+                {
+                    value = i,
+                    text = i.ToString()
+                });
+                cmbCantCuatro.Items.Add(new
+                {
+                    value = i,
+                    text = i.ToString()
+                });
+                cmbCantCinco.Items.Add(new
+                {
+                    value = i,
+                    text = i.ToString()
+                });
+                cmbCantSeis.Items.Add(new
+                {
+                    value = i,
+                    text = i.ToString()
+                });
+
+
+                //cmbCantUno.Items.Add(i);
+                //cmbCantDos.Items.Add(i);
+                //cmbCantTres.Items.Add(i);
+                //cmbCantCuatro.Items.Add(i);
+                //cmbCantCinco.Items.Add(i);
+                //cmbCantSeis.Items.Add(i);
             }
         }
         private string ObtenerTarifa(int num_perfil)
@@ -1171,8 +1394,11 @@ namespace TestMdfEntityFramework.Views
                 {
                     //obtener los fk de lugar origen y destino
                     ServiceLugares serv_lug = new ServiceLugares();
-                    ct_lugares fkLugarOrigen = serv_lug.getEntityByNombre(lugOri);
-                    ct_lugares fkLugarDestino = serv_lug.getEntityByNombre(lugDes);
+                    //ct_lugares fkLugarOrigen = serv_lug.getEntityByNombre(lugOri);
+                    //ct_lugares fkLugarDestino = serv_lug.getEntityByNombre(lugDes);
+
+                    ct_lugares fkLugarOrigen = serv_lug.getEntity(lugOri);
+                    ct_lugares fkLugarDestino = serv_lug.getEntity(lugDes);
 
                     switch (num_perfil)
                     {
@@ -1185,7 +1411,8 @@ namespace TestMdfEntityFramework.Views
                             {
                                 //obtener los fk de perfil
                                 ServicePerfiles serv_perf = new ServicePerfiles();
-                                ct_perfiles fkPerfil1 = serv_perf.getEntityByNombre(perfil1);
+                                //ct_perfiles fkPerfil1 = serv_perf.getEntityByNombre(perfil1);
+                                ct_perfiles fkPerfil1 = serv_perf.getEntity(perfil1);
 
                                 //sumar monto a tarifa a cobrar
                                 sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil1.pkPerfil);
@@ -1202,7 +1429,8 @@ namespace TestMdfEntityFramework.Views
                             {
                                 //obtener los fk de perfil
                                 ServicePerfiles serv_perf = new ServicePerfiles();
-                                ct_perfiles fkPerfil2 = serv_perf.getEntityByNombre(perfil2);
+                                //ct_perfiles fkPerfil2 = serv_perf.getEntityByNombre(perfil2);
+                                ct_perfiles fkPerfil2 = serv_perf.getEntity(perfil2);
 
                                 //sumar monto a tarifa a cobrar
                                 sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil2.pkPerfil);
@@ -1218,7 +1446,8 @@ namespace TestMdfEntityFramework.Views
                             {
                                 //obtener los fk de perfil
                                 ServicePerfiles serv_perf = new ServicePerfiles();
-                                ct_perfiles fkPerfil3 = serv_perf.getEntityByNombre(perfil3);
+                                //ct_perfiles fkPerfil3 = serv_perf.getEntityByNombre(perfil3);
+                                ct_perfiles fkPerfil3 = serv_perf.getEntity(perfil3);
 
                                 //sumar monto a tarifa a cobrar
                                 sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil3.pkPerfil);
@@ -1234,7 +1463,8 @@ namespace TestMdfEntityFramework.Views
                             {
                                 //obtener los fk de perfil
                                 ServicePerfiles serv_perf = new ServicePerfiles();
-                                ct_perfiles fkPerfil4 = serv_perf.getEntityByNombre(perfil4);
+                                //ct_perfiles fkPerfil4 = serv_perf.getEntityByNombre(perfil4);
+                                ct_perfiles fkPerfil4 = serv_perf.getEntity(perfil4);
 
                                 //sumar monto a tarifa a cobrar
                                 sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil4.pkPerfil);
@@ -1250,7 +1480,8 @@ namespace TestMdfEntityFramework.Views
                             {
                                 //obtener los fk de perfil
                                 ServicePerfiles serv_perf = new ServicePerfiles();
-                                ct_perfiles fkPerfil5 = serv_perf.getEntityByNombre(perfil5);
+                                //ct_perfiles fkPerfil5 = serv_perf.getEntityByNombre(perfil5);
+                                ct_perfiles fkPerfil5 = serv_perf.getEntity(perfil5);
 
                                 //sumar monto a tarifa a cobrar
                                 sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil5.pkPerfil);
@@ -1266,7 +1497,8 @@ namespace TestMdfEntityFramework.Views
                             {
                                 //obtener los fk de perfil
                                 ServicePerfiles serv_perf = new ServicePerfiles();
-                                ct_perfiles fkPerfil6 = serv_perf.getEntityByNombre(perfil6);
+                                //ct_perfiles fkPerfil6 = serv_perf.getEntityByNombre(perfil6);
+                                ct_perfiles fkPerfil6 = serv_perf.getEntity(perfil6);
 
                                 //sumar monto a tarifa a cobrar
                                 sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil6.pkPerfil);
@@ -1284,6 +1516,26 @@ namespace TestMdfEntityFramework.Views
             }
             return tarifa_perfil_cantidad;
         }
+
+        private void limpiarCampos()
+        {
+            cmbLugarOrigen.SelectedIndex = 0;
+            cmbLugarDestino.SelectedIndex = 0;
+            
+            cmbPerfilUno.SelectedIndex = 0;
+            cmbPerfilDos.SelectedIndex = 0;
+            cmbPerfilTres.SelectedIndex = 0;
+            cmbPerfilCuatro.SelectedIndex = 0;
+            cmbPerfilCinco.SelectedIndex = 0;
+            cmbPerfilSeis.SelectedIndex = 0;
+
+            cmbCantUno.SelectedIndex = 0;
+            cmbCantDos.SelectedIndex = 0;
+            cmbCantTres.SelectedIndex = 0;
+            cmbCantCuatro.SelectedIndex = 0;
+            cmbCantCinco.SelectedIndex = 0;
+            cmbCantSeis.SelectedIndex = 0;
+        }
         private void recalcular_tarifa(object sender)
         {
             try
@@ -1299,9 +1551,9 @@ namespace TestMdfEntityFramework.Views
                 //}
                 //else if((ComboBox)sender != null)
                 //{
-                    var currentSelectedIndex = ((ComboBox)sender).SelectedIndex;
-                    textSelected = ((ComboBox)sender).Items[currentSelectedIndex].ToString();
-                    nombreCombo = ((ComboBox)sender).Name;
+                var currentSelectedIndex = ((ComboBox)sender).SelectedIndex;
+                textSelected = ((ComboBox)sender).Items[currentSelectedIndex].ToString();
+                nombreCombo = ((ComboBox)sender).Name;
 
                 //}
 
@@ -1311,13 +1563,35 @@ namespace TestMdfEntityFramework.Views
                     case "cmbLugarOrigen":
                         if (((ComboBox)sender) != null && textSelected != "")
                         {
-                            lugOri = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                            if (((ComboBox)sender).SelectedValue.ToString().Trim() != lugDes)
+                            {
+                                lugOri = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                            }
+                            else
+                            {
+                                cmbLugarOrigen.SelectedIndex = 0;
+                                if (lugOri != "0" && lugDes != "0")
+                                {
+                                    MessageBox.Show("Debe seleccionar Origen y Destino distintos", "ATENCION !!!");
+                                }
+                            }
                         }
                         break;
                     case "cmbLugarDestino":
                         if (((ComboBox)sender) != null && textSelected != "")
                         {
-                            lugDes = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                            if (((ComboBox)sender).SelectedValue.ToString().Trim() != lugOri)
+                            {
+                                lugDes = ((ComboBox)sender).SelectedValue.ToString().Trim();
+                            }
+                            else
+                            {
+                                cmbLugarDestino.SelectedIndex = 0;
+                                if(lugOri != "0" && lugDes != "0")
+                                {
+                                    MessageBox.Show("Debe seleccionar Origen y Destino distintos", "ATENCION !!!");
+                                }   
+                            }
                         }
                         break;
                     case "cmbPerfilUno":
@@ -1398,18 +1672,22 @@ namespace TestMdfEntityFramework.Views
 
                 double tarifa_a_cobrar = 0;
 
-                if (lugOri != "" && lugDes != "")
+                if (lugOri != "" && lugDes != "" && lugOri != "0" && lugDes != "0")
                 {
                     //obtener los fk de lugar origen y destino
                     ServiceLugares serv_lug = new ServiceLugares();
-                    ct_lugares fkLugarOrigen = serv_lug.getEntityByNombre(lugOri);
-                    ct_lugares fkLugarDestino = serv_lug.getEntityByNombre(lugDes);
+                    ct_lugares fkLugarOrigen = serv_lug.getEntity(lugOri);
+                    ct_lugares fkLugarDestino = serv_lug.getEntity(lugDes);
+
+                    //ct_lugares fkLugarOrigen = serv_lug.getEntityByNombre(lugOri);
+                    //ct_lugares fkLugarDestino = serv_lug.getEntityByNombre(lugDes);
 
                     if (perfil1 != "" && cant1 != 0)
                     {
                         //obtener los fk de perfil
                         ServicePerfiles serv_perf = new ServicePerfiles();
-                        ct_perfiles fkPerfil1 = serv_perf.getEntityByNombre(perfil1);
+                        ct_perfiles fkPerfil1 = serv_perf.getEntity(perfil1);
+                        //ct_perfiles fkPerfil1 = serv_perf.getEntityByNombre(perfil1);
 
                         //sumar monto a tarifa a cobrar
                         sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil1.pkPerfil);
@@ -1419,6 +1697,7 @@ namespace TestMdfEntityFramework.Views
                         }
                         else
                         {
+                            limpiarCampos();
                             MessageBox.Show("No hay una Tarifa Asignada en sistema para la combinacion en posicion 1 en perfil y Lugares Origen Destino seleccionados actualmente", "ATENCION !!!");
                         }
                     }
@@ -1426,7 +1705,8 @@ namespace TestMdfEntityFramework.Views
                     {
                         //obtener los fk de perfil
                         ServicePerfiles serv_perf = new ServicePerfiles();
-                        ct_perfiles fkPerfil2 = serv_perf.getEntityByNombre(perfil2);
+                        ct_perfiles fkPerfil2 = serv_perf.getEntity(perfil2);
+                        //ct_perfiles fkPerfil2 = serv_perf.getEntityByNombre(perfil2);
 
                         //sumar monto a tarifa a cobrar
                         sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil2.pkPerfil);
@@ -1436,6 +1716,7 @@ namespace TestMdfEntityFramework.Views
                         }
                         else
                         {
+                            limpiarCampos();
                             MessageBox.Show("No hay una Tarifa Asignada en sistema para la combinacion en posicion 2 en perfil y Lugares Origen Destino seleccionados actualmente", "ATENCION !!!");
                         }
                     }
@@ -1443,7 +1724,7 @@ namespace TestMdfEntityFramework.Views
                     {
                         //obtener los fk de perfil
                         ServicePerfiles serv_perf = new ServicePerfiles();
-                        ct_perfiles fkPerfil3 = serv_perf.getEntityByNombre(perfil3);
+                        ct_perfiles fkPerfil3 = serv_perf.getEntity(perfil3);
 
                         //sumar monto a tarifa a cobrar
                         sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil3.pkPerfil);
@@ -1453,6 +1734,7 @@ namespace TestMdfEntityFramework.Views
                         }
                         else
                         {
+                            limpiarCampos();
                             MessageBox.Show("No hay una Tarifa Asignada en sistema para la combinacion en posicion 3 en perfil y Lugares Origen Destino seleccionados actualmente", "ATENCION !!!");
                         }
                     }
@@ -1460,7 +1742,7 @@ namespace TestMdfEntityFramework.Views
                     {
                         //obtener los fk de perfil
                         ServicePerfiles serv_perf = new ServicePerfiles();
-                        ct_perfiles fkPerfil4 = serv_perf.getEntityByNombre(perfil4);
+                        ct_perfiles fkPerfil4 = serv_perf.getEntity(perfil4);
 
                         //sumar monto a tarifa a cobrar
                         sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil4.pkPerfil);
@@ -1470,6 +1752,7 @@ namespace TestMdfEntityFramework.Views
                         }
                         else
                         {
+                            limpiarCampos();
                             MessageBox.Show("No hay una Tarifa Asignada en sistema para la combinacion en posicion 4 en perfil y Lugares Origen Destino seleccionados actualmente", "ATENCION !!!");
                         }
                     }
@@ -1477,7 +1760,7 @@ namespace TestMdfEntityFramework.Views
                     {
                         //obtener los fk de perfil
                         ServicePerfiles serv_perf = new ServicePerfiles();
-                        ct_perfiles fkPerfil5 = serv_perf.getEntityByNombre(perfil5);
+                        ct_perfiles fkPerfil5 = serv_perf.getEntity(perfil5);
 
                         //sumar monto a tarifa a cobrar
                         sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil5.pkPerfil);
@@ -1487,6 +1770,7 @@ namespace TestMdfEntityFramework.Views
                         }
                         else
                         {
+                            limpiarCampos();
                             MessageBox.Show("No hay una Tarifa Asignada en sistema para la combinacion en posicion 5 en perfil y Lugares Origen Destino seleccionados actualmente", "ATENCION !!!");
                         }
                     }
@@ -1494,7 +1778,7 @@ namespace TestMdfEntityFramework.Views
                     {
                         //obtener los fk de perfil
                         ServicePerfiles serv_perf = new ServicePerfiles();
-                        ct_perfiles fkPerfil6 = serv_perf.getEntityByNombre(perfil6);
+                        ct_perfiles fkPerfil6 = serv_perf.getEntity(perfil6);
 
                         //sumar monto a tarifa a cobrar
                         sy_tarifas st = serv_tarifas.getEntityByLugarOriLugarDesAndPerfil(fkLugarOrigen.pkLugar, fkLugarDestino.pkLugar, fkPerfil6.pkPerfil);
@@ -1504,6 +1788,7 @@ namespace TestMdfEntityFramework.Views
                         }
                         else
                         {
+                            limpiarCampos();
                             MessageBox.Show("No hay una Tarifa Asignada en sistema para la combinacion en posicion 6 en perfil y Lugares Origen Destino seleccionados actualmente", "ATENCION !!!");
                         }
                     }
@@ -1512,7 +1797,7 @@ namespace TestMdfEntityFramework.Views
                 lblMontoCalculado.Text = tarifa_a_cobrar.ToString().Trim();
 
                 //PARA HABILITAR O DESHABILITAR EL BOTON DE COBRAR EN CASO DE NO LLENARSE LOS CAMPOS CORRESPONDIENTES
-                if (sePuedeCobrar(sender)){habilitaBotonCobrar();} else { deshabilitaBotonCobrar(); }
+                if (sePuedeCobrar(sender)) { habilitaBotonCobrar(); } else { deshabilitaBotonCobrar(); }
             }
             catch (Exception ex)
             {
@@ -1868,9 +2153,9 @@ namespace TestMdfEntityFramework.Views
                 //dispose_serial_port();
 
                 open_serial_port(); //EMD 2024-05-06
-  
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
                 btnCobrar.IsEnabled = false;
@@ -1936,7 +2221,7 @@ namespace TestMdfEntityFramework.Views
                     //puertoSerie1.Read(RecievedDataGlobal, 0, 32);
                     puertoSerie1.Read(RecievedDataGlobal, 0, 50);
 
-                    if(RecievedDataGlobal[4] == 7)
+                    if (RecievedDataGlobal[4] == 7)
                     {
                         int status = Convert.ToInt32(RecievedDataGlobal[5]);
                         ESTATUS = status.ToString();
@@ -2009,23 +2294,24 @@ namespace TestMdfEntityFramework.Views
                     //if (RecievedDataGlobal[5] == 0) // si el comando de tarifa se completo correctamente.
                     //{
 
-                        // TODO: ejecutar_commando_02_ultima_venta para obtener los totales cobrado y pagado
-                        ejecutar_commando_02_ultima_venta();
+                    // TODO: ejecutar_commando_02_ultima_venta para obtener los totales cobrado y pagado
+                    ejecutar_commando_02_ultima_venta();
 
                     ClearBufferRecievedDataGlobal(); //EMD 2024-06-05
 
-                        Task.WaitAll(new Task[] { Task.Delay(100) });
-                        puertoSerie1.Read(RecievedDataGlobal, 0, 50);
+                    Task.WaitAll(new Task[] { Task.Delay(100) });
+                    puertoSerie1.Read(RecievedDataGlobal, 0, 50);
 
-                        total_cobrado = getTotalCobradoBoleto();
-                        total_pagado = getTotalPagadoBoleto();
+                    total_cobrado = getTotalCobradoBoleto();
+                    total_pagado = getTotalPagadoBoleto();
 
-                        InsertarBoleto(total_cobrado, total_pagado);
-                        CANTIDAD_VECES_INSERTA_BOLETO++;
+                    InsertarBoleto(total_cobrado, total_pagado);
+                    CANTIDAD_VECES_INSERTA_BOLETO++;
                     //}
-                    
+
                 }
 
+                limpiarCampos();
 
                 //Actualiza los campos limpiandolos despues de realizar la venta del boleto
                 //delegado_limpiar_campos_despues_de_venta_boleto();
@@ -2195,6 +2481,8 @@ namespace TestMdfEntityFramework.Views
 
                 desbloqueaCampos();
 
+                limpiarCampos();
+
                 txtMensajePopup.Text = "VENTA CANCELADA";
                 mostrarPopupOk();
 
@@ -2205,6 +2493,8 @@ namespace TestMdfEntityFramework.Views
                 delegado_actualiza_lbl_monto_ingresado();
 
                 detiene_timers();
+
+                
             }
             else
             {
@@ -2272,7 +2562,7 @@ namespace TestMdfEntityFramework.Views
             string folio_boleto_actual = "";
 
             folio_boleto_actual = ObtenerSiguienteFolioAInsertarEnDbLocal();
-            
+
             return folio_boleto_actual;
         }
         private void ingresa_folio_boleto_actual_en_buffer_send_data(string folio_boleto_actual)
@@ -2324,7 +2614,7 @@ namespace TestMdfEntityFramework.Views
             string hora = varStrFechaHora.Substring(6, 2) + ':' + varStrFechaHora.Substring(8, 2) + ':' + varStrFechaHora.Substring(10, 2);
 
             obj_boleto.fechaHoraCancelacion = fecha + " " + hora;
-            
+
             uint varTotalCobrado = VarByteToUInteger32(31);
             uint varTotalPagado = VarByteToUInteger32(35);
 
@@ -2558,7 +2848,7 @@ namespace TestMdfEntityFramework.Views
 
             return TextoFechaHora;
         }
-        
+
 
         #endregion
 
@@ -2631,9 +2921,9 @@ namespace TestMdfEntityFramework.Views
                 lblCant200Pesos.Text = "0";
                 lblCant500Pesos.Text = "0";
                 lblCant1000Pesos.Text = "0";
-                
 
-                
+
+
             }
             catch (Exception ex)
             {
@@ -2675,7 +2965,7 @@ namespace TestMdfEntityFramework.Views
         {
             try
             {
-                
+
 
                 cmbLugarOrigen.Text = "";
                 cmbLugarDestino.Text = "";
@@ -2759,9 +3049,9 @@ namespace TestMdfEntityFramework.Views
             open_serial_port();
             ClearBufferRecievedDataGlobal();
             //puertoSerie1.DiscardInBuffer(); // IMPORTANTE PARA QUE LIMPIE EL BUFFER DEL PUERTO SERIE !!!
-            
+
             puertoSerie1.Write(BufferSendData, 0, 7);
-            
+
         }
         private uint getTotalCobradoBoleto()
         {

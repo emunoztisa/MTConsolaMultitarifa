@@ -195,6 +195,8 @@
                        HorizontalAlignment="Left"
                        />
             <ComboBox x:Name="cmbLugarOrigen" 
+                      SelectedValuePath="value"
+                      DisplayMemberPath="text"
                       Grid.Row="5" 
                       Grid.Column="1" 
                       Grid.ColumnSpan="5"
@@ -218,6 +220,8 @@
                        HorizontalAlignment="Left"
                        />
             <ComboBox x:Name="cmbLugarDestino" 
+                      SelectedValuePath="value"
+                      DisplayMemberPath="text"
                       Grid.Row="5" 
                       Grid.Column="7" 
                       Grid.ColumnSpan="6"
@@ -274,6 +278,8 @@
 
             <!--#region PERFIL CANTIDAD UNO -->
             <ComboBox x:Name="cmbPerfilUno" 
+                      SelectedValuePath="value"
+                      DisplayMemberPath="text"
                       Grid.Row="9" 
                       Grid.Column="1" 
                       Grid.ColumnSpan="4"
@@ -284,6 +290,8 @@
                       >
             </ComboBox>
             <ComboBox x:Name="cmbCantUno" 
+                      SelectedValuePath="value"
+                      DisplayMemberPath="text"
                       Grid.Row="9" 
                       Grid.Column="5" 
                       Background="Transparent"
@@ -296,6 +304,8 @@
 
             <!--#region PERFIL CANTIDAD DOS -->
             <ComboBox x:Name="cmbPerfilDos" 
+                      SelectedValuePath="value"
+                      DisplayMemberPath="text"
                       Grid.Row="11" 
                       Grid.Column="1" 
                       Grid.ColumnSpan="4"
@@ -306,6 +316,8 @@
                       >
             </ComboBox>
             <ComboBox x:Name="cmbCantDos"
+                      SelectedValuePath="value"
+                      DisplayMemberPath="text"
                       Grid.Row="11" 
                       Grid.Column="5" 
                       Background="Transparent"
@@ -318,6 +330,8 @@
 
             <!--#region PERFIL CANTIDAD TRES -->
             <ComboBox x:Name="cmbPerfilTres" 
+                      SelectedValuePath="value"
+                      DisplayMemberPath="text"
                       Grid.Row="13" 
                       Grid.Column="1" 
                       Grid.ColumnSpan="4"
@@ -328,6 +342,8 @@
                       >
             </ComboBox>
             <ComboBox x:Name="cmbCantTres"
+                      SelectedValuePath="value"
+                      DisplayMemberPath="text"
                       Grid.Row="13" 
                       Grid.Column="5" 
                       Background="Transparent"
@@ -340,6 +356,8 @@
 
             <!--#region PERFIL CANTIDAD CUATRO -->
             <ComboBox x:Name="cmbPerfilCuatro" 
+                      SelectedValuePath="value"
+                      DisplayMemberPath="text"
                       Grid.Row="9" 
                       Grid.Column="7" 
                       Grid.ColumnSpan="5"
@@ -350,6 +368,8 @@
                       >
             </ComboBox>
             <ComboBox x:Name="cmbCantCuatro" 
+                      SelectedValuePath="value"
+                      DisplayMemberPath="text"
                       Grid.Row="9" 
                       Grid.Column="12" 
                       Background="Transparent"
@@ -362,6 +382,8 @@
 
             <!--#region PERFIL CANTIDAD CINCO -->
             <ComboBox x:Name="cmbPerfilCinco" 
+                      SelectedValuePath="value"
+                      DisplayMemberPath="text"
                       Grid.Row="11" 
                       Grid.Column="7" 
                       Grid.ColumnSpan="5"
@@ -372,6 +394,8 @@
                       >
             </ComboBox>
             <ComboBox x:Name="cmbCantCinco" 
+                      SelectedValuePath="value"
+                      DisplayMemberPath="text"
                       Grid.Row="11" 
                       Grid.Column="12" 
                       Background="Transparent"
@@ -384,6 +408,8 @@
 
             <!--#region PERFIL CANTIDAD SEIS -->
             <ComboBox x:Name="cmbPerfilSeis" 
+                      SelectedValuePath="value"
+                      DisplayMemberPath="text"
                       Grid.Row="13" 
                       Grid.Column="7" 
                       Grid.ColumnSpan="5"
@@ -393,6 +419,8 @@
                       Margin="5,5,5,5" SelectionChanged="cmbPerfilSeis_SelectionChanged">
             </ComboBox>
             <ComboBox x:Name="cmbCantSeis" 
+                      SelectedValuePath="value"
+                      DisplayMemberPath="text"
                       Grid.Row="13" 
                       Grid.Column="12" 
                       Background="Transparent"
@@ -478,7 +506,7 @@
             <!--#region POPUP OK -->
             <Grid x:Name="popupGrid"
               Visibility="Hidden"
-              Grid.Row="8" Grid.Column="6" LostFocus="popupGrid_LostFocus" MouseDown="popupGrid_MouseDown" TouchDown="popupGrid_TouchDown">
+              Grid.Row="8" Grid.Column="7" LostFocus="popupGrid_LostFocus" MouseDown="popupGrid_MouseDown" TouchDown="popupGrid_TouchDown">
                 <Grid Background="FloralWhite"
                   Opacity="0.6"/>
 

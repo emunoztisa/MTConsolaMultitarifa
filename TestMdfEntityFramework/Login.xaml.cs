@@ -112,42 +112,45 @@ namespace TestMdfEntityFramework
             {
                 for (int i = 0; i < usuarios_list.Count; i++)
                 {
-                    ct_usuarios us = new ct_usuarios();
-                    us.pkUsuario = usuarios_list[i].pkUsuario;
-                    us.fkPuesto = usuarios_list[i].fkPuesto;
-                    us.fkStatus = usuarios_list[i].fkStatus;
-                    us.nombre = usuarios_list[i].nombre;
-                    us.usuario = usuarios_list[i].usuario;
-                    us.contrasena = mc.EncriptarCadena(usuarios_list[i].contrasena);
-                    us.token = usuarios_list[i].token;
-                    us.tipo_usuario = usuarios_list[i].tipo_usuario;
-                    us.enviado = usuarios_list[i].enviado;
-                    us.confirmado = usuarios_list[i].confirmado;
-                    us.modo = usuarios_list[i].modo;
-                    us.created_at = usuarios_list[i].created_at;
-                    us.updated_at = usuarios_list[i].updated_at;
-                    us.deleted_at = usuarios_list[i].deleted_at;
-                    us.created_id = usuarios_list[i].created_id;
-                    us.updated_id = usuarios_list[i].updated_id;
-                    us.deleted_id = usuarios_list[i].deleted_id;
-
-                    ct_usuarios user_existente = usuarios_dblocal.getEntityByUser(usuarios_list[i].usuario);
-                    if (user_existente != null && user_existente.usuario != "")
+                    if (usuarios_list[i].usuario.Contains("mt_con_"))
                     {
-                        //YA EXISTE EL USUARIO EN LA DB LOCAL
-                        //UPDATE
-                        if (usuarios_list[i].usuario != cuenta_admin)
+                        ct_usuarios us = new ct_usuarios();
+                        us.pkUsuario = usuarios_list[i].pkUsuario;
+                        us.fkPuesto = usuarios_list[i].fkPuesto;
+                        us.fkStatus = usuarios_list[i].fkStatus;
+                        us.nombre = usuarios_list[i].nombre;
+                        us.usuario = usuarios_list[i].usuario;
+                        us.contrasena = mc.EncriptarCadena(usuarios_list[i].contrasena);
+                        us.token = usuarios_list[i].token;
+                        us.tipo_usuario = usuarios_list[i].tipo_usuario;
+                        us.enviado = usuarios_list[i].enviado;
+                        us.confirmado = usuarios_list[i].confirmado;
+                        us.modo = usuarios_list[i].modo;
+                        us.created_at = usuarios_list[i].created_at;
+                        us.updated_at = usuarios_list[i].updated_at;
+                        us.deleted_at = usuarios_list[i].deleted_at;
+                        us.created_id = usuarios_list[i].created_id;
+                        us.updated_id = usuarios_list[i].updated_id;
+                        us.deleted_id = usuarios_list[i].deleted_id;
+
+                        ct_usuarios user_existente = usuarios_dblocal.getEntityByUser(usuarios_list[i].usuario);
+                        if (user_existente != null && user_existente.usuario != "")
                         {
+                            //YA EXISTE EL USUARIO EN LA DB LOCAL
+                            //UPDATE
+                            if (usuarios_list[i].usuario != cuenta_admin)
+                            {
 
-                            //ACTUALIZAR usuario con todo el token ya seteado.
-                            usuarios_dblocal.updEntity(us);
+                                //ACTUALIZAR usuario con todo el token ya seteado.
+                                usuarios_dblocal.updEntity(us);
+                            }
                         }
-                    }
-                    else
-                    {
-                        //NO EXISTE EL USUARIO EN LA DB LOCAL
-                        //INSERTAR
-                        usuarios_dblocal.addEntity(us);
+                        else
+                        {
+                            //NO EXISTE EL USUARIO EN LA DB LOCAL
+                            //INSERTAR
+                            usuarios_dblocal.addEntity(us);
+                        }
                     }
                 }
             }

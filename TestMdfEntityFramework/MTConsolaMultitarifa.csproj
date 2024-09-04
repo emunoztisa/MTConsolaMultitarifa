@@ -137,6 +137,7 @@
     </ApplicationDefinition>
     <Compile Include="Clases\CLocation.cs" />
     <Compile Include="Clases\ComandosAlcancia.cs" />
+    <Compile Include="Clases\Combos.cs" />
     <Compile Include="Clases\ConfigPort.cs" />
     <Compile Include="Clases\Perfiles.cs" />
     <Compile Include="Clases\Session.cs" />

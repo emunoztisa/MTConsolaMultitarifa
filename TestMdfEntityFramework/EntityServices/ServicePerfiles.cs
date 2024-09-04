@@ -36,7 +36,7 @@ namespace TestMdfEntityFramework.EntityServices
 
         public override ct_perfiles getEntity(object pk)
         {
-            return em.ct_perfiles.Where(q => (Int64)q.pkPerfil == (Int64)pk).FirstOrDefault<ct_perfiles>();
+            return em.ct_perfiles.Where(q => q.pkPerfil.ToString().Trim() == pk.ToString().Trim()).FirstOrDefault<ct_perfiles>();
         }
 
         public override void updEntity(ct_perfiles entity)

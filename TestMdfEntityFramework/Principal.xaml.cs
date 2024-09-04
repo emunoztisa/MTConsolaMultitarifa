@@ -979,7 +979,40 @@ namespace TestMdfEntityFramework
                     btnConfiguraciones.IsEnabled = true;
                     btnConfiguraciones.Visibility = Visibility.Visible;
                     break;
-
+                case "MT_WEB":
+                    //BOTON MENU - ASIGNAR TARIFA
+                    btnCobroTarifa.IsEnabled = false;
+                    btnCobroTarifa.Visibility = Visibility.Hidden;
+                    //BOTON MENU - CORTES
+                    btnReportes.IsEnabled = false;
+                    btnReportes.Visibility = Visibility.Hidden;
+                    //BOTON MENU - MENSAJES
+                    btnMensajes.IsEnabled = false;
+                    btnMensajes.Visibility = Visibility.Hidden;
+                    //BOTON MENU - CONFIGURACIONES
+                    btnConfiguraciones.IsEnabled = false;
+                    btnConfiguraciones.Visibility = Visibility.Hidden;
+                    //BOTON MENU - ASIGNACIONES
+                    btnAsignacion.IsEnabled = false;
+                    btnAsignacion.Visibility = Visibility.Hidden;
+                    break;
+                case "MT_TAQUILLA":
+                    //BOTON MENU - ASIGNAR TARIFA
+                    btnCobroTarifa.IsEnabled = false;
+                    btnCobroTarifa.Visibility = Visibility.Hidden;
+                    //BOTON MENU - CORTES
+                    btnReportes.IsEnabled = false;
+                    btnReportes.Visibility = Visibility.Hidden;
+                    //BOTON MENU - MENSAJES
+                    btnMensajes.IsEnabled = false;
+                    btnMensajes.Visibility = Visibility.Hidden;
+                    //BOTON MENU - CONFIGURACIONES
+                    btnConfiguraciones.IsEnabled = false;
+                    btnConfiguraciones.Visibility = Visibility.Hidden;
+                    //BOTON MENU - ASIGNACIONES
+                    btnAsignacion.IsEnabled = false;
+                    btnAsignacion.Visibility = Visibility.Hidden;
+                    break;
 
 
             }
