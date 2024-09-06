@@ -14,6 +14,7 @@ using TestMdfEntityFramework.Views;
 using System.Device.Location;
 using System.Threading.Tasks;
 using TestMdfEntityFramework.Utils;
+using System.Linq;
 
 namespace TestMdfEntityFramework
 {
@@ -400,6 +401,9 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_Empresas();
         }
         private void Sincroniza_Corredores()
         {
@@ -420,6 +424,9 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_Corredores();
         }
         private void Sincroniza_Unidades()
         {
@@ -440,6 +447,9 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_Unidades();
         }
         private void Sincroniza_Andadores()
         {
@@ -466,6 +476,9 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_Andadores();
         }
         private void Sincroniza_Lugares()
         {
@@ -488,6 +501,9 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_Lugares();
         }
         private void Sincroniza_Operadores()
         {
@@ -508,6 +524,9 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_Operadores();
         }
         private void Sincroniza_Perfiles()
         {
@@ -528,6 +547,9 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_Perfiles();
         }
         private void Sincroniza_Rutas()
         {
@@ -548,6 +570,9 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_Rutas();
         }
         private void Sincroniza_Tarifas()
         {
@@ -570,6 +595,8 @@ namespace TestMdfEntityFramework
                 }
             }
 
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_Tarifas();
         }
         private void Sincroniza_LugarRuta()
         {
@@ -590,6 +617,9 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_LugarRuta();
         }
         private void Sincroniza_EmpresaCorredorOperador()
         {
@@ -610,6 +640,9 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_EmpresaCorredorOperador();
         }
         private void Sincroniza_Asignaciones()
         {
@@ -644,6 +677,9 @@ namespace TestMdfEntityFramework
                     }
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_Asignaciones();
         }
 
         private void Sincroniza_TarifasMontosFijos()
@@ -679,6 +715,9 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_TarifasMontosFijos();
         }
         private void Sincroniza_Denominaciones()
         {
@@ -713,6 +752,9 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_Denominaciones();
         }
         private void Sincroniza_OpcionesGenerales()
         {
@@ -742,6 +784,9 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_OpcionesGenerales();
         }
         private void Sincroniza_ConfigVarios()
         {
@@ -774,8 +819,431 @@ namespace TestMdfEntityFramework
                     serv.addEntity(list[i]);
                 }
             }
+
+            //Eliminar los registros que se hayan eliminado en TISA
+            DeleteLocal_ConfigVarios();
         }
 
+
+        #endregion
+
+        #region Eliminar los registros en la sincronizacion
+        private void DeleteLocal_Empresas()
+        {
+            EmpresasController controller = new EmpresasController();
+            List<ct_empresas> list_controller = controller.GetEmpresas();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkEmpresa);
+            }
+
+            ServiceEmpresas serv = new ServiceEmpresas();
+            List<ct_empresas> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkEmpresa);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                ct_empresas obj = list_local.Find(q => q.pkEmpresa == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_Corredores()
+        {
+            CorredoresController controller = new CorredoresController();
+            List<ct_corredores> list_controller = controller.GetCorredores();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkCorredor);
+            }
+
+            ServiceCorredores serv = new ServiceCorredores();
+            List<ct_corredores> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkCorredor);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                ct_corredores obj = list_local.Find(q => q.pkCorredor == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_Unidades()
+        {
+            UnidadesController controller = new UnidadesController();
+            List<ct_unidades> list_controller = controller.GetUnidades();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkUnidad);
+            }
+
+            ServiceUnidades serv = new ServiceUnidades();
+            List<ct_unidades> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkUnidad);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                ct_unidades obj = list_local.Find(q => q.pkUnidad == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_Andadores()
+        {
+            AndadoresController controller = new AndadoresController();
+            List<ct_andadores> list_controller = controller.GetAndadores();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkAndador);
+            }
+
+            ServiceAndadores serv = new ServiceAndadores();
+            List<ct_andadores> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkAndador);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                ct_andadores obj = list_local.Find(q => q.pkAndador == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_Lugares()
+        {
+            LugaresController controller = new LugaresController();
+            List<ct_lugares> list_controller = controller.GetLugares();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkLugar);
+            }
+
+            ServiceLugares serv = new ServiceLugares();
+            List<ct_lugares> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkLugar);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                ct_lugares obj = list_local.Find(q => q.pkLugar == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_Operadores()
+        {
+            OperadoresController controller = new OperadoresController();
+            List<ct_operadores> list_controller = controller.GetOperadores();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkOperador);
+            }
+
+            ServiceOperadores serv = new ServiceOperadores();
+            List<ct_operadores> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkOperador);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                ct_operadores obj = list_local.Find(q => q.pkOperador == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_Perfiles()
+        {
+            PerfilesController controller = new PerfilesController();
+            List<ct_perfiles> list_controller = controller.GetPerfiles();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkPerfil);
+            }
+
+            ServicePerfiles serv = new ServicePerfiles();
+            List<ct_perfiles> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkPerfil);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                ct_perfiles obj = list_local.Find(q => q.pkPerfil == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_Rutas()
+        {
+            RutasController controller = new RutasController();
+            List<ct_rutas> list_controller = controller.GetRutas();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkRuta);
+            }
+
+            ServiceRutas serv = new ServiceRutas();
+            List<ct_rutas> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkRuta);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                ct_rutas obj = list_local.Find(q => q.pkRuta == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_Tarifas()
+        {
+            TarifasController controller = new TarifasController();
+            List<sy_tarifas> list_controller = controller.GetTarifas();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkTarifa);
+            }
+
+            ServiceTarifas serv = new ServiceTarifas();
+            List<sy_tarifas> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkTarifa);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                sy_tarifas obj = list_local.Find(q => q.pkTarifa == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_LugarRuta()
+        {
+            LugarRutaController controller = new LugarRutaController();
+            List<sy_lugar_ruta> list_controller = controller.GetLugaresRutas();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkLugarRuta);
+            }
+
+            ServiceLugarRuta serv = new ServiceLugarRuta();
+            List<sy_lugar_ruta> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkLugarRuta);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                sy_lugar_ruta obj = list_local.Find(q => q.pkLugarRuta == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_EmpresaCorredorOperador()
+        {
+            EmpresaCorredorOperadorController controller = new EmpresaCorredorOperadorController();
+            List<sy_empresa_corredor_operador> list_controller = controller.GetEmpresaCorredorOperador();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkEmpresaCorredorOperador);
+            }
+
+            ServiceEmpresaCorredorOperador serv = new ServiceEmpresaCorredorOperador();
+            List<sy_empresa_corredor_operador> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkEmpresaCorredorOperador);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                sy_empresa_corredor_operador obj = list_local.Find(q => q.pkEmpresaCorredorOperador == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_Asignaciones()
+        {
+            AsignacionesController controller = new AsignacionesController();
+            List<sy_asignaciones> list_controller = controller.GetAsignaciones();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkAsignacion);
+            }
+
+            ServiceAsignaciones serv = new ServiceAsignaciones();
+            List<sy_asignaciones> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkAsignacion);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                sy_asignaciones obj = list_local.Find(q => q.pkAsignacion == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_TarifasMontosFijos()
+        {
+            TarifasMontosFijosController controller = new TarifasMontosFijosController();
+            List<ct_tarifas_montos_fijos> list_controller = controller.GetTarifasMontosFijos();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkTarifaMontoFijo);
+            }
+
+            ServiceTarifasMontosFijos serv = new ServiceTarifasMontosFijos();
+            List<ct_tarifas_montos_fijos> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkTarifaMontoFijo);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                ct_tarifas_montos_fijos obj = list_local.Find(q => q.pkTarifaMontoFijo == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_Denominaciones()
+        {
+            DenominacionesController controller = new DenominacionesController();
+            List<ct_denominaciones> list_controller = controller.GetDenominaciones();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkDenominacion);
+            }
+
+            ServiceDenominaciones serv = new ServiceDenominaciones();
+            List<ct_denominaciones> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkDenominacion);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                ct_denominaciones obj = list_local.Find(q => q.pkDenominacion == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_OpcionesGenerales()
+        {
+            OpcionesGeneralesController controller = new OpcionesGeneralesController();
+            List<opciones_generales> list_controller = controller.GetOpcionesGenerales();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkOpcionGeneral);
+            }
+
+            ServiceOpcionesGenerales serv = new ServiceOpcionesGenerales();
+            List<opciones_generales> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkOpcionGeneral);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                opciones_generales obj = list_local.Find(q => q.pkOpcionGeneral == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
+        private void DeleteLocal_ConfigVarios()
+        {
+            ConfigVariosController controller = new ConfigVariosController();
+            List<config_varios> list_controller = controller.GetConfigVarios();
+            List<long> list_controller_pks = new List<long>();
+            foreach (var item in list_controller)
+            {
+                list_controller_pks.Add(item.pkConfigVarios);
+            }
+
+            ServiceConfigVarios serv = new ServiceConfigVarios();
+            List<config_varios> list_local = serv.getEntities();
+            List<long> list_local_pks = new List<long>();
+            foreach (var item in list_local)
+            {
+                list_local_pks.Add(item.pkConfigVarios);
+            }
+
+            List<long> list_to_delete = list_local_pks.Except(list_controller_pks).ToList();
+            foreach (long it in list_to_delete)
+            {
+                config_varios obj = list_local.Find(q => q.pkConfigVarios == it);
+                obj.deleted_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                serv.updEntity(obj);
+            }
+        }
 
         #endregion
 
@@ -903,17 +1371,32 @@ namespace TestMdfEntityFramework
         }
         private void Cambia_Imagen_Mensajes()
         {
-            ServiceMensajes serv_mensajes = new ServiceMensajes();
-            List<sy_mensajes> list_msn_no_reproducidos = serv_mensajes.getEntityNoReproducidos();
+            try
+            {
+                //string ruta_sonido = @"/SCS/sonidos/shoot2.wav";
+                string ruta_sonido = @"shoot2.wav";
+                System.Media.SoundPlayer player = new System.Media.SoundPlayer(ruta_sonido);
 
-            if (list_msn_no_reproducidos.Count > 0)
-            {
-                imgOpcionMensajes.Source = new BitmapImage(new Uri(@"/SCS/IMG/mensajes_rojo.png", UriKind.Relative));
+                ServiceMensajes serv_mensajes = new ServiceMensajes();
+                List<sy_mensajes> list_msn_no_reproducidos = serv_mensajes.getEntityNoReproducidos();
+
+                if (list_msn_no_reproducidos.Count > 0)
+                {
+                    imgOpcionMensajes.Source = new BitmapImage(new Uri(@"/SCS/IMG/mensajes_rojo.png", UriKind.Relative));
+
+                    //reproducimos
+                    player.Play();
+                }
+                else
+                {
+                    imgOpcionMensajes.Source = new BitmapImage(new Uri(@"/SCS/IMG/mensajes.png", UriKind.Relative));
+                }
             }
-            else
+            catch (Exception ex)
             {
-                imgOpcionMensajes.Source = new BitmapImage(new Uri(@"/SCS/IMG/mensajes.png", UriKind.Relative));
+                MessageBox.Show(ex.Message);
             }
+            
         }
         private void cargar_logo_aplicacion()
         {

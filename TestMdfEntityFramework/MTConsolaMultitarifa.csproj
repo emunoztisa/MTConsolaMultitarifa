@@ -558,6 +558,12 @@
     <Resource Include="SCS\IMG\puerto_rojo.png" />
     <Resource Include="SCS\IMG\puerto_verde.png" />
     <Resource Include="SCS\IMG\puerto_gris.png" />
+    <Content Include="SCS\sonidos\shoot.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="shoot2.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SqlServerTypes\readme.htm" />
     <Content Include="SqlServerTypes\x64\msvcr120.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
