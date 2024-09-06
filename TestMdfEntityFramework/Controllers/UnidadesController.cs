@@ -41,10 +41,10 @@ namespace TestMdfEntityFramework.Controllers
                 reg.fkEmpresa = item.fkEmpresa;
                 reg.fkCorredor = item.fkCorredor;
 
+                reg.numeracion = item.numeracion;
                 reg.nombre = item.nombre;
                 reg.noSerieAVL = item.noSerieAVL;
-                reg.economico = item.economico;
-
+                
                 reg.capacidad = item.capacidad;
                 reg.validador = item.validador;
                 reg.status = item.status;
@@ -74,9 +74,9 @@ namespace TestMdfEntityFramework.Controllers
             req.pkUnidad = obj.pkUnidad;
             req.fkEmpresa = obj.fkEmpresa;
             req.fkCorredor = obj.fkCorredor;
+            req.numeracion = obj.numeracion;
             req.nombre = obj.nombre;
             req.noSerieAVL = obj.noSerieAVL;
-            req.economico = obj.economico;
             req.capacidad = (int)obj.capacidad;
             req.validador = obj.validador.ToString();
             req.status = (int)obj.status;

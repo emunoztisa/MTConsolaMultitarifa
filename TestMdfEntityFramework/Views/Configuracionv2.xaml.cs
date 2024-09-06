@@ -1251,9 +1251,9 @@ namespace TestMdfEntityFramework.Views
                     cu_1.pkUnidad = unidad_1.pkUnidad;
                     cu_1.fkEmpresa = unidad_1.fkEmpresa;
                     cu_1.fkCorredor = unidad_1.fkCorredor;
+                    cu_1.numeracion = unidad_1.numeracion;
                     cu_1.nombre = unidad_1.nombre;
                     cu_1.noSerieAVL = unidad_1.noSerieAVL;
-                    cu_1.economico = unidad_1.economico;
                     cu_1.capacidad = unidad_1.capacidad;
                     cu_1.validador = unidad_1.validador;
                     cu_1.status = 1;
@@ -1275,9 +1275,9 @@ namespace TestMdfEntityFramework.Views
                     cu_2.pkUnidad = unidad_2.pkUnidad;
                     cu_2.fkEmpresa = unidad_2.fkEmpresa;
                     cu_2.fkCorredor = unidad_2.fkCorredor;
+                    cu_2.numeracion = unidad_2.numeracion;
                     cu_2.nombre = unidad_2.nombre;
                     cu_2.noSerieAVL = unidad_2.noSerieAVL;
-                    cu_2.economico = unidad_2.economico;
                     cu_2.capacidad = unidad_2.capacidad;
                     cu_2.validador = unidad_2.validador;
                     cu_2.status = 2;

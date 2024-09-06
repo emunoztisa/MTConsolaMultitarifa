@@ -50,9 +50,9 @@ namespace TestMdfEntityFramework.EntityServices
             {
                 it.fkEmpresa = entity.fkEmpresa;
                 it.fkCorredor = entity.fkCorredor;
+                it.numeracion = entity.numeracion;
                 it.nombre = entity.nombre;
                 it.noSerieAVL = entity.noSerieAVL;
-                it.economico = entity.economico;
                 it.capacidad = entity.capacidad;
                 it.validador = entity.validador;
                 it.status = entity.status;

@@ -11,9 +11,9 @@ namespace TestMdfEntityFramework.Requests
         public long pkUnidad { get; set; }
         public Nullable<long> fkEmpresa { get; set; }
         public Nullable<long> fkCorredor { get; set; }
+        public string numeracion { get; set; }
         public string nombre { get; set; }
         public string noSerieAVL { get; set; }
-        public string economico { get; set; }
         public int capacidad { get; set; }
         public string validador { get; set; }
         public int status { get; set; }
@@ -27,15 +27,15 @@ namespace TestMdfEntityFramework.Requests
         }
         public ReqUnidades(
             long pkUnidad, long fkEmpresa, long fkCorredor
-            , string nombre, string noSerieAVL, string economico, int capacidad, string validador, int status
+            , string nombre, string noSerieAVL, string numeracion, int capacidad, string validador, int status
             , string created_at, string updated_at, string deleted_at)
         {
             this.pkUnidad = pkUnidad;
             this.fkEmpresa = fkEmpresa;
             this.fkCorredor = fkCorredor;
+            this.numeracion = numeracion;
             this.nombre = nombre;
             this.noSerieAVL = noSerieAVL;
-            this.economico = economico;
             this.capacidad = capacidad;
             this.validador = validador;
             this.status = status;

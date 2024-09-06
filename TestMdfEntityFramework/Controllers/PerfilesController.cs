@@ -38,6 +38,8 @@ namespace TestMdfEntityFramework.Controllers
                 ct_perfiles reg = new ct_perfiles();
                 reg.pkPerfil = item.pkPerfil;
                 reg.nombre = item.nombre;
+                reg.tipoDescuento = item.tipoDescuento;
+                reg.monto = item.monto;
                 reg.status = item.status;
                 reg.created_at = item.created_at;
                 reg.updated_at = item.updated_at;

@@ -16,6 +16,8 @@ namespace TestMdfEntityFramework
     {
         public long pkPerfil { get; set; }
         public string nombre { get; set; }
+        public string tipoDescuento { get; set; }
+        public Nullable<decimal> monto { get; set; }
         public Nullable<int> status { get; set; }
         public string deleted_at { get; set; }
         public string updated_at { get; set; }

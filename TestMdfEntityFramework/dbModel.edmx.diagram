@@ -16,11 +16,9 @@
         <EntityTypeShape EntityType="databaseModel.ct_empresas" Width="1.5" PointX="5.375" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.ct_lugares" Width="1.5" PointX="8.625" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.ct_operadores" Width="1.5" PointX="10.25" PointY="0.5" />
-        <EntityTypeShape EntityType="databaseModel.ct_perfiles" Width="1.5" PointX="11.875" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.ct_rutas" Width="1.5" PointX="0.5" PointY="3.375" />
         <EntityTypeShape EntityType="databaseModel.sy_status" Width="1.5" PointX="10.375" PointY="3.375" />
         <EntityTypeShape EntityType="databaseModel.sy_asignaciones" Width="1.5" PointX="13.75" PointY="4" />
-        <EntityTypeShape EntityType="databaseModel.ct_unidades" Width="1.5" PointX="13.5" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.sy_boletos_detalle" Width="1.5" PointX="3.75" PointY="6" />
         <EntityTypeShape EntityType="databaseModel.sy_boletos" Width="1.5" PointX="2.125" PointY="6" />
         <EntityTypeShape EntityType="databaseModel.sy_mensajes" Width="1.5" PointX="5.5" PointY="8.875" />
@@ -34,6 +32,8 @@
         <EntityTypeShape EntityType="databaseModel.sy_empresa_corredor_operador" Width="1.5" PointX="0.5" PointY="6" />
         <EntityTypeShape EntityType="databaseModel.users" Width="1.5" PointX="0.5" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.ct_usuarios" Width="1.5" PointX="0.75" PointY="12.75" />
+        <EntityTypeShape EntityType="databaseModel.ct_perfiles" Width="1.5" PointX="11.875" PointY="0.5" />
+        <EntityTypeShape EntityType="databaseModel.ct_unidades" Width="1.5" PointX="13.5" PointY="0.5" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

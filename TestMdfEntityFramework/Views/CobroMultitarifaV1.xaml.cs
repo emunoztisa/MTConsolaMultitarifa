@@ -1669,7 +1669,6 @@ namespace TestMdfEntityFramework.Views
                 }
 
                 ServiceTarifas serv_tarifas = new ServiceTarifas();
-
                 double tarifa_a_cobrar = 0;
 
                 if (lugOri != "" && lugDes != "" && lugOri != "0" && lugDes != "0")

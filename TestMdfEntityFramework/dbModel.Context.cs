@@ -36,11 +36,9 @@ namespace TestMdfEntityFramework
         public virtual DbSet<ct_empresas> ct_empresas { get; set; }
         public virtual DbSet<ct_lugares> ct_lugares { get; set; }
         public virtual DbSet<ct_operadores> ct_operadores { get; set; }
-        public virtual DbSet<ct_perfiles> ct_perfiles { get; set; }
         public virtual DbSet<ct_rutas> ct_rutas { get; set; }
         public virtual DbSet<sy_status> sy_status { get; set; }
         public virtual DbSet<sy_asignaciones> sy_asignaciones { get; set; }
-        public virtual DbSet<ct_unidades> ct_unidades { get; set; }
         public virtual DbSet<sy_boletos_detalle> sy_boletos_detalle { get; set; }
         public virtual DbSet<sy_boletos> sy_boletos { get; set; }
         public virtual DbSet<sy_mensajes> sy_mensajes { get; set; }
@@ -54,5 +52,7 @@ namespace TestMdfEntityFramework
         public virtual DbSet<sy_empresa_corredor_operador> sy_empresa_corredor_operador { get; set; }
         public virtual DbSet<users> users { get; set; }
         public virtual DbSet<ct_usuarios> ct_usuarios { get; set; }
+        public virtual DbSet<ct_perfiles> ct_perfiles { get; set; }
+        public virtual DbSet<ct_unidades> ct_unidades { get; set; }
     }
 }

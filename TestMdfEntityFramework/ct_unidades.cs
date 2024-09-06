@@ -17,9 +17,9 @@ namespace TestMdfEntityFramework
         public long pkUnidad { get; set; }
         public Nullable<long> fkEmpresa { get; set; }
         public Nullable<long> fkCorredor { get; set; }
+        public string numeracion { get; set; }
         public string nombre { get; set; }
         public string noSerieAVL { get; set; }
-        public string economico { get; set; }
         public Nullable<int> capacidad { get; set; }
         public Nullable<int> validador { get; set; }
         public Nullable<int> status { get; set; }

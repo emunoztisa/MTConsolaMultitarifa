@@ -49,6 +49,8 @@ namespace TestMdfEntityFramework.EntityServices
             else
             {
                 it.nombre = entity.nombre;
+                it.tipoDescuento = entity.tipoDescuento;
+                it.monto = entity.monto;
                 it.status = entity.status;
                 it.created_at = entity.created_at;
                 it.updated_at = entity.updated_at;
