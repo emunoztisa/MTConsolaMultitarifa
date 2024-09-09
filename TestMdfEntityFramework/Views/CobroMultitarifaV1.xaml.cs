@@ -2833,6 +2833,28 @@ namespace TestMdfEntityFramework.Views
             }
             return bytes.ToArray();
         }
+
+        private void btnIdaRegreso_Click(object sender, RoutedEventArgs e)
+        {
+            //Aqui el metodo que realizara la carga de los lugares segun sea el caso de IDA o REGRESO.
+            SetearLugares_IdaRegreso();
+
+
+            if(txtIdaRegreso.Text == "IDA")
+            {
+                txtIdaRegreso.Text = "REGRESO";
+            }
+            else if (txtIdaRegreso.Text == "REGRESO")
+            {
+                txtIdaRegreso.Text = "IDA";
+            }
+        }
+
+        private void SetearLugares_IdaRegreso()
+        {
+            
+        }
+
         private string StringToBCD(int indexBuffer)
         {
             string TextoFechaHora = "";

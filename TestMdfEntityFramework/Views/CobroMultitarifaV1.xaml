@@ -115,7 +115,7 @@
             <!--#region TITULO-->
             <TextBlock Grid.Row="0"
                        Grid.Column="1"
-                       Grid.ColumnSpan="5"
+                       Grid.ColumnSpan="3"
                        Text="Cobro Multitarifa"
                        Foreground="White"
                        FontSize="30"
@@ -131,6 +131,27 @@
                        VerticalAlignment="Center"/>
             <!--#endregion-->
 
+            <!--#region BOTON IDA Y REGRESO -->
+            <Button x:Name="btnIdaRegreso"
+                    Grid.Row="0" 
+                    Grid.Column="4" 
+                    Grid.ColumnSpan="3"
+                    Grid.RowSpan="2"
+                    Margin="30,10,30,10"
+                    Style="{DynamicResource BTNSTYLE}" 
+                    Click="btnIdaRegreso_Click"
+                    >
+                <Button.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="Black" Offset="0"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+                <TextBlock x:Name="txtIdaRegreso" Text="IDA" Foreground="White" 
+                           FontSize="17" FontWeight="Bold"/>
+            </Button>
+            <!--#endregion-->
+            
             <!--#region BOTON CANCELAR VENTA -->
             <Button x:Name="btnCancelarVenta"
                     Grid.Row="0" 
