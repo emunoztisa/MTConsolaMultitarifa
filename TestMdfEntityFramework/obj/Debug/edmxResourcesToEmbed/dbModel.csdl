@@ -1,0 +1,503 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="databaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="databaseEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="config_varios" EntityType="databaseModel.config_varios" />
+    <EntitySet Name="opciones_generales" EntityType="databaseModel.opciones_generales" />
+    <EntitySet Name="ct_andadores" EntityType="databaseModel.ct_andadores" />
+    <EntitySet Name="sy_tarifas" EntityType="databaseModel.sy_tarifas" />
+    <EntitySet Name="ct_alcancias" EntityType="databaseModel.ct_alcancias" />
+    <EntitySet Name="ct_consolas" EntityType="databaseModel.ct_consolas" />
+    <EntitySet Name="ct_taquillas" EntityType="databaseModel.ct_taquillas" />
+    <EntitySet Name="ct_empresas" EntityType="databaseModel.ct_empresas" />
+    <EntitySet Name="ct_lugares" EntityType="databaseModel.ct_lugares" />
+    <EntitySet Name="ct_operadores" EntityType="databaseModel.ct_operadores" />
+    <EntitySet Name="sy_status" EntityType="databaseModel.sy_status" />
+    <EntitySet Name="sy_asignaciones" EntityType="databaseModel.sy_asignaciones" />
+    <EntitySet Name="sy_boletos_detalle" EntityType="databaseModel.sy_boletos_detalle" />
+    <EntitySet Name="sy_boletos" EntityType="databaseModel.sy_boletos" />
+    <EntitySet Name="sy_mensajes" EntityType="databaseModel.sy_mensajes" />
+    <EntitySet Name="sy_ubicacion" EntityType="databaseModel.sy_ubicacion" />
+    <EntitySet Name="ct_denominaciones" EntityType="databaseModel.ct_denominaciones" />
+    <EntitySet Name="ct_imagenes_subidas" EntityType="databaseModel.ct_imagenes_subidas" />
+    <EntitySet Name="ct_tarifas_montos_fijos" EntityType="databaseModel.ct_tarifas_montos_fijos" />
+    <EntitySet Name="sy_boletos_tarifa_fija" EntityType="databaseModel.sy_boletos_tarifa_fija" />
+    <EntitySet Name="sy_cortes" EntityType="databaseModel.sy_cortes" />
+    <EntitySet Name="sy_lugar_ruta" EntityType="databaseModel.sy_lugar_ruta" />
+    <EntitySet Name="sy_empresa_corredor_operador" EntityType="databaseModel.sy_empresa_corredor_operador" />
+    <EntitySet Name="users" EntityType="databaseModel.users" />
+    <EntitySet Name="ct_usuarios" EntityType="databaseModel.ct_usuarios" />
+    <EntitySet Name="ct_perfiles" EntityType="databaseModel.ct_perfiles" />
+    <EntitySet Name="ct_corredores" EntityType="databaseModel.ct_corredores" />
+    <EntitySet Name="ct_rutas" EntityType="databaseModel.ct_rutas" />
+    <EntitySet Name="ct_unidades" EntityType="databaseModel.ct_unidades" />
+    <EntitySet Name="ct_config_puertos" EntityType="databaseModel.ct_config_puertos" />
+  </EntityContainer>
+  <EntityType Name="config_varios">
+    <Key>
+      <PropertyRef Name="pkConfigVarios" />
+    </Key>
+    <Property Name="pkConfigVarios" Type="Int64" Nullable="false" />
+    <Property Name="clave" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="valor" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="descripcion" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="opciones_generales">
+    <Key>
+      <PropertyRef Name="pkOpcionGeneral" />
+    </Key>
+    <Property Name="pkOpcionGeneral" Type="Int32" Nullable="false" />
+    <Property Name="opcion_general" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="valor" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="orden" Type="Int32" />
+    <Property Name="agrupador" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_andadores">
+    <Key>
+      <PropertyRef Name="pkAndador" />
+    </Key>
+    <Property Name="pkAndador" Type="Int64" Nullable="false" />
+    <Property Name="fkLugar" Type="Int64" />
+    <Property Name="fkStatus" Type="Int64" />
+    <Property Name="nombre" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="sy_tarifas">
+    <Key>
+      <PropertyRef Name="pkTarifa" />
+    </Key>
+    <Property Name="pkTarifa" Type="Int64" Nullable="false" />
+    <Property Name="fkLugarOrigen" Type="Int64" Nullable="false" />
+    <Property Name="fkLugarDestino" Type="Int64" Nullable="false" />
+    <Property Name="fkPerfil" Type="Int64" Nullable="false" />
+    <Property Name="monto" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_alcancias">
+    <Key>
+      <PropertyRef Name="pkAlcancia" />
+      <PropertyRef Name="nombre" />
+    </Key>
+    <Property Name="pkAlcancia" Type="Int64" Nullable="false" />
+    <Property Name="fkConsola" Type="Int64" />
+    <Property Name="fkStatus" Type="Int64" />
+    <Property Name="nombre" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_consolas">
+    <Key>
+      <PropertyRef Name="pkConsola" />
+      <PropertyRef Name="nombre" />
+    </Key>
+    <Property Name="pkConsola" Type="Int64" Nullable="false" />
+    <Property Name="fkUnidad" Type="Int64" />
+    <Property Name="fkStatus" Type="Int64" />
+    <Property Name="nombre" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_taquillas">
+    <Key>
+      <PropertyRef Name="pkTaquilla" />
+      <PropertyRef Name="nombre" />
+      <PropertyRef Name="ubicacion" />
+    </Key>
+    <Property Name="pkTaquilla" Type="Int64" Nullable="false" />
+    <Property Name="fkStatus" Type="Int64" />
+    <Property Name="nombre" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="ubicacion" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_empresas">
+    <Key>
+      <PropertyRef Name="pkEmpresa" />
+    </Key>
+    <Property Name="pkEmpresa" Type="Int64" Nullable="false" />
+    <Property Name="nombre" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_lugares">
+    <Key>
+      <PropertyRef Name="pkLugar" />
+    </Key>
+    <Property Name="pkLugar" Type="Int64" Nullable="false" />
+    <Property Name="nombre" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_operadores">
+    <Key>
+      <PropertyRef Name="pkOperador" />
+    </Key>
+    <Property Name="pkOperador" Type="Int64" Nullable="false" />
+    <Property Name="fkEmpresa" Type="Int64" />
+    <Property Name="nombre" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="sy_status">
+    <Key>
+      <PropertyRef Name="pkStatus" />
+    </Key>
+    <Property Name="pkStatus" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="agrupador" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="sy_asignaciones">
+    <Key>
+      <PropertyRef Name="pkAsignacion" />
+    </Key>
+    <Property Name="pkAsignacion" Type="Int64" Nullable="false" />
+    <Property Name="fkRuta" Type="Int64" />
+    <Property Name="fkUnidad" Type="Int64" />
+    <Property Name="fkOperador" Type="Int64" />
+    <Property Name="fkAndador" Type="Int64" />
+    <Property Name="fkLiquidacion" Type="Int64" />
+    <Property Name="fkStatus" Type="Int64" />
+    <Property Name="folio" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="fecha" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="hora" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ihora" Type="Int32" />
+    <Property Name="cantidadAsientosDisp" Type="Int32" />
+    <Property Name="recurrente" Type="Int32" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="sy_boletos_detalle">
+    <Key>
+      <PropertyRef Name="pkBoletoDetalle" />
+    </Key>
+    <Property Name="pkBoletoDetalle" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="pkBoletoDetalleTISA" Type="Int64" />
+    <Property Name="fkBoleto" Type="Int64" />
+    <Property Name="fkPerfil" Type="Int64" />
+    <Property Name="fkTarifa" Type="Int64" />
+    <Property Name="fkStatus" Type="Int64" />
+    <Property Name="cantidad" Type="Int32" />
+    <Property Name="subtotal" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="enviado" Type="Int32" />
+    <Property Name="confirmadoTISA" Type="Int32" />
+    <Property Name="modo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="sy_boletos">
+    <Key>
+      <PropertyRef Name="pkBoleto" />
+    </Key>
+    <Property Name="pkBoleto" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="pkBoletoTISA" Type="Int64" />
+    <Property Name="fkAsignacion" Type="Int64" />
+    <Property Name="fkLugarOrigen" Type="Int64" />
+    <Property Name="fkLugarDestino" Type="Int64" />
+    <Property Name="fkStatus" Type="Int64" />
+    <Property Name="folio" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="totalCobrado" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="totalPagado" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="fechaHoraCancelacion" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="enviado" Type="Int32" />
+    <Property Name="confirmadoTISA" Type="Int32" />
+    <Property Name="modo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="sy_mensajes">
+    <Key>
+      <PropertyRef Name="pkMensaje" />
+    </Key>
+    <Property Name="pkMensaje" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="fkAsignacion" Type="Int64" />
+    <Property Name="fkStatus" Type="Int64" />
+    <Property Name="mensaje" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="enviado" Type="Int32" />
+    <Property Name="confirmadoTISA" Type="Int32" />
+    <Property Name="modo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="dispositivo_origen" Type="Int32" />
+    <Property Name="dispositivo_destino" Type="Int32" />
+    <Property Name="reproducido" Type="Int32" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="sy_ubicacion">
+    <Key>
+      <PropertyRef Name="pkUbicacion" />
+    </Key>
+    <Property Name="pkUbicacion" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="fkAsignacion" Type="Int64" />
+    <Property Name="latitud" Type="Decimal" Precision="18" Scale="10" />
+    <Property Name="longitud" Type="Decimal" Precision="18" Scale="10" />
+    <Property Name="enviado" Type="Int32" />
+    <Property Name="confirmadoTISA" Type="Int32" />
+    <Property Name="modo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_denominaciones">
+    <Key>
+      <PropertyRef Name="pkDenominacion" />
+    </Key>
+    <Property Name="pkDenominacion" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="nombre" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="valor" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="path_imagen" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="bin_imagen" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="posicion" Type="Int32" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_imagenes_subidas">
+    <Key>
+      <PropertyRef Name="pkImagenSubida" />
+    </Key>
+    <Property Name="pkImagenSubida" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="nombre" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="imagen" Type="Binary" Nullable="false" MaxLength="Max" FixedLength="false" />
+    <Property Name="path_imagen" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_tarifas_montos_fijos">
+    <Key>
+      <PropertyRef Name="pkTarifaMontoFijo" />
+    </Key>
+    <Property Name="pkTarifaMontoFijo" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="valor" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="texto" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="descripcion" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="orden" Type="Int32" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="sy_boletos_tarifa_fija">
+    <Key>
+      <PropertyRef Name="pkBoleto" />
+    </Key>
+    <Property Name="pkBoleto" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="pkBoletoTISA" Type="Int64" />
+    <Property Name="fkAsignacion" Type="Int64" />
+    <Property Name="fkStatus" Type="Int64" />
+    <Property Name="folio" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="tarifa" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="cant_pasajeros" Type="Int32" />
+    <Property Name="total" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="totalCobrado" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="totalPagado" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="fechaHoraCancelacion" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="enviado" Type="Int32" />
+    <Property Name="confirmadoTISA" Type="Int32" />
+    <Property Name="modo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="sy_cortes">
+    <Key>
+      <PropertyRef Name="pkCorte" />
+    </Key>
+    <Property Name="pkCorte" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="pkCorteTISA" Type="Int64" />
+    <Property Name="fkAsignacion" Type="Int64" />
+    <Property Name="fkLugarOrigen" Type="Int64" />
+    <Property Name="fkLugarDestino" Type="Int64" />
+    <Property Name="fkStatus" Type="Int64" />
+    <Property Name="folio" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="fecha" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="hora" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="total_efectivo_acumulado" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="total_tarifas" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="total_efectivo_rst" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="efectivo_moneda" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="efectivo_billete" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="cant_mon_tipo_0" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="cant_mon_tipo_1" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="cant_mon_tipo_2" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="cant_mon_tipo_3" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="cant_mon_tipo_4" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="cant_mon_tipo_5" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="cant_mon_tipo_6" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="cant_bill_tipo_0" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="cant_bill_tipo_1" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="cant_bill_tipo_2" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="cant_bill_tipo_3" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="cant_bill_tipo_4" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="cant_bill_tipo_5" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="cant_bill_tipo_6" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="enviado" Type="Int32" />
+    <Property Name="confirmadoTISA" Type="Int32" />
+    <Property Name="modo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="sy_lugar_ruta">
+    <Key>
+      <PropertyRef Name="pkLugarRuta" />
+    </Key>
+    <Property Name="pkLugarRuta" Type="Int64" Nullable="false" />
+    <Property Name="fkLugar" Type="Int64" Nullable="false" />
+    <Property Name="fkRuta" Type="Int64" Nullable="false" />
+    <Property Name="orden" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="sy_empresa_corredor_operador">
+    <Key>
+      <PropertyRef Name="pkEmpresaCorredorOperador" />
+    </Key>
+    <Property Name="pkEmpresaCorredorOperador" Type="Int64" Nullable="false" />
+    <Property Name="fkEmpresa" Type="Int64" Nullable="false" />
+    <Property Name="fkCorredor" Type="Int64" Nullable="false" />
+    <Property Name="fkOperador" Type="Int64" Nullable="false" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="users">
+    <Key>
+      <PropertyRef Name="pkUser" />
+    </Key>
+    <Property Name="pkUser" Type="Int64" Nullable="false" />
+    <Property Name="user" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="contrasena" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="m_surname" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_usuarios">
+    <Key>
+      <PropertyRef Name="pkUsuario" />
+    </Key>
+    <Property Name="pkUsuario" Type="Int64" Nullable="false" />
+    <Property Name="fkPuesto" Type="Int64" Nullable="false" />
+    <Property Name="fkStatus" Type="Int64" Nullable="false" />
+    <Property Name="nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="usuario" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="contrasena" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="tipo_usuario" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="enviado" Type="Int32" />
+    <Property Name="confirmado" Type="Int32" />
+    <Property Name="modo" Type="Int32" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="created_id" Type="Int64" />
+    <Property Name="updated_id" Type="Int64" />
+    <Property Name="deleted_id" Type="Int64" />
+  </EntityType>
+  <EntityType Name="ct_perfiles">
+    <Key>
+      <PropertyRef Name="pkPerfil" />
+    </Key>
+    <Property Name="pkPerfil" Type="Int64" Nullable="false" />
+    <Property Name="nombre" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="tipoDescuento" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="monto" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_corredores">
+    <Key>
+      <PropertyRef Name="pkCorredor" />
+    </Key>
+    <Property Name="pkCorredor" Type="Int64" Nullable="false" />
+    <Property Name="fkEmpresa" Type="Int64" Nullable="false" />
+    <Property Name="nombre" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="true" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_rutas">
+    <Key>
+      <PropertyRef Name="pkRuta" />
+    </Key>
+    <Property Name="pkRuta" Type="Int64" Nullable="false" />
+    <Property Name="fkCorredor" Type="Int64" />
+    <Property Name="nombre" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="true" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_unidades">
+    <Key>
+      <PropertyRef Name="pkUnidad" />
+    </Key>
+    <Property Name="pkUnidad" Type="Int64" Nullable="false" />
+    <Property Name="fkEmpresa" Type="Int64" />
+    <Property Name="fkCorredor" Type="Int64" />
+    <Property Name="numeracion" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+    <Property Name="nombre" Type="String" MaxLength="16" FixedLength="false" Unicode="true" />
+    <Property Name="noSerieAVL" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="capacidad" Type="Int32" />
+    <Property Name="validador" Type="Int32" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ct_config_puertos">
+    <Key>
+      <PropertyRef Name="pkConfigPuerto" />
+    </Key>
+    <Property Name="pkConfigPuerto" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="nombre_dispositivo" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="port_name" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="baud_rate" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="data_bits" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="stop_bits" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="paridad" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="handshake" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="enviado" Type="Int32" />
+    <Property Name="confirmado" Type="Int32" />
+    <Property Name="modo" Type="Int32" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+</Schema>

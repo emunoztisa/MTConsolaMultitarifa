@@ -178,6 +178,9 @@
     <Compile Include="ct_andadores.cs">
       <DependentUpon>dbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ct_config_puertos.cs">
+      <DependentUpon>dbModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="ct_consolas.cs">
       <DependentUpon>dbModel.tt</DependentUpon>
     </Compile>
@@ -228,6 +231,7 @@
     <Compile Include="EntityServices\ServiceBoletosDetalles.cs" />
     <Compile Include="EntityServices\ServiceBoletosTarifaFija.cs" />
     <Compile Include="EntityServices\ServiceComun_Usuarios.cs" />
+    <Compile Include="EntityServices\ServiceConfigPuertos.cs" />
     <Compile Include="EntityServices\ServiceConfigVarios.cs" />
     <Compile Include="EntityServices\ServiceConsolas.cs" />
     <Compile Include="EntityServices\ServiceCorredores.cs" />
@@ -361,17 +365,14 @@
     <Compile Include="Views\Configuracionv3.xaml.cs">
       <DependentUpon>Configuracionv3.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ConfiguracionV4.xaml.cs">
+      <DependentUpon>ConfiguracionV4.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ConfImpresora.xaml.cs">
       <DependentUpon>ConfImpresora.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ConfPuertoSerie.xaml.cs">
       <DependentUpon>ConfPuertoSerie.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
@@ -453,6 +454,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ConfiguracionV4.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ConfImpresora.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -506,9 +511,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Views\ReporteUsers.rdlc" />
     <EntityDeploy Include="dbModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
@@ -538,6 +540,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Debug\app.publish\TestMdfEntityFramework.exe" />
     <Content Include="dbModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>dbModel.Context.cs</LastGenOutput>
@@ -558,6 +561,20 @@
     <Resource Include="SCS\IMG\puerto_rojo.png" />
     <Resource Include="SCS\IMG\puerto_verde.png" />
     <Resource Include="SCS\IMG\puerto_gris.png" />
+    <Content Include="Libs\AForge.dll" />
+    <Content Include="Libs\AForge.Video.DirectShow.dll" />
+    <Resource Include="Libs\AForge.Video.DirectShow.xml" />
+    <Content Include="Libs\AForge.Video.dll" />
+    <Resource Include="Libs\AForge.Video.xml" />
+    <Resource Include="Libs\AForge.xml" />
+    <Content Include="Libs\DPFPCtlXTypeLibNET.dll" />
+    <Content Include="Libs\DPFPCtlXWrapperNET.dll" />
+    <Content Include="Libs\DPFPDevNET.dll" />
+    <Content Include="Libs\DPFPEngNET.dll" />
+    <Content Include="Libs\DPFPGuiNET.dll" />
+    <Content Include="Libs\DPFPShrNET.dll" />
+    <Content Include="Libs\DPFPShrXTypeLibNET.dll" />
+    <Content Include="Libs\DPFPVerNET.dll" />
     <Content Include="SCS\sonidos\shoot.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -646,7 +663,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Libs\" />
     <Folder Include="ReportesClases\" />
     <Folder Include="SCS\IMG\IMAGENES_SUBIDAS\" />
     <Folder Include="Views\Reports\" />

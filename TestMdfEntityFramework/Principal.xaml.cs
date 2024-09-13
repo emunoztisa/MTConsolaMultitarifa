@@ -229,7 +229,8 @@ namespace TestMdfEntityFramework
         }
         private void btnConfiguraciones_Click(object sender, RoutedEventArgs e)
         {
-            DataContext = new Configuracionv2();
+            //DataContext = new Configuracionv2();
+            DataContext = new ConfiguracionV4();
         }
         private void btnCobroTarifa_Click(object sender, RoutedEventArgs e)
         {

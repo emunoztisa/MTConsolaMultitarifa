@@ -1,0 +1,550 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="databaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="config_varios">
+    <Key>
+      <PropertyRef Name="pkConfigVarios" />
+    </Key>
+    <Property Name="pkConfigVarios" Type="bigint" Nullable="false" />
+    <Property Name="clave" Type="nvarchar" MaxLength="100" />
+    <Property Name="valor" Type="nvarchar" MaxLength="100" />
+    <Property Name="descripcion" Type="nvarchar" MaxLength="500" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="30" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="30" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="30" />
+  </EntityType>
+  <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_alcancias' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+  <EntityType Name="ct_alcancias">
+    <Key>
+      <PropertyRef Name="pkAlcancia" />
+      <PropertyRef Name="nombre" />
+    </Key>
+    <Property Name="pkAlcancia" Type="bigint" Nullable="false" />
+    <Property Name="fkConsola" Type="bigint" />
+    <Property Name="fkStatus" Type="bigint" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="ct_andadores">
+    <Key>
+      <PropertyRef Name="pkAndador" />
+    </Key>
+    <Property Name="pkAndador" Type="bigint" Nullable="false" />
+    <Property Name="fkLugar" Type="bigint" />
+    <Property Name="fkStatus" Type="bigint" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="ct_config_puertos">
+    <Key>
+      <PropertyRef Name="pkConfigPuerto" />
+    </Key>
+    <Property Name="pkConfigPuerto" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre_dispositivo" Type="nvarchar" MaxLength="100" />
+    <Property Name="status" Type="int" />
+    <Property Name="port_name" Type="nvarchar" MaxLength="10" />
+    <Property Name="baud_rate" Type="nvarchar" MaxLength="10" />
+    <Property Name="data_bits" Type="nvarchar" MaxLength="10" />
+    <Property Name="stop_bits" Type="nvarchar" MaxLength="10" />
+    <Property Name="paridad" Type="nvarchar" MaxLength="10" />
+    <Property Name="handshake" Type="nvarchar" MaxLength="10" />
+    <Property Name="enviado" Type="int" />
+    <Property Name="confirmado" Type="int" />
+    <Property Name="modo" Type="int" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_consolas' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+  <EntityType Name="ct_consolas">
+    <Key>
+      <PropertyRef Name="pkConsola" />
+      <PropertyRef Name="nombre" />
+    </Key>
+    <Property Name="pkConsola" Type="bigint" Nullable="false" />
+    <Property Name="fkUnidad" Type="bigint" />
+    <Property Name="fkStatus" Type="bigint" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="ct_corredores">
+    <Key>
+      <PropertyRef Name="pkCorredor" />
+    </Key>
+    <Property Name="pkCorredor" Type="bigint" Nullable="false" />
+    <Property Name="fkEmpresa" Type="bigint" Nullable="false" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="16" Nullable="false" />
+    <Property Name="status" Type="int" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="ct_denominaciones">
+    <Key>
+      <PropertyRef Name="pkDenominacion" />
+    </Key>
+    <Property Name="pkDenominacion" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="valor" Type="nvarchar" MaxLength="10" Nullable="false" />
+    <Property Name="path_imagen" Type="nvarchar(max)" />
+    <Property Name="bin_imagen" Type="varbinary(max)" />
+    <Property Name="posicion" Type="int" />
+    <Property Name="status" Type="int" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="ct_empresas">
+    <Key>
+      <PropertyRef Name="pkEmpresa" />
+    </Key>
+    <Property Name="pkEmpresa" Type="bigint" Nullable="false" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="status" Type="int" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="ct_imagenes_subidas">
+    <Key>
+      <PropertyRef Name="pkImagenSubida" />
+    </Key>
+    <Property Name="pkImagenSubida" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="imagen" Type="image" Nullable="false" />
+    <Property Name="path_imagen" Type="nvarchar(max)" />
+    <Property Name="status" Type="int" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="ct_lugares">
+    <Key>
+      <PropertyRef Name="pkLugar" />
+    </Key>
+    <Property Name="pkLugar" Type="bigint" Nullable="false" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="200" Nullable="false" />
+    <Property Name="status" Type="int" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="ct_operadores">
+    <Key>
+      <PropertyRef Name="pkOperador" />
+    </Key>
+    <Property Name="pkOperador" Type="bigint" Nullable="false" />
+    <Property Name="fkEmpresa" Type="bigint" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="status" Type="int" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="ct_perfiles">
+    <Key>
+      <PropertyRef Name="pkPerfil" />
+    </Key>
+    <Property Name="pkPerfil" Type="bigint" Nullable="false" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="200" Nullable="false" />
+    <Property Name="tipoDescuento" Type="nvarchar" MaxLength="50" />
+    <Property Name="monto" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="status" Type="int" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="ct_rutas">
+    <Key>
+      <PropertyRef Name="pkRuta" />
+    </Key>
+    <Property Name="pkRuta" Type="bigint" Nullable="false" />
+    <Property Name="fkCorredor" Type="bigint" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="16" Nullable="false" />
+    <Property Name="status" Type="int" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_taquillas' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+  <EntityType Name="ct_taquillas">
+    <Key>
+      <PropertyRef Name="pkTaquilla" />
+      <PropertyRef Name="nombre" />
+      <PropertyRef Name="ubicacion" />
+    </Key>
+    <Property Name="pkTaquilla" Type="bigint" Nullable="false" />
+    <Property Name="fkStatus" Type="bigint" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="ubicacion" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="ct_tarifas_montos_fijos">
+    <Key>
+      <PropertyRef Name="pkTarifaMontoFijo" />
+    </Key>
+    <Property Name="pkTarifaMontoFijo" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="valor" Type="nvarchar" MaxLength="20" />
+    <Property Name="texto" Type="nvarchar" MaxLength="30" />
+    <Property Name="descripcion" Type="nvarchar" MaxLength="100" />
+    <Property Name="orden" Type="int" />
+    <Property Name="status" Type="int" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="ct_unidades">
+    <Key>
+      <PropertyRef Name="pkUnidad" />
+    </Key>
+    <Property Name="pkUnidad" Type="bigint" Nullable="false" />
+    <Property Name="fkEmpresa" Type="bigint" />
+    <Property Name="fkCorredor" Type="bigint" />
+    <Property Name="numeracion" Type="nvarchar" MaxLength="5" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="16" />
+    <Property Name="noSerieAVL" Type="nvarchar" MaxLength="10" />
+    <Property Name="capacidad" Type="int" />
+    <Property Name="validador" Type="int" />
+    <Property Name="status" Type="int" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="ct_usuarios">
+    <Key>
+      <PropertyRef Name="pkUsuario" />
+    </Key>
+    <Property Name="pkUsuario" Type="bigint" Nullable="false" />
+    <Property Name="fkPuesto" Type="bigint" Nullable="false" />
+    <Property Name="fkStatus" Type="bigint" Nullable="false" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="100" />
+    <Property Name="usuario" Type="nvarchar" MaxLength="50" />
+    <Property Name="contrasena" Type="nvarchar" MaxLength="200" />
+    <Property Name="token" Type="text" />
+    <Property Name="tipo_usuario" Type="nvarchar" MaxLength="50" />
+    <Property Name="enviado" Type="int" />
+    <Property Name="confirmado" Type="int" />
+    <Property Name="modo" Type="int" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="created_id" Type="bigint" />
+    <Property Name="updated_id" Type="bigint" />
+    <Property Name="deleted_id" Type="bigint" />
+  </EntityType>
+  <EntityType Name="opciones_generales">
+    <Key>
+      <PropertyRef Name="pkOpcionGeneral" />
+    </Key>
+    <Property Name="pkOpcionGeneral" Type="int" Nullable="false" />
+    <Property Name="opcion_general" Type="nvarchar" MaxLength="200" />
+    <Property Name="valor" Type="nvarchar" MaxLength="200" />
+    <Property Name="orden" Type="int" />
+    <Property Name="agrupador" Type="nvarchar" MaxLength="50" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="30" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="30" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="30" />
+  </EntityType>
+  <EntityType Name="sy_asignaciones">
+    <Key>
+      <PropertyRef Name="pkAsignacion" />
+    </Key>
+    <Property Name="pkAsignacion" Type="bigint" Nullable="false" />
+    <Property Name="fkRuta" Type="bigint" />
+    <Property Name="fkUnidad" Type="bigint" />
+    <Property Name="fkOperador" Type="bigint" />
+    <Property Name="fkAndador" Type="bigint" />
+    <Property Name="fkLiquidacion" Type="bigint" />
+    <Property Name="fkStatus" Type="bigint" />
+    <Property Name="folio" Type="nvarchar" MaxLength="50" />
+    <Property Name="fecha" Type="nvarchar" MaxLength="50" />
+    <Property Name="hora" Type="nvarchar" MaxLength="50" />
+    <Property Name="ihora" Type="int" />
+    <Property Name="cantidadAsientosDisp" Type="int" />
+    <Property Name="recurrente" Type="int" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="sy_boletos">
+    <Key>
+      <PropertyRef Name="pkBoleto" />
+    </Key>
+    <Property Name="pkBoleto" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="pkBoletoTISA" Type="bigint" />
+    <Property Name="fkAsignacion" Type="bigint" />
+    <Property Name="fkLugarOrigen" Type="bigint" />
+    <Property Name="fkLugarDestino" Type="bigint" />
+    <Property Name="fkStatus" Type="bigint" />
+    <Property Name="folio" Type="nvarchar" MaxLength="100" />
+    <Property Name="totalCobrado" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="totalPagado" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="fechaHoraCancelacion" Type="nvarchar" MaxLength="50" />
+    <Property Name="enviado" Type="int" />
+    <Property Name="confirmadoTISA" Type="int" />
+    <Property Name="modo" Type="nvarchar" MaxLength="50" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="sy_boletos_detalle">
+    <Key>
+      <PropertyRef Name="pkBoletoDetalle" />
+    </Key>
+    <Property Name="pkBoletoDetalle" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="pkBoletoDetalleTISA" Type="bigint" />
+    <Property Name="fkBoleto" Type="bigint" />
+    <Property Name="fkPerfil" Type="bigint" />
+    <Property Name="fkTarifa" Type="bigint" />
+    <Property Name="fkStatus" Type="bigint" />
+    <Property Name="cantidad" Type="int" />
+    <Property Name="subtotal" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="enviado" Type="int" />
+    <Property Name="confirmadoTISA" Type="int" />
+    <Property Name="modo" Type="nvarchar" MaxLength="50" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="sy_boletos_tarifa_fija">
+    <Key>
+      <PropertyRef Name="pkBoleto" />
+    </Key>
+    <Property Name="pkBoleto" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="pkBoletoTISA" Type="bigint" />
+    <Property Name="fkAsignacion" Type="bigint" />
+    <Property Name="fkStatus" Type="bigint" />
+    <Property Name="folio" Type="nvarchar" MaxLength="30" Nullable="false" />
+    <Property Name="tarifa" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="cant_pasajeros" Type="int" />
+    <Property Name="total" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="totalCobrado" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="totalPagado" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="fechaHoraCancelacion" Type="nvarchar" MaxLength="50" />
+    <Property Name="enviado" Type="int" />
+    <Property Name="confirmadoTISA" Type="int" />
+    <Property Name="modo" Type="nvarchar" MaxLength="50" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="30" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="30" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="30" />
+  </EntityType>
+  <EntityType Name="sy_cortes">
+    <Key>
+      <PropertyRef Name="pkCorte" />
+    </Key>
+    <Property Name="pkCorte" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="pkCorteTISA" Type="bigint" />
+    <Property Name="fkAsignacion" Type="bigint" />
+    <Property Name="fkLugarOrigen" Type="bigint" />
+    <Property Name="fkLugarDestino" Type="bigint" />
+    <Property Name="fkStatus" Type="bigint" />
+    <Property Name="folio" Type="nvarchar" MaxLength="100" />
+    <Property Name="fecha" Type="nvarchar" MaxLength="20" />
+    <Property Name="hora" Type="nvarchar" MaxLength="20" />
+    <Property Name="total_efectivo_acumulado" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="total_tarifas" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="total_efectivo_rst" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="efectivo_moneda" Type="nvarchar" MaxLength="20" />
+    <Property Name="efectivo_billete" Type="nvarchar" MaxLength="20" />
+    <Property Name="cant_mon_tipo_0" Type="nvarchar" MaxLength="20" />
+    <Property Name="cant_mon_tipo_1" Type="nvarchar" MaxLength="20" />
+    <Property Name="cant_mon_tipo_2" Type="nvarchar" MaxLength="20" />
+    <Property Name="cant_mon_tipo_3" Type="nvarchar" MaxLength="20" />
+    <Property Name="cant_mon_tipo_4" Type="nvarchar" MaxLength="20" />
+    <Property Name="cant_mon_tipo_5" Type="nvarchar" MaxLength="20" />
+    <Property Name="cant_mon_tipo_6" Type="nvarchar" MaxLength="20" />
+    <Property Name="cant_bill_tipo_0" Type="nvarchar" MaxLength="20" />
+    <Property Name="cant_bill_tipo_1" Type="nvarchar" MaxLength="20" />
+    <Property Name="cant_bill_tipo_2" Type="nvarchar" MaxLength="20" />
+    <Property Name="cant_bill_tipo_3" Type="nvarchar" MaxLength="20" />
+    <Property Name="cant_bill_tipo_4" Type="nvarchar" MaxLength="20" />
+    <Property Name="cant_bill_tipo_5" Type="nvarchar" MaxLength="20" />
+    <Property Name="cant_bill_tipo_6" Type="nvarchar" MaxLength="20" />
+    <Property Name="enviado" Type="int" />
+    <Property Name="confirmadoTISA" Type="int" />
+    <Property Name="modo" Type="nvarchar" MaxLength="50" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="sy_empresa_corredor_operador">
+    <Key>
+      <PropertyRef Name="pkEmpresaCorredorOperador" />
+    </Key>
+    <Property Name="pkEmpresaCorredorOperador" Type="bigint" Nullable="false" />
+    <Property Name="fkEmpresa" Type="bigint" Nullable="false" />
+    <Property Name="fkCorredor" Type="bigint" Nullable="false" />
+    <Property Name="fkOperador" Type="bigint" Nullable="false" />
+    <Property Name="status" Type="int" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="sy_lugar_ruta">
+    <Key>
+      <PropertyRef Name="pkLugarRuta" />
+    </Key>
+    <Property Name="pkLugarRuta" Type="bigint" Nullable="false" />
+    <Property Name="fkLugar" Type="bigint" Nullable="false" />
+    <Property Name="fkRuta" Type="bigint" Nullable="false" />
+    <Property Name="orden" Type="int" Nullable="false" />
+    <Property Name="status" Type="int" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="sy_mensajes">
+    <Key>
+      <PropertyRef Name="pkMensaje" />
+    </Key>
+    <Property Name="pkMensaje" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="fkAsignacion" Type="bigint" />
+    <Property Name="fkStatus" Type="bigint" />
+    <Property Name="mensaje" Type="nvarchar" MaxLength="200" />
+    <Property Name="enviado" Type="int" />
+    <Property Name="confirmadoTISA" Type="int" />
+    <Property Name="modo" Type="nvarchar" MaxLength="50" />
+    <Property Name="dispositivo_origen" Type="int" />
+    <Property Name="dispositivo_destino" Type="int" />
+    <Property Name="reproducido" Type="int" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_status' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+  <EntityType Name="sy_status">
+    <Key>
+      <PropertyRef Name="pkStatus" />
+    </Key>
+    <Property Name="pkStatus" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="agrupador" Type="nvarchar" MaxLength="100" />
+    <Property Name="nombre" Type="nvarchar" MaxLength="100" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="sy_tarifas">
+    <Key>
+      <PropertyRef Name="pkTarifa" />
+    </Key>
+    <Property Name="pkTarifa" Type="bigint" Nullable="false" />
+    <Property Name="fkLugarOrigen" Type="bigint" Nullable="false" />
+    <Property Name="fkLugarDestino" Type="bigint" Nullable="false" />
+    <Property Name="fkPerfil" Type="bigint" Nullable="false" />
+    <Property Name="monto" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+    <Property Name="status" Type="int" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="sy_ubicacion">
+    <Key>
+      <PropertyRef Name="pkUbicacion" />
+    </Key>
+    <Property Name="pkUbicacion" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="fkAsignacion" Type="bigint" />
+    <Property Name="latitud" Type="decimal" Precision="18" Scale="10" />
+    <Property Name="longitud" Type="decimal" Precision="18" Scale="10" />
+    <Property Name="enviado" Type="int" />
+    <Property Name="confirmadoTISA" Type="int" />
+    <Property Name="modo" Type="nvarchar" MaxLength="50" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="users">
+    <Key>
+      <PropertyRef Name="pkUser" />
+    </Key>
+    <Property Name="pkUser" Type="bigint" Nullable="false" />
+    <Property Name="user" Type="nvarchar" MaxLength="100" />
+    <Property Name="contrasena" Type="nvarchar" MaxLength="200" />
+    <Property Name="token" Type="text" />
+    <Property Name="m_surname" Type="nvarchar" MaxLength="100" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="30" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="30" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="30" />
+  </EntityType>
+  <EntityContainer Name="databaseModelStoreContainer">
+    <EntitySet Name="config_varios" EntityType="Self.config_varios" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ct_andadores" EntityType="Self.ct_andadores" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ct_config_puertos" EntityType="Self.ct_config_puertos" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ct_corredores" EntityType="Self.ct_corredores" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ct_denominaciones" EntityType="Self.ct_denominaciones" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ct_empresas" EntityType="Self.ct_empresas" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ct_imagenes_subidas" EntityType="Self.ct_imagenes_subidas" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ct_lugares" EntityType="Self.ct_lugares" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ct_operadores" EntityType="Self.ct_operadores" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ct_perfiles" EntityType="Self.ct_perfiles" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ct_rutas" EntityType="Self.ct_rutas" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ct_tarifas_montos_fijos" EntityType="Self.ct_tarifas_montos_fijos" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ct_unidades" EntityType="Self.ct_unidades" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ct_usuarios" EntityType="Self.ct_usuarios" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="opciones_generales" EntityType="Self.opciones_generales" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sy_asignaciones" EntityType="Self.sy_asignaciones" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sy_boletos" EntityType="Self.sy_boletos" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sy_boletos_detalle" EntityType="Self.sy_boletos_detalle" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sy_boletos_tarifa_fija" EntityType="Self.sy_boletos_tarifa_fija" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sy_cortes" EntityType="Self.sy_cortes" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sy_empresa_corredor_operador" EntityType="Self.sy_empresa_corredor_operador" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sy_lugar_ruta" EntityType="Self.sy_lugar_ruta" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sy_mensajes" EntityType="Self.sy_mensajes" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sy_tarifas" EntityType="Self.sy_tarifas" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sy_ubicacion" EntityType="Self.sy_ubicacion" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="users" EntityType="Self.users" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ct_alcancias" EntityType="Self.ct_alcancias" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [ct_alcancias].[pkAlcancia] AS [pkAlcancia], 
+    [ct_alcancias].[fkConsola] AS [fkConsola], 
+    [ct_alcancias].[fkStatus] AS [fkStatus], 
+    [ct_alcancias].[nombre] AS [nombre], 
+    [ct_alcancias].[created_at] AS [created_at], 
+    [ct_alcancias].[updated_at] AS [updated_at], 
+    [ct_alcancias].[deleted_at] AS [deleted_at]
+    FROM [dbo].[ct_alcancias] AS [ct_alcancias]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="ct_consolas" EntityType="Self.ct_consolas" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [ct_consolas].[pkConsola] AS [pkConsola], 
+    [ct_consolas].[fkUnidad] AS [fkUnidad], 
+    [ct_consolas].[fkStatus] AS [fkStatus], 
+    [ct_consolas].[nombre] AS [nombre], 
+    [ct_consolas].[created_at] AS [created_at], 
+    [ct_consolas].[updated_at] AS [updated_at], 
+    [ct_consolas].[deleted_at] AS [deleted_at]
+    FROM [dbo].[ct_consolas] AS [ct_consolas]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="ct_taquillas" EntityType="Self.ct_taquillas" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [ct_taquillas].[pkTaquilla] AS [pkTaquilla], 
+    [ct_taquillas].[fkStatus] AS [fkStatus], 
+    [ct_taquillas].[nombre] AS [nombre], 
+    [ct_taquillas].[ubicacion] AS [ubicacion], 
+    [ct_taquillas].[created_at] AS [created_at], 
+    [ct_taquillas].[updated_at] AS [updated_at], 
+    [ct_taquillas].[deleted_at] AS [deleted_at]
+    FROM [dbo].[ct_taquillas] AS [ct_taquillas]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="sy_status" EntityType="Self.sy_status" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [sy_status].[pkStatus] AS [pkStatus], 
+    [sy_status].[agrupador] AS [agrupador], 
+    [sy_status].[nombre] AS [nombre], 
+    [sy_status].[created_at] AS [created_at], 
+    [sy_status].[updated_at] AS [updated_at], 
+    [sy_status].[deleted_at] AS [deleted_at]
+    FROM [dbo].[sy_status] AS [sy_status]</DefiningQuery>
+    </EntitySet>
+  </EntityContainer>
+</Schema>
