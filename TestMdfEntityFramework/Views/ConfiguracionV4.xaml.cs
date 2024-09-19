@@ -40,10 +40,13 @@ namespace TestMdfEntityFramework.Views
         //SERIAL PORT
         System.IO.Ports.SerialPort puertoSerie1 = new System.IO.Ports.SerialPort();
         String[] listado_puerto = System.IO.Ports.SerialPort.GetPortNames();
+        
+
 
         //BUFFERS SEND AND RECIEVED
         byte[] BufferSendData = new byte[80];
         byte[] RecievedDataGlobal = new byte[80];
+
 
         //POPUP OK
         private double left, top, right, bottom, centerX, centerY;
@@ -858,7 +861,6 @@ namespace TestMdfEntityFramework.Views
             }
             return list2;
         }
-
         private List<ct_config_puertos> getCatalogo_ConfigPuertos_BaseLocal()
         {
             ServiceConfigPuertos serv = new ServiceConfigPuertos();
@@ -866,7 +868,6 @@ namespace TestMdfEntityFramework.Views
            
             return list;
         }
-
         private List<string> getCatalogo_TipoTarifa_BaseLocal()
         {
             ServiceOpcionesGenerales sog = new ServiceOpcionesGenerales();
@@ -887,7 +888,6 @@ namespace TestMdfEntityFramework.Views
             }
             return listado_impresoras;
         }
-
         private List<string> getCatalogo_Empresas_BaseLocal()
         {
             ServiceEmpresas serv = new ServiceEmpresas();
@@ -2817,5 +2817,8 @@ namespace TestMdfEntityFramework.Views
 
             llenarGridConfigPuertos();
         }
+
+
+       
     }
 }

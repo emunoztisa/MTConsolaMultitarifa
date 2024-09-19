@@ -27,9 +27,43 @@ namespace TestMdfEntityFramework
         public static long FK_ASIGNACION_ACTIVA = 0;
         string MODO_APP = "";
 
-        //SERIAL PORT
-        System.IO.Ports.SerialPort puertoSerie1 = new System.IO.Ports.SerialPort();
+        //SERIAL PORT - ALCANCIA
+        System.IO.Ports.SerialPort puertoSerie_alcancia = new System.IO.Ports.SerialPort();
         String[] listado_puerto = System.IO.Ports.SerialPort.GetPortNames();
+
+        //SERIAL PORT - CC1
+        System.IO.Ports.SerialPort puertoSerie_cc1 = new System.IO.Ports.SerialPort();
+
+        //SERIAL PORT - CC2
+        System.IO.Ports.SerialPort puertoSerie_cc2 = new System.IO.Ports.SerialPort();
+
+        //SERIAL PORT - CC3
+        System.IO.Ports.SerialPort puertoSerie_cc3 = new System.IO.Ports.SerialPort();
+
+        //SERIAL PORT - GPS
+        System.IO.Ports.SerialPort puertoSerie_gps = new System.IO.Ports.SerialPort();
+
+
+
+        //BUFFERS SEND AND RECIEVED - ALCANCIA
+        byte[] BufferSendData = new byte[80];
+        byte[] RecievedDataGlobal = new byte[80];
+
+        //BUFFERS SEND AND RECIEVED - CC1
+        byte[] BufferSendData_cc1 = new byte[80];
+        byte[] RecievedDataGlobal_cc1 = new byte[80];
+
+        //BUFFERS SEND AND RECIEVED - CC2
+        byte[] BufferSendData_cc2 = new byte[80];
+        byte[] RecievedDataGlobal_cc2 = new byte[80];
+
+        //BUFFERS SEND AND RECIEVED - CC3
+        byte[] BufferSendData_cc3 = new byte[80];
+        byte[] RecievedDataGlobal_cc3 = new byte[80];
+
+        //BUFFERS SEND AND RECIEVED - GPS
+        byte[] BufferSendData_gps = new byte[80];
+        byte[] RecievedDataGlobal_gps = new byte[80];
 
         //TIMERS
         DispatcherTimer timerReloj = new DispatcherTimer();
@@ -42,6 +76,8 @@ namespace TestMdfEntityFramework
             btnInicio_Click(null, null);
             
             cargar_logo_aplicacion();
+
+            
         }
 
         #region TIMERS
@@ -142,6 +178,11 @@ namespace TestMdfEntityFramework
         #region EVENTOS CONTROLES
         private void Principal_OnLoad(object sender, RoutedEventArgs e)
         {
+            //configura_puerto_serial_cc1();
+            //configura_puerto_serial_cc2();
+            //configura_puerto_serial_cc3();
+
+            configura_puerto_serial_gps();
 
             inicializa_timer_reloj();
             inicializa_timer_evalua_mensajes();
@@ -273,13 +314,19 @@ namespace TestMdfEntityFramework
         }
         private void btnResetPortName_Click(object sender, RoutedEventArgs e)
         {
-            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
-            config_varios cv_port_name = serv_config_varios.getEntityByClave("PORT_NAME");
-            if (cv_port_name.valor != null && cv_port_name.valor != "")
-            {
-                cv_port_name.valor = "";
-                serv_config_varios.updEntityByClave(cv_port_name);
-            }
+            //ejecutar_commando_12_reset_cc1();
+            //ejecutar_commando_13_acumulado_pasajeros_cc1();
+
+
+            //ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            //config_varios cv_port_name = serv_config_varios.getEntityByClave("PORT_NAME");
+            //if (cv_port_name.valor != null && cv_port_name.valor != "")
+            //{
+            //    cv_port_name.valor = "";
+            //    serv_config_varios.updEntityByClave(cv_port_name);
+            //}
+
+            ejecutar_comando_5_obtener_posicion_gps();
         }
         private void btnLogout_Click(object sender, RoutedEventArgs e)
         {
@@ -1597,65 +1644,7 @@ namespace TestMdfEntityFramework
 
         #endregion
 
-        #region PUERTO SERIAL
-        public void configura_puerto_serial()
-        {
-            try
-            {
-                ServiceConfigVarios scv = new ServiceConfigVarios();
-                config_varios cv_port_name = scv.getEntityByClave("PORT_NAME");
-                config_varios cv_baud_rate = scv.getEntityByClave("BAUD_RATE");
-                config_varios cv_paridad = scv.getEntityByClave("PARIDAD");
-                config_varios cv_data_bits = scv.getEntityByClave("DATA_BITS");
-                config_varios cv_stop_bits = scv.getEntityByClave("STOP_BITS");
-                config_varios cv_handshake = scv.getEntityByClave("HANDSHAKE");
-
-                if (cv_port_name.valor != "")
-                {
-                    //MessageBox.Show(cv_port_name.valor);
-
-                    this.puertoSerie1 = new System.IO.Ports.SerialPort
-                    ("" + cv_port_name.valor
-                    , Convert.ToInt32(cv_baud_rate.valor)
-                    , cv_paridad.valor == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
-                    , Convert.ToInt32(cv_data_bits.valor)
-                    , Convert.ToInt32(cv_stop_bits.valor) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
-                    );
-                    puertoSerie1.Handshake = cv_handshake.valor == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
-                }
-            }
-            catch
-            {
-                MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
-            }
-
-            //close_serial_port();
-
-        }
-        private void open_serial_port()
-        {
-            try
-            {
-                if (puertoSerie1.IsOpen == false)
-                {
-                    puertoSerie1.Open();
-                }
-            }
-            catch (Exception ex)
-            {
-                configura_puerto_serial();
-
-            }
-        }
-        private void close_serial_port()
-        {
-            if (puertoSerie1.IsOpen == true)
-            {
-                puertoSerie1.Close();
-            }
-        }
-
-        #endregion
+       
 
         #region VALIDACIONES
         private bool validaPuertoCOMConfigurado()
@@ -1695,9 +1684,9 @@ namespace TestMdfEntityFramework
 
             try
             {
-                if (puertoSerie1.IsOpen == false)
+                if (puertoSerie_alcancia.IsOpen == false)
                 {
-                    puertoSerie1.Open();
+                    puertoSerie_alcancia.Open();
                     hayDispositivoConectado = true;
                 }
                 else
@@ -1754,5 +1743,957 @@ namespace TestMdfEntityFramework
         }
 
 
+
+
+        #region COMANDOS - CUENTA COCOS
+        private bool ejecutar_commando_12_reset_cc1()
+        {
+            // #02 30 30 30 31 31 32 30 30 31 33 #03 en el programa serial port monitor
+            // 02  0  0  0  1  1  2  0  0  1  3  03
+            bool bnd_reset_exitoso = true;
+            try
+            {
+                decimal[] arr = new decimal[12];
+                arr[0] = 2;
+                arr[1] = '0';   //  1   //  DIRECCION   //  ANSII
+                arr[2] = '0';   //  2   //  DIRECCION   //  ANSII
+                arr[3] = '0';   //  3   //  DIRECCION   //  ANSII
+                arr[4] = '1';   //  4   //  DIRECCION   //  ANSII
+                arr[5] = '1';   //  5   //  COMANDO     //  ANSII
+                arr[6] = '2';   //  6   //  COMANDO     //  ANSII
+                arr[7] = '0';   //  7   //  TAMAÑO DATA //  ANSII
+                arr[8] = '0';   //  8   //  TAMAÑO DATA //  ANSII
+                arr[9] = '1';   //  11  //  CHECKSUM    //  ANSII
+                arr[10] = '3';  //  12  //  CHECKSUM    //  ANSII
+                arr[11] = 3;
+
+
+                ClearBufferSendData_cc1();
+                ClearBufferRecievedDataGlobal_cc1();
+
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    BufferSendData_cc1[i] = decimal.ToByte(arr[i]);
+                }
+
+                open_serial_port_cc1();
+                puertoSerie_cc1.Write(BufferSendData_cc1,0, 12);
+
+                
+                Task.WaitAll(new Task[] { Task.Delay(100) });
+                puertoSerie_cc1.Read(RecievedDataGlobal_cc1,0,50);
+
+                if (RecievedDataGlobal_cc1.Length > 0)
+                {
+                    int var1 = Convert.ToInt32( 
+                       ((char)RecievedDataGlobal_cc1[9]).ToString()
+                        + 
+                       ((char)RecievedDataGlobal_cc1[10]).ToString()
+                        );
+
+                    //if (RecievedDataGlobal_cc1[9] == '0'
+                    //    && RecievedDataGlobal_cc1[10] == '6')
+                    if(var1 == 6)
+                    {
+                        string msg = "Reset Correcto";
+
+                    }
+                    
+                }
+                else
+                {
+                    MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                bnd_reset_exitoso = false;
+            }
+
+            return bnd_reset_exitoso;
+        }
+        private bool ejecutar_commando_13_acumulado_pasajeros_cc1()
+        {
+            // #02 30 30 30 31 31 32 30 30 31 33 #03 en el programa serial port monitor
+            // 02  0  0  0  1  1  2  0  0  1  3  03
+            bool bnd_get_acumulado_pasajeros_exitoso = true;
+            try
+            {
+                decimal[] arr = new decimal[12];
+                arr[0] = 2;
+                arr[1] = '0';   //  1   //  DIRECCION   //  ANSII
+                arr[2] = '0';   //  2   //  DIRECCION   //  ANSII
+                arr[3] = '0';   //  3   //  DIRECCION   //  ANSII
+                arr[4] = '1';   //  4   //  DIRECCION   //  ANSII
+                arr[5] = '1';   //  5   //  COMANDO     //  ANSII
+                arr[6] = '3';   //  6   //  COMANDO     //  ANSII
+                arr[7] = '0';   //  7   //  TAMAÑO DATA //  ANSII
+                arr[8] = '0';   //  8   //  TAMAÑO DATA //  ANSII
+                arr[9] = '1';   //  11  //  CHECKSUM    //  ANSII
+                arr[10] = '4';  //  12  //  CHECKSUM    //  ANSII
+                arr[11] = 3;
+
+
+                ClearBufferSendData_cc1();
+                ClearBufferRecievedDataGlobal_cc1();
+
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    BufferSendData_cc1[i] = decimal.ToByte(arr[i]);
+                }
+
+                open_serial_port_cc1();
+                puertoSerie_cc1.Write(BufferSendData_cc1, 0, 12);
+
+
+                Task.WaitAll(new Task[] { Task.Delay(100) });
+                puertoSerie_cc1.Read(RecievedDataGlobal_cc1, 0, 60);
+
+                int cont = 0;
+                for (int i = 0; i < RecievedDataGlobal_cc1.Length; i++)
+                {
+                    if(RecievedDataGlobal_cc1[i] != 3)
+                    {
+                        cont++;
+
+                    }
+                    else
+                    {
+                        cont++;
+                        break;
+                    }
+                    
+                }
+
+                if (RecievedDataGlobal_cc1.Length > 0 && cont == 44)
+                {
+                    int var1 = Convert.ToInt32(
+                       ((char)RecievedDataGlobal_cc1[5]).ToString()
+                        +
+                       ((char)RecievedDataGlobal_cc1[6]).ToString()
+                        );
+
+                    //if (RecievedDataGlobal_cc1[9] == '0'
+                    //    && RecievedDataGlobal_cc1[10] == '6')
+                    if (var1 == 93)
+                    {
+                        string msg = "Acumulado";
+                        int cant_subidas = 0;
+                        int cant_bajadas = 0;
+
+                        cant_subidas = Convert.ToInt32(
+                       ((char)RecievedDataGlobal_cc1[9]).ToString()
+                        + ((char)RecievedDataGlobal_cc1[10]).ToString()
+                        + ((char)RecievedDataGlobal_cc1[11]).ToString()
+                        + ((char)RecievedDataGlobal_cc1[12]).ToString()
+                        + ((char)RecievedDataGlobal_cc1[13]).ToString()
+                        + ((char)RecievedDataGlobal_cc1[14]).ToString()
+                        + ((char)RecievedDataGlobal_cc1[15]).ToString()
+                        + ((char)RecievedDataGlobal_cc1[16]).ToString()
+                        );
+
+                        cant_bajadas = Convert.ToInt32(
+                       ((char)RecievedDataGlobal_cc1[17]).ToString()
+                        + ((char)RecievedDataGlobal_cc1[18]).ToString()
+                        + ((char)RecievedDataGlobal_cc1[19]).ToString()
+                        + ((char)RecievedDataGlobal_cc1[20]).ToString()
+                        + ((char)RecievedDataGlobal_cc1[21]).ToString()
+                        + ((char)RecievedDataGlobal_cc1[22]).ToString()
+                        + ((char)RecievedDataGlobal_cc1[23]).ToString()
+                        + ((char)RecievedDataGlobal_cc1[24]).ToString()
+                        );
+                    }
+
+                }
+                else
+                {
+                    MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                bnd_get_acumulado_pasajeros_exitoso = false;
+                MessageBox.Show(ex.Message, "EXCEPTION !!!");
+            }
+
+            return bnd_get_acumulado_pasajeros_exitoso;
+        }
+
+        private bool ejecutar_commando_12_reset_cc2()
+        {
+            // #02 30 30 30 31 31 32 30 30 31 33 #03 en el programa serial port monitor
+            // 02  0  0  0  1  1  2  0  0  1  3  03
+            bool bnd_reset_exitoso = true;
+            try
+            {
+                decimal[] arr = new decimal[12];
+                arr[0] = 2;
+                arr[1] = '0';   //  1   //  DIRECCION   //  ANSII
+                arr[2] = '0';   //  2   //  DIRECCION   //  ANSII
+                arr[3] = '0';   //  3   //  DIRECCION   //  ANSII
+                arr[4] = '1';   //  4   //  DIRECCION   //  ANSII
+                arr[5] = '1';   //  5   //  COMANDO     //  ANSII
+                arr[6] = '2';   //  6   //  COMANDO     //  ANSII
+                arr[7] = '0';   //  7   //  TAMAÑO DATA //  ANSII
+                arr[8] = '0';   //  8   //  TAMAÑO DATA //  ANSII
+                arr[9] = '1';   //  11  //  CHECKSUM    //  ANSII
+                arr[10] = '3';  //  12  //  CHECKSUM    //  ANSII
+                arr[11] = 3;
+
+
+                ClearBufferSendData_cc2();
+                ClearBufferRecievedDataGlobal_cc2();
+
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    BufferSendData_cc2[i] = decimal.ToByte(arr[i]);
+                }
+
+                open_serial_port_cc2();
+                puertoSerie_cc2.Write(BufferSendData_cc2, 0, 12);
+
+
+                Task.WaitAll(new Task[] { Task.Delay(100) });
+                puertoSerie_cc2.Read(RecievedDataGlobal_cc2, 0, 50);
+
+                if (RecievedDataGlobal_cc2.Length > 0)
+                {
+                    int var1 = Convert.ToInt32(
+                       ((char)RecievedDataGlobal_cc2[9]).ToString()
+                        +
+                       ((char)RecievedDataGlobal_cc2[10]).ToString()
+                        );
+
+                    //if (RecievedDataGlobal_cc2[9] == '0'
+                    //    && RecievedDataGlobal_cc2[10] == '6')
+                    if (var1 == 6)
+                    {
+                        string msg = "Reset Correcto";
+
+                    }
+
+                }
+                else
+                {
+                    MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                bnd_reset_exitoso = false;
+            }
+
+            return bnd_reset_exitoso;
+        }
+        private bool ejecutar_commando_13_acumulado_pasajeros_cc2()
+        {
+            // #02 30 30 30 31 31 32 30 30 31 33 #03 en el programa serial port monitor
+            // 02  0  0  0  1  1  2  0  0  1  3  03
+            bool bnd_get_acumulado_pasajeros_exitoso = true;
+            try
+            {
+                decimal[] arr = new decimal[12];
+                arr[0] = 2;
+                arr[1] = '0';   //  1   //  DIRECCION   //  ANSII
+                arr[2] = '0';   //  2   //  DIRECCION   //  ANSII
+                arr[3] = '0';   //  3   //  DIRECCION   //  ANSII
+                arr[4] = '1';   //  4   //  DIRECCION   //  ANSII
+                arr[5] = '1';   //  5   //  COMANDO     //  ANSII
+                arr[6] = '3';   //  6   //  COMANDO     //  ANSII
+                arr[7] = '0';   //  7   //  TAMAÑO DATA //  ANSII
+                arr[8] = '0';   //  8   //  TAMAÑO DATA //  ANSII
+                arr[9] = '1';   //  11  //  CHECKSUM    //  ANSII
+                arr[10] = '4';  //  12  //  CHECKSUM    //  ANSII
+                arr[11] = 3;
+
+
+                ClearBufferSendData_cc2();
+                ClearBufferRecievedDataGlobal_cc2();
+
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    BufferSendData_cc2[i] = decimal.ToByte(arr[i]);
+                }
+
+                open_serial_port_cc2();
+                puertoSerie_cc2.Write(BufferSendData_cc2, 0, 12);
+
+
+                Task.WaitAll(new Task[] { Task.Delay(100) });
+                puertoSerie_cc2.Read(RecievedDataGlobal_cc2, 0, 60);
+
+                int cont = 0;
+                for (int i = 0; i < RecievedDataGlobal_cc2.Length; i++)
+                {
+                    if (RecievedDataGlobal_cc2[i] != 3)
+                    {
+                        cont++;
+
+                    }
+                    else
+                    {
+                        cont++;
+                        break;
+                    }
+
+                }
+
+                if (RecievedDataGlobal_cc2.Length > 0 && cont == 44)
+                {
+                    int var1 = Convert.ToInt32(
+                       ((char)RecievedDataGlobal_cc2[5]).ToString()
+                        +
+                       ((char)RecievedDataGlobal_cc2[6]).ToString()
+                        );
+
+                    //if (RecievedDataGlobal_cc2[9] == '0'
+                    //    && RecievedDataGlobal_cc2[10] == '6')
+                    if (var1 == 93)
+                    {
+                        string msg = "Acumulado";
+                        int cant_subidas = 0;
+                        int cant_bajadas = 0;
+
+                        cant_subidas = Convert.ToInt32(
+                       ((char)RecievedDataGlobal_cc2[9]).ToString()
+                        + ((char)RecievedDataGlobal_cc2[10]).ToString()
+                        + ((char)RecievedDataGlobal_cc2[11]).ToString()
+                        + ((char)RecievedDataGlobal_cc2[12]).ToString()
+                        + ((char)RecievedDataGlobal_cc2[13]).ToString()
+                        + ((char)RecievedDataGlobal_cc2[14]).ToString()
+                        + ((char)RecievedDataGlobal_cc2[15]).ToString()
+                        + ((char)RecievedDataGlobal_cc2[16]).ToString()
+                        );
+
+                        cant_bajadas = Convert.ToInt32(
+                       ((char)RecievedDataGlobal_cc2[17]).ToString()
+                        + ((char)RecievedDataGlobal_cc2[18]).ToString()
+                        + ((char)RecievedDataGlobal_cc2[19]).ToString()
+                        + ((char)RecievedDataGlobal_cc2[20]).ToString()
+                        + ((char)RecievedDataGlobal_cc2[21]).ToString()
+                        + ((char)RecievedDataGlobal_cc2[22]).ToString()
+                        + ((char)RecievedDataGlobal_cc2[23]).ToString()
+                        + ((char)RecievedDataGlobal_cc2[24]).ToString()
+                        );
+                    }
+
+                }
+                else
+                {
+                    MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                bnd_get_acumulado_pasajeros_exitoso = false;
+                MessageBox.Show(ex.Message, "EXCEPTION !!!");
+            }
+
+            return bnd_get_acumulado_pasajeros_exitoso;
+        }
+
+        private bool ejecutar_commando_12_reset_cc3()
+        {
+            // #02 30 30 30 31 31 32 30 30 31 33 #03 en el programa serial port monitor
+            // 02  0  0  0  1  1  2  0  0  1  3  03
+            bool bnd_reset_exitoso = true;
+            try
+            {
+                decimal[] arr = new decimal[12];
+                arr[0] = 2;
+                arr[1] = '0';   //  1   //  DIRECCION   //  ANSII
+                arr[2] = '0';   //  2   //  DIRECCION   //  ANSII
+                arr[3] = '0';   //  3   //  DIRECCION   //  ANSII
+                arr[4] = '1';   //  4   //  DIRECCION   //  ANSII
+                arr[5] = '1';   //  5   //  COMANDO     //  ANSII
+                arr[6] = '2';   //  6   //  COMANDO     //  ANSII
+                arr[7] = '0';   //  7   //  TAMAÑO DATA //  ANSII
+                arr[8] = '0';   //  8   //  TAMAÑO DATA //  ANSII
+                arr[9] = '1';   //  11  //  CHECKSUM    //  ANSII
+                arr[10] = '3';  //  12  //  CHECKSUM    //  ANSII
+                arr[11] = 3;
+
+
+                ClearBufferSendData_cc3();
+                ClearBufferRecievedDataGlobal_cc3();
+
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    BufferSendData_cc3[i] = decimal.ToByte(arr[i]);
+                }
+
+                open_serial_port_cc3();
+                puertoSerie_cc3.Write(BufferSendData_cc3, 0, 12);
+
+
+                Task.WaitAll(new Task[] { Task.Delay(100) });
+                puertoSerie_cc3.Read(RecievedDataGlobal_cc3, 0, 50);
+
+                if (RecievedDataGlobal_cc3.Length > 0)
+                {
+                    int var1 = Convert.ToInt32(
+                       ((char)RecievedDataGlobal_cc3[9]).ToString()
+                        +
+                       ((char)RecievedDataGlobal_cc3[10]).ToString()
+                        );
+
+                    //if (RecievedDataGlobal_cc3[9] == '0'
+                    //    && RecievedDataGlobal_cc3[10] == '6')
+                    if (var1 == 6)
+                    {
+                        string msg = "Reset Correcto";
+
+                    }
+
+                }
+                else
+                {
+                    MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                bnd_reset_exitoso = false;
+            }
+
+            return bnd_reset_exitoso;
+        }
+        private bool ejecutar_commando_13_acumulado_pasajeros_cc3()
+        {
+            // #02 30 30 30 31 31 32 30 30 31 33 #03 en el programa serial port monitor
+            // 02  0  0  0  1  1  2  0  0  1  3  03
+            bool bnd_get_acumulado_pasajeros_exitoso = true;
+            try
+            {
+                decimal[] arr = new decimal[12];
+                arr[0] = 2;
+                arr[1] = '0';   //  1   //  DIRECCION   //  ANSII
+                arr[2] = '0';   //  2   //  DIRECCION   //  ANSII
+                arr[3] = '0';   //  3   //  DIRECCION   //  ANSII
+                arr[4] = '1';   //  4   //  DIRECCION   //  ANSII
+                arr[5] = '1';   //  5   //  COMANDO     //  ANSII
+                arr[6] = '3';   //  6   //  COMANDO     //  ANSII
+                arr[7] = '0';   //  7   //  TAMAÑO DATA //  ANSII
+                arr[8] = '0';   //  8   //  TAMAÑO DATA //  ANSII
+                arr[9] = '1';   //  11  //  CHECKSUM    //  ANSII
+                arr[10] = '4';  //  12  //  CHECKSUM    //  ANSII
+                arr[11] = 3;
+
+
+                ClearBufferSendData_cc3();
+                ClearBufferRecievedDataGlobal_cc3();
+
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    BufferSendData_cc3[i] = decimal.ToByte(arr[i]);
+                }
+
+                open_serial_port_cc3();
+                puertoSerie_cc3.Write(BufferSendData_cc3, 0, 12);
+
+
+                Task.WaitAll(new Task[] { Task.Delay(100) });
+                puertoSerie_cc3.Read(RecievedDataGlobal_cc3, 0, 60);
+
+                int cont = 0;
+                for (int i = 0; i < RecievedDataGlobal_cc3.Length; i++)
+                {
+                    if (RecievedDataGlobal_cc3[i] != 3)
+                    {
+                        cont++;
+
+                    }
+                    else
+                    {
+                        cont++;
+                        break;
+                    }
+
+                }
+
+                if (RecievedDataGlobal_cc3.Length > 0 && cont == 44)
+                {
+                    int var1 = Convert.ToInt32(
+                       ((char)RecievedDataGlobal_cc3[5]).ToString()
+                        +
+                       ((char)RecievedDataGlobal_cc3[6]).ToString()
+                        );
+
+                    //if (RecievedDataGlobal_cc3[9] == '0'
+                    //    && RecievedDataGlobal_cc3[10] == '6')
+                    if (var1 == 93)
+                    {
+                        string msg = "Acumulado";
+                        int cant_subidas = 0;
+                        int cant_bajadas = 0;
+
+                        cant_subidas = Convert.ToInt32(
+                       ((char)RecievedDataGlobal_cc3[9]).ToString()
+                        + ((char)RecievedDataGlobal_cc3[10]).ToString()
+                        + ((char)RecievedDataGlobal_cc3[11]).ToString()
+                        + ((char)RecievedDataGlobal_cc3[12]).ToString()
+                        + ((char)RecievedDataGlobal_cc3[13]).ToString()
+                        + ((char)RecievedDataGlobal_cc3[14]).ToString()
+                        + ((char)RecievedDataGlobal_cc3[15]).ToString()
+                        + ((char)RecievedDataGlobal_cc3[16]).ToString()
+                        );
+
+                        cant_bajadas = Convert.ToInt32(
+                       ((char)RecievedDataGlobal_cc3[17]).ToString()
+                        + ((char)RecievedDataGlobal_cc3[18]).ToString()
+                        + ((char)RecievedDataGlobal_cc3[19]).ToString()
+                        + ((char)RecievedDataGlobal_cc3[20]).ToString()
+                        + ((char)RecievedDataGlobal_cc3[21]).ToString()
+                        + ((char)RecievedDataGlobal_cc3[22]).ToString()
+                        + ((char)RecievedDataGlobal_cc3[23]).ToString()
+                        + ((char)RecievedDataGlobal_cc3[24]).ToString()
+                        );
+                    }
+
+                }
+                else
+                {
+                    MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                bnd_get_acumulado_pasajeros_exitoso = false;
+                MessageBox.Show(ex.Message, "EXCEPTION !!!");
+            }
+
+            return bnd_get_acumulado_pasajeros_exitoso;
+        }
+
+        #endregion
+
+        #region COMANDOS - GPS
+        private void ejecutar_comando_reiniciar_dispositivo_gps()
+        {
+
+
+        }
+        private void ejecutar_comando_5_obtener_posicion_gps()
+        {
+            // REPLY:
+            // Current position!Lat:N22.577092333333333,E113.91651583333332,Course:0.0,Speed:0,DateTime:2019-07-12 10:02:46
+            try
+            {
+                string strComando = "WHERE#";
+
+                open_serial_port_gps();
+                puertoSerie_gps.WriteLine(strComando);
+                Task.WaitAll(new Task[] { Task.Delay(100) });
+                string res = puertoSerie_gps.ReadLine();
+                //string res = "Current position!Lat: N22.577092333333333,E113.91651583333332,Course: 0.0,Speed: 0,DateTime: 2019 - 07 - 12 10:02:46";
+
+                if (res.Length > 0)
+                {
+                    string a = res.Substring(22);
+                    string[] arr_b = a.Split(',');
+                    string lat = arr_b[0].ToString().Trim();
+                    string lng = arr_b[1].ToString().Trim();
+
+                    if (lat.StartsWith("N")) { lat = lat.Replace("N", ""); } else { lat = lat.Replace("S", "-"); }
+                    if (lng.StartsWith("E")) { lng = lng.Replace("E", ""); } else { lng = lng.Replace("W", "-"); }
+
+                    Console.WriteLine(lat);
+                    Console.WriteLine(lng);
+
+                }
+                else
+                {
+                    MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "EXCEPTION");
+            }
+        }
+        #endregion
+
+        #region PUERTO SERIAL - ALCANCIA
+        public void configura_puerto_serial()
+        {
+            try
+            {
+                //ServiceConfigVarios scv = new ServiceConfigVarios();
+                //config_varios cv_port_name = scv.getEntityByClave("PORT_NAME");
+                //config_varios cv_baud_rate = scv.getEntityByClave("BAUD_RATE");
+                //config_varios cv_paridad = scv.getEntityByClave("PARIDAD");
+                //config_varios cv_data_bits = scv.getEntityByClave("DATA_BITS");
+                //config_varios cv_stop_bits = scv.getEntityByClave("STOP_BITS");
+                //config_varios cv_handshake = scv.getEntityByClave("HANDSHAKE");
+
+                ServiceConfigPuertos scp = new ServiceConfigPuertos();
+                ct_config_puertos config_puerto = scp.getEntity(1);
+                string cv_port_name = config_puerto.port_name;
+                string cv_baud_rate = config_puerto.baud_rate;
+                string cv_paridad = config_puerto.paridad;
+                string cv_data_bits = config_puerto.data_bits;
+                string cv_stop_bits = config_puerto.stop_bits;
+                string cv_handshake = config_puerto.handshake;
+
+                if (cv_port_name != "")
+                {
+                    this.puertoSerie_alcancia = new System.IO.Ports.SerialPort
+                    ("" + cv_port_name
+                    , Convert.ToInt32(cv_baud_rate)
+                    , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                    , Convert.ToInt32(cv_data_bits)
+                    , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                    );
+                    puertoSerie_alcancia.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
+            }
+        }
+        private void open_serial_port()
+        {
+            try
+            {
+                if (puertoSerie_alcancia.IsOpen == false)
+                {
+                    puertoSerie_alcancia.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+                configura_puerto_serial();
+
+            }
+        }
+        private void close_serial_port()
+        {
+            if (puertoSerie_alcancia.IsOpen == true)
+            {
+                puertoSerie_alcancia.Close();
+            }
+        }
+
+        #endregion
+
+        #region PUERTO SERIAL - CUENTA COCOS 1
+        void ClearBufferSendData_cc1()
+        {
+            for (int i = 0; i < BufferSendData_cc1.Length; i++)
+            {
+                BufferSendData_cc1[i] = 0;
+            }
+        }
+        void ClearBufferRecievedDataGlobal_cc1()
+        {
+            for (int i = 0; i < RecievedDataGlobal_cc1.Length; i++)
+            {
+                RecievedDataGlobal_cc1[i] = 0;
+            }
+        }
+        public void configura_puerto_serial_cc1()
+        {
+            try
+            {
+                ServiceConfigPuertos scp = new ServiceConfigPuertos();
+                ct_config_puertos config_puerto = scp.getEntity(2);
+                string cv_port_name = config_puerto.port_name;
+                string cv_baud_rate = config_puerto.baud_rate;
+                string cv_paridad = config_puerto.paridad;
+                string cv_data_bits = config_puerto.data_bits;
+                string cv_stop_bits = config_puerto.stop_bits;
+                string cv_handshake = config_puerto.handshake;
+
+                if (cv_port_name != "")
+                {
+                    this.puertoSerie_cc1 = new System.IO.Ports.SerialPort
+                    ("" + cv_port_name
+                    , Convert.ToInt32(cv_baud_rate)
+                    , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                    , Convert.ToInt32(cv_data_bits)
+                    , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                    );
+                    puertoSerie_cc1.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+
+                    close_serial_port_cc1();
+                    open_serial_port_cc1(); //EMD 2024-05-06
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
+            }
+        }
+        private void open_serial_port_cc1()
+        {
+            try
+            {
+                if (puertoSerie_cc1.IsOpen == false)
+                {
+                    puertoSerie_cc1.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void close_serial_port_cc1()
+        {
+            if (puertoSerie_cc1.IsOpen == true)
+            {
+                puertoSerie_cc1.Close();
+            }
+        }
+        private void dispose_serial_port_cc1()
+        {
+            if (puertoSerie_cc1.IsOpen == false)
+            {
+                puertoSerie_cc1.Dispose();
+            }
+        }
+        #endregion
+
+        #region PUERTO SERIAL - CUENTA COCOS 2
+        void ClearBufferSendData_cc2()
+        {
+            for (int i = 0; i < BufferSendData_cc2.Length; i++)
+            {
+                BufferSendData_cc2[i] = 0;
+            }
+        }
+        void ClearBufferRecievedDataGlobal_cc2()
+        {
+            for (int i = 0; i < RecievedDataGlobal_cc2.Length; i++)
+            {
+                RecievedDataGlobal_cc2[i] = 0;
+            }
+        }
+        public void configura_puerto_serial_cc2()
+        {
+            try
+            {
+                ServiceConfigPuertos scp = new ServiceConfigPuertos();
+                ct_config_puertos config_puerto = scp.getEntity(3);
+                string cv_port_name = config_puerto.port_name;
+                string cv_baud_rate = config_puerto.baud_rate;
+                string cv_paridad = config_puerto.paridad;
+                string cv_data_bits = config_puerto.data_bits;
+                string cv_stop_bits = config_puerto.stop_bits;
+                string cv_handshake = config_puerto.handshake;
+
+                if (cv_port_name != "")
+                {
+                    this.puertoSerie_cc2 = new System.IO.Ports.SerialPort
+                    ("" + cv_port_name
+                    , Convert.ToInt32(cv_baud_rate)
+                    , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                    , Convert.ToInt32(cv_data_bits)
+                    , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                    );
+                    puertoSerie_cc2.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+
+                    close_serial_port_cc2();
+                    open_serial_port_cc2(); //EMD 2024-05-06
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
+            }
+        }
+        private void open_serial_port_cc2()
+        {
+            try
+            {
+                if (puertoSerie_cc2.IsOpen == false)
+                {
+                    puertoSerie_cc2.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void close_serial_port_cc2()
+        {
+            if (puertoSerie_cc2.IsOpen == true)
+            {
+                puertoSerie_cc2.Close();
+            }
+        }
+        private void dispose_serial_port_cc2()
+        {
+            if (puertoSerie_cc2.IsOpen == false)
+            {
+                puertoSerie_cc2.Dispose();
+            }
+        }
+        #endregion
+
+        #region PUERTO SERIAL - CUENTA COCOS 3
+        void ClearBufferSendData_cc3()
+        {
+            for (int i = 0; i < BufferSendData_cc3.Length; i++)
+            {
+                BufferSendData_cc3[i] = 0;
+            }
+        }
+        void ClearBufferRecievedDataGlobal_cc3()
+        {
+            for (int i = 0; i < RecievedDataGlobal_cc3.Length; i++)
+            {
+                RecievedDataGlobal_cc3[i] = 0;
+            }
+        }
+        public void configura_puerto_serial_cc3()
+        {
+            try
+            {
+                ServiceConfigPuertos scp = new ServiceConfigPuertos();
+                ct_config_puertos config_puerto = scp.getEntity(4);
+                string cv_port_name = config_puerto.port_name;
+                string cv_baud_rate = config_puerto.baud_rate;
+                string cv_paridad = config_puerto.paridad;
+                string cv_data_bits = config_puerto.data_bits;
+                string cv_stop_bits = config_puerto.stop_bits;
+                string cv_handshake = config_puerto.handshake;
+
+                if (cv_port_name != "")
+                {
+                    this.puertoSerie_cc3 = new System.IO.Ports.SerialPort
+                    ("" + cv_port_name
+                    , Convert.ToInt32(cv_baud_rate)
+                    , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                    , Convert.ToInt32(cv_data_bits)
+                    , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                    );
+                    puertoSerie_cc3.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+
+                    close_serial_port_cc3();
+                    open_serial_port_cc3(); //EMD 2024-05-06
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
+            }
+        }
+        private void open_serial_port_cc3()
+        {
+            try
+            {
+                if (puertoSerie_cc3.IsOpen == false)
+                {
+                    puertoSerie_cc3.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void close_serial_port_cc3()
+        {
+            if (puertoSerie_cc3.IsOpen == true)
+            {
+                puertoSerie_cc3.Close();
+            }
+        }
+        private void dispose_serial_port_cc3()
+        {
+            if (puertoSerie_cc3.IsOpen == false)
+            {
+                puertoSerie_cc3.Dispose();
+            }
+        }
+        #endregion
+
+        #region PUERTO SERIAL - GPS
+        void ClearBufferSendData_gps()
+        {
+            for (int i = 0; i < BufferSendData_gps.Length; i++)
+            {
+                BufferSendData_gps[i] = 0;
+            }
+        }
+        void ClearBufferRecievedDataGlobal_gps()
+        {
+            for (int i = 0; i < RecievedDataGlobal_gps.Length; i++)
+            {
+                RecievedDataGlobal_gps[i] = 0;
+            }
+        }
+        public void configura_puerto_serial_gps()
+        {
+            try
+            {
+                ServiceConfigPuertos scp = new ServiceConfigPuertos();
+                ct_config_puertos config_puerto = scp.getEntity(2);
+                string cv_port_name = config_puerto.port_name;
+                string cv_baud_rate = config_puerto.baud_rate;
+                string cv_paridad = config_puerto.paridad;
+                string cv_data_bits = config_puerto.data_bits;
+                string cv_stop_bits = config_puerto.stop_bits;
+                string cv_handshake = config_puerto.handshake;
+
+                if (cv_port_name != "")
+                {
+                    this.puertoSerie_gps = new System.IO.Ports.SerialPort
+                    ("" + cv_port_name
+                    , Convert.ToInt32(cv_baud_rate)
+                    , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                    , Convert.ToInt32(cv_data_bits)
+                    , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                    );
+                    puertoSerie_gps.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+
+                    close_serial_port_gps();
+                    open_serial_port_gps(); //EMD 2024-05-06
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
+            }
+        }
+        private void open_serial_port_gps()
+        {
+            try
+            {
+                if (puertoSerie_gps.IsOpen == false)
+                {
+                    puertoSerie_gps.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void close_serial_port_gps()
+        {
+            if (puertoSerie_gps.IsOpen == true)
+            {
+                puertoSerie_gps.Close();
+            }
+        }
+        private void dispose_serial_port_gps()
+        {
+            if (puertoSerie_gps.IsOpen == false)
+            {
+                puertoSerie_gps.Dispose();
+            }
+        }
+        #endregion
     }
 }

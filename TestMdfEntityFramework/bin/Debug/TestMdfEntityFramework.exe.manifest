@@ -162,24 +162,24 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="TestMdfEntityFramework.exe" size="3188208">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="TestMdfEntityFramework.exe" size="3196400">
       <assemblyIdentity name="TestMdfEntityFramework" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>O0lLQfpSfsDMhu/xd05W8x0yNWFed8+j3SIaM5UoC9o=</dsig:DigestValue>
+        <dsig:DigestValue>jNHq2khCGsWX74siHUtAwpUvJvYK5+kf93sxonCbvTM=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="bin\Debug\app.publish\TestMdfEntityFramework.exe" size="3188208">
+  <file name="bin\Debug\app.publish\TestMdfEntityFramework.exe" size="3196400">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>O0lLQfpSfsDMhu/xd05W8x0yNWFed8+j3SIaM5UoC9o=</dsig:DigestValue>
+      <dsig:DigestValue>jNHq2khCGsWX74siHUtAwpUvJvYK5+kf93sxonCbvTM=</dsig:DigestValue>
     </hash>
   </file>
   <file name="dbModel.Context.tt" size="22931">
