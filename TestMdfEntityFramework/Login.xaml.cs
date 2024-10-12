@@ -691,8 +691,8 @@ namespace TestMdfEntityFramework
                 //Cambia la imagen de conexion internet.
                 Cambia_Imagen_Evalua_Conexion_Internet();
 
-                //Cambia la imagen de conexion serial.
-                Cambia_Imagen_Evalua_Conexion_Puerto_Serial();
+                ////Cambia la imagen de conexion serial.
+                //Cambia_Imagen_Evalua_Conexion_Puerto_Serial();
 
             }
             catch (Exception ex)
@@ -724,25 +724,30 @@ namespace TestMdfEntityFramework
                 //config_varios cv_handshake = scv.getEntityByClave("HANDSHAKE");
 
                 ServiceConfigPuertos scp = new ServiceConfigPuertos();
-                ct_config_puertos config_puerto = scp.getEntity(1);
-                string cv_port_name = config_puerto.port_name;
-                string cv_baud_rate = config_puerto.baud_rate;
-                string cv_paridad = config_puerto.paridad;
-                string cv_data_bits = config_puerto.data_bits;
-                string cv_stop_bits = config_puerto.stop_bits;
-                string cv_handshake = config_puerto.handshake;
-
-                if (cv_port_name != "")
+                ct_config_puertos config_puerto = scp.getEntityByNombreDispositivo("ALCANCIA");
+                if(config_puerto != null)
                 {
-                    this.puertoSerie1 = new System.IO.Ports.SerialPort
-                    ("" + cv_port_name
-                    , Convert.ToInt32(cv_baud_rate)
-                    , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
-                    , Convert.ToInt32(cv_data_bits)
-                    , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
-                    );
-                    puertoSerie1.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+                    string cv_port_name = config_puerto.port_name;
+                    string cv_baud_rate = config_puerto.baud_rate;
+                    string cv_paridad = config_puerto.paridad;
+                    string cv_data_bits = config_puerto.data_bits;
+                    string cv_stop_bits = config_puerto.stop_bits;
+                    string cv_handshake = config_puerto.handshake;
+
+                    if (cv_port_name != "")
+                    {
+                        this.puertoSerie1 = new System.IO.Ports.SerialPort
+                        ("" + cv_port_name
+                        , Convert.ToInt32(cv_baud_rate)
+                        , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                        , Convert.ToInt32(cv_data_bits)
+                        , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                        );
+                        puertoSerie1.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+                    }
+
                 }
+                
             }
             catch
             {
@@ -760,7 +765,7 @@ namespace TestMdfEntityFramework
             }
             catch (Exception ex)
             {
-                configura_puerto_serial();
+                //configura_puerto_serial();
 
             }
         }

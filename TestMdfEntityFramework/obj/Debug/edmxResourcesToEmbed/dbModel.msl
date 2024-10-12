@@ -495,5 +495,47 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="sy_conteo_cuenta_cocos">
+      <EntityTypeMapping TypeName="databaseModel.sy_conteo_cuenta_cocos">
+        <MappingFragment StoreEntitySet="sy_conteo_cuenta_cocos">
+          <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+          <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+          <ScalarProperty Name="modo" ColumnName="modo" />
+          <ScalarProperty Name="confirmado" ColumnName="confirmado" />
+          <ScalarProperty Name="enviado" ColumnName="enviado" />
+          <ScalarProperty Name="fecha_hora" ColumnName="fecha_hora" />
+          <ScalarProperty Name="cc3_bajadas" ColumnName="cc3_bajadas" />
+          <ScalarProperty Name="cc3_subidas" ColumnName="cc3_subidas" />
+          <ScalarProperty Name="cc2_bajadas" ColumnName="cc2_bajadas" />
+          <ScalarProperty Name="cc2_subidas" ColumnName="cc2_subidas" />
+          <ScalarProperty Name="cc1_bajadas" ColumnName="cc1_bajadas" />
+          <ScalarProperty Name="cc1_subidas" ColumnName="cc1_subidas" />
+          <ScalarProperty Name="fkStatus" ColumnName="fkStatus" />
+          <ScalarProperty Name="fkAsignacion" ColumnName="fkAsignacion" />
+          <ScalarProperty Name="pkConteoCuentaCocosTISA" ColumnName="pkConteoCuentaCocosTISA" />
+          <ScalarProperty Name="pkConteoCuentaCocos" ColumnName="pkConteoCuentaCocos" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="sy_posicion_gps">
+      <EntityTypeMapping TypeName="databaseModel.sy_posicion_gps">
+        <MappingFragment StoreEntitySet="sy_posicion_gps">
+          <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+          <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+          <ScalarProperty Name="modo" ColumnName="modo" />
+          <ScalarProperty Name="confirmado" ColumnName="confirmado" />
+          <ScalarProperty Name="enviado" ColumnName="enviado" />
+          <ScalarProperty Name="fecha_hora" ColumnName="fecha_hora" />
+          <ScalarProperty Name="lng" ColumnName="lng" />
+          <ScalarProperty Name="lat" ColumnName="lat" />
+          <ScalarProperty Name="fkStatus" ColumnName="fkStatus" />
+          <ScalarProperty Name="fkAsignacion" ColumnName="fkAsignacion" />
+          <ScalarProperty Name="pkPosicionGPSTISA" ColumnName="pkPosicionGPSTISA" />
+          <ScalarProperty Name="pkPosicionGPS" ColumnName="pkPosicionGPS" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>

@@ -343,6 +343,28 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_taqui
           <Property Name="updated_at" Type="nvarchar" MaxLength="30" />
           <Property Name="deleted_at" Type="nvarchar" MaxLength="30" />
         </EntityType>
+        <EntityType Name="sy_conteo_cuenta_cocos">
+          <Key>
+            <PropertyRef Name="pkConteoCuentaCocos" />
+          </Key>
+          <Property Name="pkConteoCuentaCocos" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="pkConteoCuentaCocosTISA" Type="bigint" />
+          <Property Name="fkAsignacion" Type="bigint" />
+          <Property Name="fkStatus" Type="bigint" />
+          <Property Name="cc1_subidas" Type="bigint" />
+          <Property Name="cc1_bajadas" Type="bigint" />
+          <Property Name="cc2_subidas" Type="bigint" />
+          <Property Name="cc2_bajadas" Type="bigint" />
+          <Property Name="cc3_subidas" Type="bigint" />
+          <Property Name="cc3_bajadas" Type="bigint" />
+          <Property Name="fecha_hora" Type="nvarchar" MaxLength="30" />
+          <Property Name="enviado" Type="int" />
+          <Property Name="confirmado" Type="int" />
+          <Property Name="modo" Type="int" />
+          <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+          <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+          <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="sy_cortes">
           <Key>
             <PropertyRef Name="pkCorte" />
@@ -426,6 +448,24 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_taqui
           <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
           <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="sy_posicion_gps">
+          <Key>
+            <PropertyRef Name="pkPosicionGPS" />
+          </Key>
+          <Property Name="pkPosicionGPS" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="pkPosicionGPSTISA" Type="bigint" />
+          <Property Name="fkAsignacion" Type="bigint" />
+          <Property Name="fkStatus" Type="bigint" />
+          <Property Name="lat" Type="nvarchar" MaxLength="50" />
+          <Property Name="lng" Type="nvarchar" MaxLength="50" />
+          <Property Name="fecha_hora" Type="nvarchar" MaxLength="30" />
+          <Property Name="enviado" Type="int" />
+          <Property Name="confirmado" Type="int" />
+          <Property Name="modo" Type="int" />
+          <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+          <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+          <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+        </EntityType>
         <!--Errores durante la generación:
 advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_status' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="sy_status">
@@ -501,10 +541,12 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="sy_boletos" EntityType="Self.sy_boletos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_boletos_detalle" EntityType="Self.sy_boletos_detalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_boletos_tarifa_fija" EntityType="Self.sy_boletos_tarifa_fija" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sy_conteo_cuenta_cocos" EntityType="Self.sy_conteo_cuenta_cocos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_cortes" EntityType="Self.sy_cortes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_empresa_corredor_operador" EntityType="Self.sy_empresa_corredor_operador" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_lugar_ruta" EntityType="Self.sy_lugar_ruta" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_mensajes" EntityType="Self.sy_mensajes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sy_posicion_gps" EntityType="Self.sy_posicion_gps" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_tarifas" EntityType="Self.sy_tarifas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sy_ubicacion" EntityType="Self.sy_ubicacion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="users" EntityType="Self.users" Schema="dbo" store:Type="Tables" />
@@ -587,6 +629,8 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <EntitySet Name="ct_rutas" EntityType="databaseModel.ct_rutas" />
           <EntitySet Name="ct_unidades" EntityType="databaseModel.ct_unidades" />
           <EntitySet Name="ct_config_puertos" EntityType="databaseModel.ct_config_puertos" />
+          <EntitySet Name="sy_conteo_cuenta_cocos" EntityType="databaseModel.sy_conteo_cuenta_cocos" />
+          <EntitySet Name="sy_posicion_gps" EntityType="databaseModel.sy_posicion_gps" />
         </EntityContainer>
         <EntityType Name="config_varios">
           <Key>
@@ -1055,6 +1099,46 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
           <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="sy_conteo_cuenta_cocos">
+          <Key>
+            <PropertyRef Name="pkConteoCuentaCocos" />
+          </Key>
+          <Property Name="pkConteoCuentaCocos" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="pkConteoCuentaCocosTISA" Type="Int64" />
+          <Property Name="fkAsignacion" Type="Int64" />
+          <Property Name="fkStatus" Type="Int64" />
+          <Property Name="cc1_subidas" Type="Int64" />
+          <Property Name="cc1_bajadas" Type="Int64" />
+          <Property Name="cc2_subidas" Type="Int64" />
+          <Property Name="cc2_bajadas" Type="Int64" />
+          <Property Name="cc3_subidas" Type="Int64" />
+          <Property Name="cc3_bajadas" Type="Int64" />
+          <Property Name="fecha_hora" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="enviado" Type="Int32" />
+          <Property Name="confirmado" Type="Int32" />
+          <Property Name="modo" Type="Int32" />
+          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="sy_posicion_gps">
+          <Key>
+            <PropertyRef Name="pkPosicionGPS" />
+          </Key>
+          <Property Name="pkPosicionGPS" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="pkPosicionGPSTISA" Type="Int64" />
+          <Property Name="fkAsignacion" Type="Int64" />
+          <Property Name="fkStatus" Type="Int64" />
+          <Property Name="lat" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="lng" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="fecha_hora" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="enviado" Type="Int32" />
+          <Property Name="confirmado" Type="Int32" />
+          <Property Name="modo" Type="Int32" />
+          <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1553,6 +1637,48 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
                 <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="nombre_dispositivo" ColumnName="nombre_dispositivo" />
                 <ScalarProperty Name="pkConfigPuerto" ColumnName="pkConfigPuerto" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sy_conteo_cuenta_cocos">
+            <EntityTypeMapping TypeName="databaseModel.sy_conteo_cuenta_cocos">
+              <MappingFragment StoreEntitySet="sy_conteo_cuenta_cocos">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="modo" ColumnName="modo" />
+                <ScalarProperty Name="confirmado" ColumnName="confirmado" />
+                <ScalarProperty Name="enviado" ColumnName="enviado" />
+                <ScalarProperty Name="fecha_hora" ColumnName="fecha_hora" />
+                <ScalarProperty Name="cc3_bajadas" ColumnName="cc3_bajadas" />
+                <ScalarProperty Name="cc3_subidas" ColumnName="cc3_subidas" />
+                <ScalarProperty Name="cc2_bajadas" ColumnName="cc2_bajadas" />
+                <ScalarProperty Name="cc2_subidas" ColumnName="cc2_subidas" />
+                <ScalarProperty Name="cc1_bajadas" ColumnName="cc1_bajadas" />
+                <ScalarProperty Name="cc1_subidas" ColumnName="cc1_subidas" />
+                <ScalarProperty Name="fkStatus" ColumnName="fkStatus" />
+                <ScalarProperty Name="fkAsignacion" ColumnName="fkAsignacion" />
+                <ScalarProperty Name="pkConteoCuentaCocosTISA" ColumnName="pkConteoCuentaCocosTISA" />
+                <ScalarProperty Name="pkConteoCuentaCocos" ColumnName="pkConteoCuentaCocos" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sy_posicion_gps">
+            <EntityTypeMapping TypeName="databaseModel.sy_posicion_gps">
+              <MappingFragment StoreEntitySet="sy_posicion_gps">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="modo" ColumnName="modo" />
+                <ScalarProperty Name="confirmado" ColumnName="confirmado" />
+                <ScalarProperty Name="enviado" ColumnName="enviado" />
+                <ScalarProperty Name="fecha_hora" ColumnName="fecha_hora" />
+                <ScalarProperty Name="lng" ColumnName="lng" />
+                <ScalarProperty Name="lat" ColumnName="lat" />
+                <ScalarProperty Name="fkStatus" ColumnName="fkStatus" />
+                <ScalarProperty Name="fkAsignacion" ColumnName="fkAsignacion" />
+                <ScalarProperty Name="pkPosicionGPSTISA" ColumnName="pkPosicionGPSTISA" />
+                <ScalarProperty Name="pkPosicionGPS" ColumnName="pkPosicionGPS" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

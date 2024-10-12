@@ -21,6 +21,7 @@ namespace TestMdfEntityFramework
     /// <summary>
     /// Lógica de interacción para Principal.xaml
     /// </summary>
+    [System.Runtime.InteropServices.Guid("7BFFA413-A96F-422C-83F9-5D466749E0FB")]
     public partial class Principal : Window
     {
         public static string ASIGNACION_ACTIVA = "";
@@ -31,14 +32,8 @@ namespace TestMdfEntityFramework
         System.IO.Ports.SerialPort puertoSerie_alcancia = new System.IO.Ports.SerialPort();
         String[] listado_puerto = System.IO.Ports.SerialPort.GetPortNames();
 
-        //SERIAL PORT - CC1
-        System.IO.Ports.SerialPort puertoSerie_cc1 = new System.IO.Ports.SerialPort();
-
-        //SERIAL PORT - CC2
-        System.IO.Ports.SerialPort puertoSerie_cc2 = new System.IO.Ports.SerialPort();
-
-        //SERIAL PORT - CC3
-        System.IO.Ports.SerialPort puertoSerie_cc3 = new System.IO.Ports.SerialPort();
+        //SERIAL PORT - CUENTA COCOS
+        System.IO.Ports.SerialPort puertoSerie_cuenta_cocos = new System.IO.Ports.SerialPort();
 
         //SERIAL PORT - GPS
         System.IO.Ports.SerialPort puertoSerie_gps = new System.IO.Ports.SerialPort();
@@ -49,17 +44,9 @@ namespace TestMdfEntityFramework
         byte[] BufferSendData = new byte[80];
         byte[] RecievedDataGlobal = new byte[80];
 
-        //BUFFERS SEND AND RECIEVED - CC1
-        byte[] BufferSendData_cc1 = new byte[80];
-        byte[] RecievedDataGlobal_cc1 = new byte[80];
-
-        //BUFFERS SEND AND RECIEVED - CC2
-        byte[] BufferSendData_cc2 = new byte[80];
-        byte[] RecievedDataGlobal_cc2 = new byte[80];
-
-        //BUFFERS SEND AND RECIEVED - CC3
-        byte[] BufferSendData_cc3 = new byte[80];
-        byte[] RecievedDataGlobal_cc3 = new byte[80];
+        //BUFFERS SEND AND RECIEVED - CUENTA COCOS
+        byte[] BufferSendData_cuenta_cocos = new byte[80];
+        byte[] RecievedDataGlobal_cuenta_cocos = new byte[80];
 
         //BUFFERS SEND AND RECIEVED - GPS
         byte[] BufferSendData_gps = new byte[80];
@@ -69,15 +56,17 @@ namespace TestMdfEntityFramework
         DispatcherTimer timerReloj = new DispatcherTimer();
         DispatcherTimer timerEvaluaMensajes = new DispatcherTimer();
         DispatcherTimer timerSincroniza = new DispatcherTimer();
+        DispatcherTimer timerCuentaCocos = new DispatcherTimer();
+        DispatcherTimer timerPosicionGPS = new DispatcherTimer();
 
         public Principal()
         {
             InitializeComponent();
             btnInicio_Click(null, null);
-            
+
             cargar_logo_aplicacion();
 
-            
+
         }
 
         #region TIMERS
@@ -102,12 +91,38 @@ namespace TestMdfEntityFramework
             timerSincroniza.Interval = new TimeSpan(0, 1, 0);
             timerSincroniza.Start();
         }
+        private void inicializa_timer_cuentacocos()
+        {
+            // INICIA TIMER QUE ESTARA ACTUALIZANDO EL VALOR DE ESTATUS
+            timerCuentaCocos.Tick += new EventHandler(dispatcherTimerCuentaCocos_Tick);
+            timerCuentaCocos.Interval = new TimeSpan(0, 0, 10);
+            timerCuentaCocos.Start();
+        }
+        private void inicializa_timer_posicion_gps()
+        {
+            // INICIA TIMER QUE ESTARA ACTUALIZANDO EL VALOR DE ESTATUS
+            timerPosicionGPS.Tick += new EventHandler(dispatcherTimerPosicionGPS_Tick);
+            timerPosicionGPS.Interval = new TimeSpan(0, 0, 3);
+            timerPosicionGPS.Start();
+
+           
+            
+        }
+
         private void dispatcherTimerReloj_Tick(object sender, EventArgs e)
         {
             try
             {
                 lblFecha.Text = DateTime.Now.ToString("dd/MM/yyyy");
                 lblReloj.Text = DateTime.Now.ToString("hh:mm:ss tt");
+
+                if (txtAsignacionActivaActual.Text == "")
+                {
+                    ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+                    config_varios cv_asign = serv_config_varios.getEntityByClave("ASIGNACION_ACTIVA");
+                    ASIGNACION_ACTIVA = cv_asign.valor.ToString().Trim();
+                    txtAsignacionActivaActual.Text = ASIGNACION_ACTIVA;
+                }
             }
             catch (Exception ex)
             {
@@ -131,17 +146,24 @@ namespace TestMdfEntityFramework
                 //Cambia la imagen de conexion en caso de haber o no conexion a internet
                 Cambia_Imagen_Evalua_Conexion_Internet();
 
-                //Cambia la imagen de conexion serial en caso de haber o no conexion a la alcancia.
-                Cambia_Imagen_Evalua_Conexion_Puerto_Serial();
+                //Cambia la imagen de conexion serial ALCANCIA en caso de haber o no conexion a la ALCANCIA.
+                Cambia_Imagen_Evalua_Conexion_Puerto_Serial_Alcancia();
 
-                //Envio de la ubicacion actual de la unidad en latitud y longitud
-                ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
-                config_varios cv_ubicacion = serv_conf_varios.getEntityByClave("UBICACION_ACTIVA");
-                if(cv_ubicacion.valor == "HABILITADO")
-                {
-                    Sincronizar_Ubicacion();
-                }
-                
+                //Cambia la imagen de conexion serial CUENTA COCOS en caso de haber o no conexion a la CUENTA COCOS.
+                Cambia_Imagen_Evalua_Conexion_Puerto_Serial_CuentaCocos();
+
+                //Cambia la imagen de conexion serial GPS en caso de haber o no conexion al GPS
+                Cambia_Imagen_Evalua_Conexion_Puerto_Serial_GPS();
+
+
+                ////Envio de la ubicacion actual de la unidad en latitud y longitud
+                //ServiceConfigVarios serv_conf_varios = new ServiceConfigVarios();
+                //config_varios cv_ubicacion = serv_conf_varios.getEntityByClave("UBICACION_ACTIVA");
+                //if (cv_ubicacion.valor == "HABILITADO")
+                //{
+                //    Sincronizar_Ubicacion();
+                //}
+
             }
             catch (Exception ex)
             {
@@ -166,11 +188,52 @@ namespace TestMdfEntityFramework
                 MessageBox.Show(ex.Message, "EXCEPTION !!!");
             }
         }
+        private void dispatcherTimerCuentaCocos_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                // Ejecutar Comandos para Obtener Info Cuenta Cocos
+                // y Guarda en local la info de cuenta cocos
+                Guardar_Cuenta_Cocos_DB_Local();
+
+                Task.WaitAll(new Task[] { Task.Delay(200) });
+
+                //Envia los pendientes por enviar hacia TISA.
+                // Cuenta Cocos
+                SincronizacionTISA.SincronizaConteoCuentaCocos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "EXCEPTION !!!");
+            }
+        }
+        private void dispatcherTimerPosicionGPS_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                // Ejecutar Comandos para Obtener Info Cuenta Cocos
+                // y Guarda en local la info de cuenta cocos
+                Guardar_Posicion_GPS_DB_Local();
+
+                Task.WaitAll(new Task[] { Task.Delay(200) });
+
+                //Envia los pendientes por enviar hacia TISA.
+                // Posicion GPS
+                SincronizacionTISA.SincronizaPosicionGPS();
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show(ex.InnerException.ToString().Trim(), "EXCEPTION !!!");
+            }
+        }
+
         private void detiene_timers()
         {
             timerReloj.IsEnabled = false;
             timerEvaluaMensajes.IsEnabled = false;
             timerSincroniza.IsEnabled = false;
+            timerCuentaCocos.IsEnabled = false;
+            timerPosicionGPS.IsEnabled = false;
         }
 
         #endregion
@@ -178,15 +241,42 @@ namespace TestMdfEntityFramework
         #region EVENTOS CONTROLES
         private void Principal_OnLoad(object sender, RoutedEventArgs e)
         {
-            //configura_puerto_serial_cc1();
-            //configura_puerto_serial_cc2();
-            //configura_puerto_serial_cc3();
+            ServiceConfigVarios scv = new ServiceConfigVarios();
 
-            configura_puerto_serial_gps();
+            config_varios config_alcancia_activa = scv.getEntityByClave("ALCANCIA_ACTIVA");
+            config_varios config_cc1_activo = scv.getEntityByClave("CC1_ACTIVO");
+            config_varios config_cc2_activo = scv.getEntityByClave("CC2_ACTIVO");
+            config_varios config_cc3_activo = scv.getEntityByClave("CC3_ACTIVO");
+            config_varios config_gps_activo = scv.getEntityByClave("UBICACION_ACTIVA");
+
+
+            if (config_alcancia_activa.valor == "HABILITADO")
+            {
+                configura_puerto_serial();
+            }
+
+            if (config_cc1_activo.valor == "HABILITADO" || config_cc2_activo.valor == "HABILITADO" || config_cc3_activo.valor == "HABILITADO")
+            {
+                configura_puerto_serial_cuenta_cocos();
+                inicializa_timer_cuentacocos();
+            }
+
+            if (config_gps_activo.valor == "HABILITADO")
+            {
+                configura_puerto_serial_gps();
+                inicializa_timer_posicion_gps();
+
+                //RESET TO DEFAULT MANUFACTURED
+                //reset_to_default_manufactured();
+
+
+                settings_params_gps();
+            }
 
             inicializa_timer_reloj();
             inicializa_timer_evalua_mensajes();
             inicializa_timer_sincroniza();
+            
 
             Comun comun = new Comun();
             if (comun.HayConexionInternet())
@@ -195,7 +285,7 @@ namespace TestMdfEntityFramework
                 SincronizarConfiguraciones();
                 SincronizaOperacionConsola();
             }
-            
+
             SetearVersionYCopyright();
 
             //OBTENER CONFIGURACIONES VARIAS DEL SISTEMA Y OPERACION ACTUAL
@@ -214,17 +304,20 @@ namespace TestMdfEntityFramework
             //Validar Tipo Usuario Logueado, para mostrar o ocultar la opcion de Configuracion del Menu
             validar_tipo_usuario();
 
+            txtUsuarioActivo.Text = "Usuario: " + setUsuarioActivoLblPrincipal();
+            txtAsignacionActivaActual.Text = ASIGNACION_ACTIVA.ToString().Trim();
+
 
         }
         private void Principal_OnUnLoad(object sender, RoutedEventArgs e)
         {
             LimpiarUsuarioActualLogueado();
-
             detiene_timers();
-
             LimpiarAsignacionActual();
 
-            
+
+            close_serial_port_cuenta_cocos(); /// 2024-09-19 EMD
+            close_serial_port_gps();
 
             ////////////////////////////////////////////////////////////////////////
             // ESTAS TAREAS SE DETENDRAN AL SALIR DEL FORMULARIO.
@@ -275,41 +368,63 @@ namespace TestMdfEntityFramework
         }
         private void btnCobroTarifa_Click(object sender, RoutedEventArgs e)
         {
-            if (HayAsignacionActiva())
+            ServiceConfigVarios serv_cv = new ServiceConfigVarios();
+            config_varios config_varios_alcancia = serv_cv.getEntityByClave("ALCANCIA_ACTIVA");
+            if(config_varios_alcancia.valor == "HABILITADO")
             {
-                ServiceConfigVarios scv = new ServiceConfigVarios();
-                config_varios cv = scv.getEntityByClave("TIPO_TARIFA");
-
-                if (cv != null)
+                if (HayAsignacionActiva())
                 {
-                    if (cv.valor == "FIJA")
+                    ServiceConfigVarios scv = new ServiceConfigVarios();
+                    config_varios cv = scv.getEntityByClave("TIPO_TARIFA");
+
+                    if (cv != null)
                     {
-                        DataContext = new CobroTarifaFija();
+                        if (cv.valor == "FIJA")
+                        {
+                            DataContext = new CobroTarifaFija();
+                        }
+                        if (cv.valor == "MULTITARIFA_IMG")
+                        {
+                            DataContext = new CobroMultitarifaV1();
+                        }
+                        if (cv.valor == "MULTITARIFA")
+                        {
+                            DataContext = new CobroMultitarifaV2();
+                        }
+                        if (cv.valor == "FIJA_DINAMICA")
+                        {
+                            DataContext = new CobroTarifaFijaBotones();
+                        }
                     }
-                    if (cv.valor == "MULTITARIFA")
-                    {
-                        DataContext = new CobroMultitarifaV1();
-                    }
-                    if (cv.valor == "FIJA_DINAMICA")
-                    {
-                        DataContext = new CobroTarifaFijaBotones();
-                    }
+                }
+                else
+                {
+                    MessageBox.Show("FAVOR DE SELECCIONAR UNA ASIGNACION ANTES DE OPERAR LA UNIDAD DE TRANSPORTE");
                 }
             }
             else
             {
-                MessageBox.Show("FAVOR DE SELECCIONAR UNA ASIGNACION ANTES DE OPERAR LA UNIDAD DE TRANSPORTE");
-            } 
+                MessageBox.Show("NO ESTA HABILITADA LA ALCANCIA, FAVOR DE CONFIGURAR EL PUERTO COM CORRESPONDIENTE Y HABILITARLA");
+            }
         }
         private void btnReportes_Click(object sender, RoutedEventArgs e)
         {
-            if (HayAsignacionActiva())
+            ServiceConfigVarios serv_cv = new ServiceConfigVarios();
+            config_varios config_varios_alcancia = serv_cv.getEntityByClave("ALCANCIA_ACTIVA");
+            if (config_varios_alcancia.valor == "HABILITADO")
             {
-                DataContext = new Reportes();
+                if (HayAsignacionActiva())
+                {
+                    DataContext = new Reportes();
+                }
+                else
+                {
+                    MessageBox.Show("FAVOR DE SELECCIONAR UNA ASIGNACION ANTES DE OPERAR LA UNIDAD DE TRANSPORTE");
+                }
             }
             else
             {
-                MessageBox.Show("FAVOR DE SELECCIONAR UNA ASIGNACION ANTES DE OPERAR LA UNIDAD DE TRANSPORTE");
+                MessageBox.Show("NO ESTA HABILITADA LA ALCANCIA, FAVOR DE CONFIGURAR EL PUERTO COM CORRESPONDIENTE Y HABILITARLA");
             }
         }
         private void btnResetPortName_Click(object sender, RoutedEventArgs e)
@@ -326,7 +441,17 @@ namespace TestMdfEntityFramework
             //    serv_config_varios.updEntityByClave(cv_port_name);
             //}
 
-            ejecutar_comando_5_obtener_posicion_gps();
+            //ejecutar_comando_5_obtener_posicion_gps();
+
+            //if(FK_ASIGNACION_ACTIVA != 0)
+            //{
+            //    Guardar_Cuenta_Cocos_DB_Local();
+            //    SincronizacionTISA.SincronizaConteoCuentaCocos();
+            //}
+
+
+
+
         }
         private void btnLogout_Click(object sender, RoutedEventArgs e)
         {
@@ -362,6 +487,17 @@ namespace TestMdfEntityFramework
             }
         }
 
+        private string setUsuarioActivoLblPrincipal()
+        {
+            ServiceConfigVarios serv_config_varios_user = new ServiceConfigVarios();
+            config_varios cv_user = serv_config_varios_user.getEntityByClave("USUARIO_ACTUAL");
+
+            ServiceComun_Usuarios serv_usuarios = new ServiceComun_Usuarios();
+            ct_usuarios obj_usuario_actual = serv_usuarios.getEntityByUser(cv_user.valor);
+
+            return obj_usuario_actual.usuario;
+
+        }
         #endregion
 
         #region METODOS SINCRONIZA CATALOGOS TISA -> CONSOLA
@@ -737,11 +873,11 @@ namespace TestMdfEntityFramework
             config_varios cv_nombre_unidad = serv_config_varios.getEntityByClave("NUMERO_UNIDAD");
             ServiceUnidades serv_unidades = new ServiceUnidades();
             ct_unidades obj_unidad = serv_unidades.getEntityByName(cv_nombre_unidad.valor);
-            
+
             //Se obtienen las unidades del endpoint
             TarifasMontosFijosController controller = new TarifasMontosFijosController();
-            List<ct_tarifas_montos_fijos> list = controller.GetTarifasMontosFijosPorUnidad(obj_unidad); 
-            
+            List<ct_tarifas_montos_fijos> list = controller.GetTarifasMontosFijosPorUnidad(obj_unidad);
+
             //Se insertan las unidades en la base local
             ServiceTarifasMontosFijos serv = new ServiceTarifasMontosFijos();
 
@@ -751,7 +887,7 @@ namespace TestMdfEntityFramework
 
                 if (obj_tmf != null)
                 {
-                    if(obj_tmf.valor.ToString().Trim() != decimal.Parse(list[i].valor).ToString("#0.00").Trim())
+                    if (obj_tmf.valor.ToString().Trim() != decimal.Parse(list[i].valor).ToString("#0.00").Trim())
                     {
                         //en caso de no existir el valor en la base local de la aplicacion, esta tarifa monto fijo se insertara
                         serv.addEntity(list[i]);
@@ -857,7 +993,7 @@ namespace TestMdfEntityFramework
 
                 if (obj != null)
                 {
-                    if(obj.clave != "USUARIO_ACTUAL")
+                    if (obj.clave != "USUARIO_ACTUAL")
                     {
                         serv.updEntityByClave(list[i]);
                     }
@@ -1301,6 +1437,7 @@ namespace TestMdfEntityFramework
             SincronizacionTISA.SincronizaBoletosYBoletosDetalle();
             SincronizacionTISA.SincronizaCortes();
             SincronizacionTISA.SincronizaBoletosTarifaFija();
+
         }
 
         #endregion
@@ -1327,7 +1464,7 @@ namespace TestMdfEntityFramework
             config_varios cv_copy = serv_conf_varios.getEntityByClave("COPYRIGHT");
             string copyright = cv_copy.valor;
 
-            txtVersion.Text = version;
+            //txtVersion.Text = version;
             txtCopyright.Text = copyright;
         }
         private void LimpiarUsuarioActualLogueado()
@@ -1350,7 +1487,7 @@ namespace TestMdfEntityFramework
             MensajesController mensajes_controller = new MensajesController();
 
             ServiceMensajes serv_mensajes = new ServiceMensajes();
-            
+
             //se sincronizan los mensajes desde la unidad hacia TISA
             List<sy_mensajes> list_mensaje_hacia_tisa = serv_mensajes.getEntityNoEnviados();
             foreach (var item in list_mensaje_hacia_tisa)
@@ -1365,7 +1502,7 @@ namespace TestMdfEntityFramework
             }
 
             //se sincronizan los mensajes desde TISA hacia la unidad
-            if(FK_ASIGNACION_ACTIVA != null && FK_ASIGNACION_ACTIVA != 0)
+            if (FK_ASIGNACION_ACTIVA != null && FK_ASIGNACION_ACTIVA != 0)
             {
                 List<sy_mensajes> list_msn_desde_tisa = mensajes_controller.GetMensajesConsolaDesdeTISA(FK_ASIGNACION_ACTIVA);
                 foreach (var item in list_msn_desde_tisa)
@@ -1378,7 +1515,7 @@ namespace TestMdfEntityFramework
                     serv_mensajes.addEntity(item);
                 }
             }
-            
+
 
         }
         private void Sincronizar_Ubicacion()
@@ -1414,7 +1551,7 @@ namespace TestMdfEntityFramework
             catch (Exception ex)
             {
 
-                
+
             }
         }
         private void Cambia_Imagen_Mensajes()
@@ -1444,7 +1581,7 @@ namespace TestMdfEntityFramework
             {
                 MessageBox.Show(ex.Message);
             }
-            
+
         }
         private void cargar_logo_aplicacion()
         {
@@ -1601,8 +1738,8 @@ namespace TestMdfEntityFramework
                     btnConfiguraciones.IsEnabled = true;
                     btnConfiguraciones.Visibility = Visibility.Visible;
                     break;
-               
-               
+
+
 
             }
         }
@@ -1644,16 +1781,18 @@ namespace TestMdfEntityFramework
 
         #endregion
 
-       
 
-        #region VALIDACIONES
-        private bool validaPuertoCOMConfigurado()
+
+        #region VALIDACIONES CONEXION SERIAL ALCANCIA
+        private bool validaPuertoCOMConfigurado_Alcancia()
         {
             bool isConfigured = false;
 
+            ServiceConfigPuertos serv_cp = new ServiceConfigPuertos();
+            ct_config_puertos cp = serv_cp.getEntityByNombreDispositivo("ALCANCIA");
+
             ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
-            config_varios cv_port_name = serv_config_varios.getEntityByClave("PORT_NAME");
-            if (cv_port_name.valor != null && cv_port_name.valor != "")
+            if (cp != null && cp.port_name != "")
             {
                 isConfigured = true;
             }
@@ -1664,7 +1803,7 @@ namespace TestMdfEntityFramework
 
             return isConfigured;
         }
-        private bool isValidComPortAndConnected()
+        private bool isValidComPortAndConnected_Alcancia()
         {
             bool isValid;
             try
@@ -1702,21 +1841,19 @@ namespace TestMdfEntityFramework
 
             return hayDispositivoConectado;
         }
-
-        #endregion
-        public bool HayConexionPuertoSerial()
+        public bool HayConexionPuertoSerial_Alcancia()
         {
             bool hayConexionPuertoSerial = false;
 
             try
             {
-                if (validaPuertoCOMConfigurado())
+                if (validaPuertoCOMConfigurado_Alcancia())
                 {
-                    if (isValidComPortAndConnected())
+                    if (isValidComPortAndConnected_Alcancia())
                     {
                         //if (validaDispositivoConectadoEnPuertoCOM())
                         //{
-                            hayConexionPuertoSerial = true;
+                        hayConexionPuertoSerial = true;
                         //}
                     }
                 }
@@ -1728,24 +1865,315 @@ namespace TestMdfEntityFramework
 
             return hayConexionPuertoSerial;
         }
-        private void Cambia_Imagen_Evalua_Conexion_Puerto_Serial()
+        private void Cambia_Imagen_Evalua_Conexion_Puerto_Serial_Alcancia()
         {
-            //Sincronizar los usuarios desde TISA hacia la CONSOLA
-            Comun comun = new Comun();
-            if (HayConexionPuertoSerial())
+            ServiceConfigVarios serv_cv = new ServiceConfigVarios();
+            config_varios config_varios_alcancia = serv_cv.getEntityByClave("ALCANCIA_ACTIVA");
+            if (config_varios_alcancia.valor == "HABILITADO")
             {
-                imgHayConexionSerial.Source = new BitmapImage(new Uri(@"/SCS/IMG/puerto_verde.png", UriKind.Relative));
+                Comun comun = new Comun();
+                if (HayConexionPuertoSerial_Alcancia())
+                {
+                    imgHayConexionSerial_Alcancia.Source = new BitmapImage(new Uri(@"/SCS/IMG/ALCANCIA_ACTIVA.png", UriKind.Relative));
+                }
+                else
+                {
+                    imgHayConexionSerial_Alcancia.Source = new BitmapImage(new Uri(@"/SCS/IMG/puerto_rojo.png", UriKind.Relative));
+                }
             }
             else
             {
-                imgHayConexionSerial.Source = new BitmapImage(new Uri(@"/SCS/IMG/puerto_rojo.png", UriKind.Relative));
+                imgHayConexionSerial_Alcancia.Source = new BitmapImage(new Uri(@"/SCS/IMG/puerto_gris.png", UriKind.Relative));
             }
+
+
         }
+
+        #endregion
+
+
+
+        #region VALIDACIONES CONEXION SERIAL CUENTA COCOS
+        private bool validaPuertoCOMConfigurado_CuentaCocos()
+        {
+            bool isConfigured = false;
+
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            ServiceConfigPuertos serv_cp = new ServiceConfigPuertos();
+            ct_config_puertos cp = serv_cp.getEntityByNombreDispositivo("CUENTA_COCOS");
+            if (cp != null && cp.port_name != "")
+            {
+                isConfigured = true;
+            }
+            else
+            {
+                isConfigured = false;
+            }
+
+            return isConfigured;
+        }
+        private bool isValidComPortAndConnected_CuentaCocos()
+        {
+            bool isValid;
+            try
+            {
+                open_serial_port_cuenta_cocos();
+                isValid = true;
+            }
+            catch (Exception ex)
+            {
+                isValid = false;
+            }
+            return isValid;
+        }
+        public bool HayConexionPuertoSerial_CuentaCocos()
+        {
+            bool hayConexionPuertoSerial = false;
+
+            try
+            {
+                if (validaPuertoCOMConfigurado_CuentaCocos())
+                {
+                    if (isValidComPortAndConnected_CuentaCocos())
+                    {
+                        //if (validaDispositivoConectadoEnPuertoCOM())
+                        //{
+                        hayConexionPuertoSerial = true;
+                        //}
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                hayConexionPuertoSerial = false;
+            }
+
+            return hayConexionPuertoSerial;
+        }
+        private void Cambia_Imagen_Evalua_Conexion_Puerto_Serial_CuentaCocos()
+        {
+            ServiceConfigVarios serv_cv = new ServiceConfigVarios();
+            config_varios config_varios_cc1 = serv_cv.getEntityByClave("CC1_ACTIVO");
+            config_varios config_varios_cc2 = serv_cv.getEntityByClave("CC2_ACTIVO");
+            config_varios config_varios_cc3 = serv_cv.getEntityByClave("CC3_ACTIVO");
+            if (config_varios_cc1.valor == "HABILITADO" || config_varios_cc2.valor == "HABILITADO" || config_varios_cc3.valor == "HABILITADO")
+            {
+                Comun comun = new Comun();
+                if (HayConexionPuertoSerial_CuentaCocos())
+                {
+                    imgHayConexionSerial_CuentaCocos.Source = new BitmapImage(new Uri(@"/SCS/IMG/CUENTACOCOS_ACTIVO.png", UriKind.Relative));
+                }
+                else
+                {
+                    imgHayConexionSerial_CuentaCocos.Source = new BitmapImage(new Uri(@"/SCS/IMG/puerto_rojo.png", UriKind.Relative));
+                }
+
+            }
+            else
+            {
+                imgHayConexionSerial_CuentaCocos.Source = new BitmapImage(new Uri(@"/SCS/IMG/puerto_gris.png", UriKind.Relative));
+            }
+                
+        }
+        #endregion
+
+
+        #region VALIDACIONES CONEXION SERIAL GPS
+        private bool validaPuertoCOMConfigurado_GPS()
+        {
+            bool isConfigured = false;
+
+            ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+            ServiceConfigPuertos serv_cp = new ServiceConfigPuertos();
+            ct_config_puertos cp = serv_cp.getEntityByNombreDispositivo("GPS");
+            if (cp != null && cp.port_name != "")
+            {
+                isConfigured = true;
+            }
+            else
+            {
+                isConfigured = false;
+            }
+
+            return isConfigured;
+        }
+        private bool isValidComPortAndConnected_GPS()
+        {
+            bool isValid;
+            try
+            {
+                open_serial_port_gps();
+                isValid = true;
+            }
+            catch (Exception ex)
+            {
+                isValid = false;
+            }
+            return isValid;
+        }
+        public bool HayConexionPuertoSerial_GPS()
+        {
+            bool hayConexionPuertoSerial = false;
+
+            try
+            {
+                if (validaPuertoCOMConfigurado_GPS())
+                {
+                    if (isValidComPortAndConnected_GPS())
+                    {
+                        //if (validaDispositivoConectadoEnPuertoCOM())
+                        //{
+                        hayConexionPuertoSerial = true;
+                        //}
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                hayConexionPuertoSerial = false;
+            }
+
+            return hayConexionPuertoSerial;
+        }
+        private void Cambia_Imagen_Evalua_Conexion_Puerto_Serial_GPS()
+        {
+            ServiceConfigVarios serv_cv = new ServiceConfigVarios();
+            config_varios config_varios_actual = serv_cv.getEntityByClave("UBICACION_ACTIVA");
+            if (config_varios_actual.valor == "HABILITADO")
+            {
+                Comun comun = new Comun();
+                if (HayConexionPuertoSerial_GPS())
+                {
+                    imgHayConexionSerial_GPS.Source = new BitmapImage(new Uri(@"/SCS/IMG/gps.png", UriKind.Relative));
+                }
+                else
+                {
+                    imgHayConexionSerial_GPS.Source = new BitmapImage(new Uri(@"/SCS/IMG/puerto_rojo.png", UriKind.Relative));
+                }
+
+            }
+            else
+            {
+                imgHayConexionSerial_GPS.Source = new BitmapImage(new Uri(@"/SCS/IMG/puerto_gris.png", UriKind.Relative));
+            }
+
+               
+        }
+        #endregion
+
+
+
+
+        #region METODOS CUENTA COCOS
+
+        int cant_subidas = 0;
+        int cant_bajadas = 0;
+        private void Guardar_Cuenta_Cocos_DB_Local()
+        {
+            if (FK_ASIGNACION_ACTIVA != 0)
+            {
+                ServiceConfigVarios serv_cv = new ServiceConfigVarios();
+                config_varios cv_cc1 = serv_cv.getEntityByClave("CC1_ACTIVO");
+                config_varios cv_cc2 = serv_cv.getEntityByClave("CC2_ACTIVO");
+                config_varios cv_cc3 = serv_cv.getEntityByClave("CC3_ACTIVO");
+
+                if (cv_cc1.valor != "DESHABILITADO" || cv_cc2.valor != "DESHABILITADO" || cv_cc3.valor != "DESHABILITADO")
+                {
+                    sy_conteo_cuenta_cocos obj = new sy_conteo_cuenta_cocos();
+
+                    cant_subidas = 0;
+                    cant_bajadas = 0;
+                    if (cv_cc1.valor == "HABILITADO")
+                    {
+                        if (ejecutar_commando_13_acumulado_pasajeros_cc1())
+                        {
+                            obj.cc1_subidas = cant_subidas;
+                            obj.cc1_bajadas = cant_bajadas;
+                        }
+                    }
+                    else
+                    {
+                        obj.cc1_subidas = cant_subidas;
+                        obj.cc1_bajadas = cant_bajadas;
+                    }
+
+                    cant_subidas = 0;
+                    cant_bajadas = 0;
+                    if (cv_cc2.valor == "HABILITADO")
+                    {
+                        if (ejecutar_commando_13_acumulado_pasajeros_cc2())
+                        {
+                            obj.cc2_subidas = cant_subidas;
+                            obj.cc2_bajadas = cant_bajadas;
+                        }
+                    }
+                    else
+                    {
+                        obj.cc2_subidas = cant_subidas;
+                        obj.cc2_bajadas = cant_bajadas;
+                    }
+
+                    cant_subidas = 0;
+                    cant_bajadas = 0;
+                    if (cv_cc3.valor == "HABILITADO")
+                    {
+                        if (ejecutar_commando_13_acumulado_pasajeros_cc3())
+                        {
+                            obj.cc3_subidas = cant_subidas;
+                            obj.cc3_bajadas = cant_bajadas;
+                        }
+                    }
+                    else
+                    {
+                        obj.cc3_subidas = cant_subidas;
+                        obj.cc3_bajadas = cant_bajadas;
+                    }
+
+                    obj.fecha_hora = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+                    obj.fkAsignacion = FK_ASIGNACION_ACTIVA;
+                    obj.fkStatus = 1;
+
+                    obj.enviado = 0;
+                    obj.confirmado = 0;
+                    obj.modo = 0;
+
+                    obj.created_at = obj.fecha_hora;
+
+                    ServiceCuentaCocos serv_cc = new ServiceCuentaCocos();
+                    serv_cc.addEntity(obj);
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("DEBE SELECCIONAR UNA ASIGNACION, PARA QUE SE ENVIE CONTADOR PASAJEROS Y UBICACION GPS", "ATENCION !!!");
+            }
+
+        }
+        #endregion
+
+        #region METODOS POSICION GPS
+        private void Guardar_Posicion_GPS_DB_Local()
+        {
+            //settings_params_gps();
+
+            sy_posicion_gps obj = escuchar_gps_GNRMC();
+            if(obj != null) 
+            { 
+                insertar_gps_GNRMC_db_local(obj); 
+            }
+            
+
+        }
+
+        #endregion
 
 
 
 
         #region COMANDOS - CUENTA COCOS
+
+
         private bool ejecutar_commando_12_reset_cc1()
         {
             // #02 30 30 30 31 31 32 30 30 31 33 #03 en el programa serial port monitor
@@ -1768,37 +2196,37 @@ namespace TestMdfEntityFramework
                 arr[11] = 3;
 
 
-                ClearBufferSendData_cc1();
-                ClearBufferRecievedDataGlobal_cc1();
+                ClearBufferSendData_cuenta_cocos();
+                ClearBufferRecievedDataGlobal_cuenta_cocos();
 
                 for (int i = 0; i < arr.Length; i++)
                 {
-                    BufferSendData_cc1[i] = decimal.ToByte(arr[i]);
+                    BufferSendData_cuenta_cocos[i] = decimal.ToByte(arr[i]);
                 }
 
-                open_serial_port_cc1();
-                puertoSerie_cc1.Write(BufferSendData_cc1,0, 12);
+                open_serial_port_cuenta_cocos();
+                puertoSerie_cuenta_cocos.Write(BufferSendData_cuenta_cocos, 0, 12);
 
-                
+
                 Task.WaitAll(new Task[] { Task.Delay(100) });
-                puertoSerie_cc1.Read(RecievedDataGlobal_cc1,0,50);
+                puertoSerie_cuenta_cocos.Read(RecievedDataGlobal_cuenta_cocos, 0, 50);
 
-                if (RecievedDataGlobal_cc1.Length > 0)
+                if (RecievedDataGlobal_cuenta_cocos.Length > 0)
                 {
-                    int var1 = Convert.ToInt32( 
-                       ((char)RecievedDataGlobal_cc1[9]).ToString()
-                        + 
-                       ((char)RecievedDataGlobal_cc1[10]).ToString()
+                    int var1 = Convert.ToInt32(
+                       ((char)RecievedDataGlobal_cuenta_cocos[9]).ToString()
+                        +
+                       ((char)RecievedDataGlobal_cuenta_cocos[10]).ToString()
                         );
 
                     //if (RecievedDataGlobal_cc1[9] == '0'
                     //    && RecievedDataGlobal_cc1[10] == '6')
-                    if(var1 == 6)
+                    if (var1 == 6)
                     {
                         string msg = "Reset Correcto";
 
                     }
-                    
+
                 }
                 else
                 {
@@ -1835,43 +2263,28 @@ namespace TestMdfEntityFramework
                 arr[11] = 3;
 
 
-                ClearBufferSendData_cc1();
-                ClearBufferRecievedDataGlobal_cc1();
+                ClearBufferSendData_cuenta_cocos();
+                ClearBufferRecievedDataGlobal_cuenta_cocos();
 
                 for (int i = 0; i < arr.Length; i++)
                 {
-                    BufferSendData_cc1[i] = decimal.ToByte(arr[i]);
+                    BufferSendData_cuenta_cocos[i] = decimal.ToByte(arr[i]);
                 }
 
-                open_serial_port_cc1();
-                puertoSerie_cc1.Write(BufferSendData_cc1, 0, 12);
+                open_serial_port_cuenta_cocos();
+                puertoSerie_cuenta_cocos.Write(BufferSendData_cuenta_cocos, 0, 12);
 
 
                 Task.WaitAll(new Task[] { Task.Delay(100) });
-                puertoSerie_cc1.Read(RecievedDataGlobal_cc1, 0, 60);
 
-                int cont = 0;
-                for (int i = 0; i < RecievedDataGlobal_cc1.Length; i++)
+                if (puertoSerie_cuenta_cocos.BytesToRead > 0 && puertoSerie_cuenta_cocos.BytesToRead == 44)
                 {
-                    if(RecievedDataGlobal_cc1[i] != 3)
-                    {
-                        cont++;
+                    puertoSerie_cuenta_cocos.Read(RecievedDataGlobal_cuenta_cocos, 0, 60);
 
-                    }
-                    else
-                    {
-                        cont++;
-                        break;
-                    }
-                    
-                }
-
-                if (RecievedDataGlobal_cc1.Length > 0 && cont == 44)
-                {
                     int var1 = Convert.ToInt32(
-                       ((char)RecievedDataGlobal_cc1[5]).ToString()
+                       ((char)RecievedDataGlobal_cuenta_cocos[5]).ToString()
                         +
-                       ((char)RecievedDataGlobal_cc1[6]).ToString()
+                       ((char)RecievedDataGlobal_cuenta_cocos[6]).ToString()
                         );
 
                     //if (RecievedDataGlobal_cc1[9] == '0'
@@ -1879,38 +2292,43 @@ namespace TestMdfEntityFramework
                     if (var1 == 93)
                     {
                         string msg = "Acumulado";
-                        int cant_subidas = 0;
-                        int cant_bajadas = 0;
+                        cant_subidas = 0;
+                        cant_bajadas = 0;
 
-                        cant_subidas = Convert.ToInt32(
-                       ((char)RecievedDataGlobal_cc1[9]).ToString()
-                        + ((char)RecievedDataGlobal_cc1[10]).ToString()
-                        + ((char)RecievedDataGlobal_cc1[11]).ToString()
-                        + ((char)RecievedDataGlobal_cc1[12]).ToString()
-                        + ((char)RecievedDataGlobal_cc1[13]).ToString()
-                        + ((char)RecievedDataGlobal_cc1[14]).ToString()
-                        + ((char)RecievedDataGlobal_cc1[15]).ToString()
-                        + ((char)RecievedDataGlobal_cc1[16]).ToString()
-                        );
+                        int.TryParse(
+                   ((char)RecievedDataGlobal_cuenta_cocos[9]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[10]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[11]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[12]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[13]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[14]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[15]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[16]).ToString()
+                    , System.Globalization.NumberStyles.HexNumber, null
+                    , out cant_subidas);
 
-                        cant_bajadas = Convert.ToInt32(
-                       ((char)RecievedDataGlobal_cc1[17]).ToString()
-                        + ((char)RecievedDataGlobal_cc1[18]).ToString()
-                        + ((char)RecievedDataGlobal_cc1[19]).ToString()
-                        + ((char)RecievedDataGlobal_cc1[20]).ToString()
-                        + ((char)RecievedDataGlobal_cc1[21]).ToString()
-                        + ((char)RecievedDataGlobal_cc1[22]).ToString()
-                        + ((char)RecievedDataGlobal_cc1[23]).ToString()
-                        + ((char)RecievedDataGlobal_cc1[24]).ToString()
-                        );
+
+                        int.TryParse(
+                            ((char)RecievedDataGlobal_cuenta_cocos[17]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[18]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[19]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[20]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[21]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[22]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[23]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[24]).ToString()
+                        , System.Globalization.NumberStyles.HexNumber, null
+                        , out cant_bajadas);
+
+
+
                     }
 
                 }
                 else
                 {
-                    MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+                    //MessageBox.Show("El cuenta cocos cc1 no esta respondiendo", "ATENCION !!!");
                 }
-
             }
             catch (Exception ex)
             {
@@ -1943,27 +2361,27 @@ namespace TestMdfEntityFramework
                 arr[11] = 3;
 
 
-                ClearBufferSendData_cc2();
-                ClearBufferRecievedDataGlobal_cc2();
+                ClearBufferSendData_cuenta_cocos();
+                ClearBufferRecievedDataGlobal_cuenta_cocos();
 
                 for (int i = 0; i < arr.Length; i++)
                 {
-                    BufferSendData_cc2[i] = decimal.ToByte(arr[i]);
+                    BufferSendData_cuenta_cocos[i] = decimal.ToByte(arr[i]);
                 }
 
-                open_serial_port_cc2();
-                puertoSerie_cc2.Write(BufferSendData_cc2, 0, 12);
+                open_serial_port_cuenta_cocos();
+                puertoSerie_cuenta_cocos.Write(BufferSendData_cuenta_cocos, 0, 12);
 
 
                 Task.WaitAll(new Task[] { Task.Delay(100) });
-                puertoSerie_cc2.Read(RecievedDataGlobal_cc2, 0, 50);
+                puertoSerie_cuenta_cocos.Read(RecievedDataGlobal_cuenta_cocos, 0, 50);
 
-                if (RecievedDataGlobal_cc2.Length > 0)
+                if (RecievedDataGlobal_cuenta_cocos.Length > 0)
                 {
                     int var1 = Convert.ToInt32(
-                       ((char)RecievedDataGlobal_cc2[9]).ToString()
+                       ((char)RecievedDataGlobal_cuenta_cocos[9]).ToString()
                         +
-                       ((char)RecievedDataGlobal_cc2[10]).ToString()
+                       ((char)RecievedDataGlobal_cuenta_cocos[10]).ToString()
                         );
 
                     //if (RecievedDataGlobal_cc2[9] == '0'
@@ -2000,53 +2418,37 @@ namespace TestMdfEntityFramework
                 arr[1] = '0';   //  1   //  DIRECCION   //  ANSII
                 arr[2] = '0';   //  2   //  DIRECCION   //  ANSII
                 arr[3] = '0';   //  3   //  DIRECCION   //  ANSII
-                arr[4] = '1';   //  4   //  DIRECCION   //  ANSII
+                arr[4] = '2';   //  4   //  DIRECCION   //  ANSII
                 arr[5] = '1';   //  5   //  COMANDO     //  ANSII
                 arr[6] = '3';   //  6   //  COMANDO     //  ANSII
                 arr[7] = '0';   //  7   //  TAMAÑO DATA //  ANSII
                 arr[8] = '0';   //  8   //  TAMAÑO DATA //  ANSII
                 arr[9] = '1';   //  11  //  CHECKSUM    //  ANSII
-                arr[10] = '4';  //  12  //  CHECKSUM    //  ANSII
+                arr[10] = '5';  //  12  //  CHECKSUM    //  ANSII
                 arr[11] = 3;
 
 
-                ClearBufferSendData_cc2();
-                ClearBufferRecievedDataGlobal_cc2();
+                ClearBufferSendData_cuenta_cocos();
+                ClearBufferRecievedDataGlobal_cuenta_cocos();
 
                 for (int i = 0; i < arr.Length; i++)
                 {
-                    BufferSendData_cc2[i] = decimal.ToByte(arr[i]);
+                    BufferSendData_cuenta_cocos[i] = decimal.ToByte(arr[i]);
                 }
 
-                open_serial_port_cc2();
-                puertoSerie_cc2.Write(BufferSendData_cc2, 0, 12);
+                open_serial_port_cuenta_cocos();
+                puertoSerie_cuenta_cocos.Write(BufferSendData_cuenta_cocos, 0, 12);
 
 
                 Task.WaitAll(new Task[] { Task.Delay(100) });
-                puertoSerie_cc2.Read(RecievedDataGlobal_cc2, 0, 60);
 
-                int cont = 0;
-                for (int i = 0; i < RecievedDataGlobal_cc2.Length; i++)
+                if (puertoSerie_cuenta_cocos.BytesToRead > 0 && puertoSerie_cuenta_cocos.BytesToRead == 44)
                 {
-                    if (RecievedDataGlobal_cc2[i] != 3)
-                    {
-                        cont++;
-
-                    }
-                    else
-                    {
-                        cont++;
-                        break;
-                    }
-
-                }
-
-                if (RecievedDataGlobal_cc2.Length > 0 && cont == 44)
-                {
+                    puertoSerie_cuenta_cocos.Read(RecievedDataGlobal_cuenta_cocos, 0, 60);
                     int var1 = Convert.ToInt32(
-                       ((char)RecievedDataGlobal_cc2[5]).ToString()
+                       ((char)RecievedDataGlobal_cuenta_cocos[5]).ToString()
                         +
-                       ((char)RecievedDataGlobal_cc2[6]).ToString()
+                       ((char)RecievedDataGlobal_cuenta_cocos[6]).ToString()
                         );
 
                     //if (RecievedDataGlobal_cc2[9] == '0'
@@ -2054,37 +2456,42 @@ namespace TestMdfEntityFramework
                     if (var1 == 93)
                     {
                         string msg = "Acumulado";
-                        int cant_subidas = 0;
-                        int cant_bajadas = 0;
+                        cant_subidas = 0;
+                        cant_bajadas = 0;
 
-                        cant_subidas = Convert.ToInt32(
-                       ((char)RecievedDataGlobal_cc2[9]).ToString()
-                        + ((char)RecievedDataGlobal_cc2[10]).ToString()
-                        + ((char)RecievedDataGlobal_cc2[11]).ToString()
-                        + ((char)RecievedDataGlobal_cc2[12]).ToString()
-                        + ((char)RecievedDataGlobal_cc2[13]).ToString()
-                        + ((char)RecievedDataGlobal_cc2[14]).ToString()
-                        + ((char)RecievedDataGlobal_cc2[15]).ToString()
-                        + ((char)RecievedDataGlobal_cc2[16]).ToString()
-                        );
+                        int.TryParse(
+                   ((char)RecievedDataGlobal_cuenta_cocos[9]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[10]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[11]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[12]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[13]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[14]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[15]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[16]).ToString()
+                    , System.Globalization.NumberStyles.HexNumber, null
+                    , out cant_subidas);
 
-                        cant_bajadas = Convert.ToInt32(
-                       ((char)RecievedDataGlobal_cc2[17]).ToString()
-                        + ((char)RecievedDataGlobal_cc2[18]).ToString()
-                        + ((char)RecievedDataGlobal_cc2[19]).ToString()
-                        + ((char)RecievedDataGlobal_cc2[20]).ToString()
-                        + ((char)RecievedDataGlobal_cc2[21]).ToString()
-                        + ((char)RecievedDataGlobal_cc2[22]).ToString()
-                        + ((char)RecievedDataGlobal_cc2[23]).ToString()
-                        + ((char)RecievedDataGlobal_cc2[24]).ToString()
-                        );
+
+                        int.TryParse(
+                            ((char)RecievedDataGlobal_cuenta_cocos[17]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[18]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[19]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[20]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[21]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[22]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[23]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[24]).ToString()
+                        , System.Globalization.NumberStyles.HexNumber, null
+                        , out cant_bajadas);
                     }
 
                 }
                 else
                 {
-                    MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+                    //MessageBox.Show("El cuenta cocos cc2 no esta respondiendo", "ATENCION !!!");
                 }
+
+
 
             }
             catch (Exception ex)
@@ -2118,27 +2525,27 @@ namespace TestMdfEntityFramework
                 arr[11] = 3;
 
 
-                ClearBufferSendData_cc3();
-                ClearBufferRecievedDataGlobal_cc3();
+                ClearBufferSendData_cuenta_cocos();
+                ClearBufferRecievedDataGlobal_cuenta_cocos();
 
                 for (int i = 0; i < arr.Length; i++)
                 {
-                    BufferSendData_cc3[i] = decimal.ToByte(arr[i]);
+                    BufferSendData_cuenta_cocos[i] = decimal.ToByte(arr[i]);
                 }
 
-                open_serial_port_cc3();
-                puertoSerie_cc3.Write(BufferSendData_cc3, 0, 12);
+                open_serial_port_cuenta_cocos();
+                puertoSerie_cuenta_cocos.Write(BufferSendData_cuenta_cocos, 0, 12);
 
 
                 Task.WaitAll(new Task[] { Task.Delay(100) });
-                puertoSerie_cc3.Read(RecievedDataGlobal_cc3, 0, 50);
+                puertoSerie_cuenta_cocos.Read(RecievedDataGlobal_cuenta_cocos, 0, 50);
 
-                if (RecievedDataGlobal_cc3.Length > 0)
+                if (RecievedDataGlobal_cuenta_cocos.Length > 0)
                 {
                     int var1 = Convert.ToInt32(
-                       ((char)RecievedDataGlobal_cc3[9]).ToString()
+                       ((char)RecievedDataGlobal_cuenta_cocos[9]).ToString()
                         +
-                       ((char)RecievedDataGlobal_cc3[10]).ToString()
+                       ((char)RecievedDataGlobal_cuenta_cocos[10]).ToString()
                         );
 
                     //if (RecievedDataGlobal_cc3[9] == '0'
@@ -2175,53 +2582,37 @@ namespace TestMdfEntityFramework
                 arr[1] = '0';   //  1   //  DIRECCION   //  ANSII
                 arr[2] = '0';   //  2   //  DIRECCION   //  ANSII
                 arr[3] = '0';   //  3   //  DIRECCION   //  ANSII
-                arr[4] = '1';   //  4   //  DIRECCION   //  ANSII
+                arr[4] = '3';   //  4   //  DIRECCION   //  ANSII
                 arr[5] = '1';   //  5   //  COMANDO     //  ANSII
                 arr[6] = '3';   //  6   //  COMANDO     //  ANSII
                 arr[7] = '0';   //  7   //  TAMAÑO DATA //  ANSII
                 arr[8] = '0';   //  8   //  TAMAÑO DATA //  ANSII
                 arr[9] = '1';   //  11  //  CHECKSUM    //  ANSII
-                arr[10] = '4';  //  12  //  CHECKSUM    //  ANSII
+                arr[10] = '6';  //  12  //  CHECKSUM    //  ANSII
                 arr[11] = 3;
 
 
-                ClearBufferSendData_cc3();
-                ClearBufferRecievedDataGlobal_cc3();
+                ClearBufferSendData_cuenta_cocos();
+                ClearBufferRecievedDataGlobal_cuenta_cocos();
 
                 for (int i = 0; i < arr.Length; i++)
                 {
-                    BufferSendData_cc3[i] = decimal.ToByte(arr[i]);
+                    BufferSendData_cuenta_cocos[i] = decimal.ToByte(arr[i]);
                 }
 
-                open_serial_port_cc3();
-                puertoSerie_cc3.Write(BufferSendData_cc3, 0, 12);
+                open_serial_port_cuenta_cocos();
+                puertoSerie_cuenta_cocos.Write(BufferSendData_cuenta_cocos, 0, 12);
 
 
                 Task.WaitAll(new Task[] { Task.Delay(100) });
-                puertoSerie_cc3.Read(RecievedDataGlobal_cc3, 0, 60);
 
-                int cont = 0;
-                for (int i = 0; i < RecievedDataGlobal_cc3.Length; i++)
+                if (puertoSerie_cuenta_cocos.BytesToRead > 0 && puertoSerie_cuenta_cocos.BytesToRead == 44)
                 {
-                    if (RecievedDataGlobal_cc3[i] != 3)
-                    {
-                        cont++;
-
-                    }
-                    else
-                    {
-                        cont++;
-                        break;
-                    }
-
-                }
-
-                if (RecievedDataGlobal_cc3.Length > 0 && cont == 44)
-                {
+                    puertoSerie_cuenta_cocos.Read(RecievedDataGlobal_cuenta_cocos, 0, 60);
                     int var1 = Convert.ToInt32(
-                       ((char)RecievedDataGlobal_cc3[5]).ToString()
+                       ((char)RecievedDataGlobal_cuenta_cocos[5]).ToString()
                         +
-                       ((char)RecievedDataGlobal_cc3[6]).ToString()
+                       ((char)RecievedDataGlobal_cuenta_cocos[6]).ToString()
                         );
 
                     //if (RecievedDataGlobal_cc3[9] == '0'
@@ -2229,37 +2620,41 @@ namespace TestMdfEntityFramework
                     if (var1 == 93)
                     {
                         string msg = "Acumulado";
-                        int cant_subidas = 0;
-                        int cant_bajadas = 0;
+                        cant_subidas = 0;
+                        cant_bajadas = 0;
 
-                        cant_subidas = Convert.ToInt32(
-                       ((char)RecievedDataGlobal_cc3[9]).ToString()
-                        + ((char)RecievedDataGlobal_cc3[10]).ToString()
-                        + ((char)RecievedDataGlobal_cc3[11]).ToString()
-                        + ((char)RecievedDataGlobal_cc3[12]).ToString()
-                        + ((char)RecievedDataGlobal_cc3[13]).ToString()
-                        + ((char)RecievedDataGlobal_cc3[14]).ToString()
-                        + ((char)RecievedDataGlobal_cc3[15]).ToString()
-                        + ((char)RecievedDataGlobal_cc3[16]).ToString()
-                        );
+                        int.TryParse(
+                   ((char)RecievedDataGlobal_cuenta_cocos[9]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[10]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[11]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[12]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[13]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[14]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[15]).ToString()
+                    + ((char)RecievedDataGlobal_cuenta_cocos[16]).ToString()
+                    , System.Globalization.NumberStyles.HexNumber, null
+                    , out cant_subidas);
 
-                        cant_bajadas = Convert.ToInt32(
-                       ((char)RecievedDataGlobal_cc3[17]).ToString()
-                        + ((char)RecievedDataGlobal_cc3[18]).ToString()
-                        + ((char)RecievedDataGlobal_cc3[19]).ToString()
-                        + ((char)RecievedDataGlobal_cc3[20]).ToString()
-                        + ((char)RecievedDataGlobal_cc3[21]).ToString()
-                        + ((char)RecievedDataGlobal_cc3[22]).ToString()
-                        + ((char)RecievedDataGlobal_cc3[23]).ToString()
-                        + ((char)RecievedDataGlobal_cc3[24]).ToString()
-                        );
+
+                        int.TryParse(
+                            ((char)RecievedDataGlobal_cuenta_cocos[17]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[18]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[19]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[20]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[21]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[22]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[23]).ToString()
+                        + ((char)RecievedDataGlobal_cuenta_cocos[24]).ToString()
+                        , System.Globalization.NumberStyles.HexNumber, null
+                        , out cant_bajadas);
                     }
 
                 }
                 else
                 {
-                    MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+                    //MessageBox.Show("El cuenta cocos cc3 no esta respondiendo", "ATENCION !!!");
                 }
+
 
             }
             catch (Exception ex)
@@ -2268,57 +2663,640 @@ namespace TestMdfEntityFramework
                 MessageBox.Show(ex.Message, "EXCEPTION !!!");
             }
 
+
             return bnd_get_acumulado_pasajeros_exitoso;
         }
 
         #endregion
 
-        #region COMANDOS - GPS
-        private void ejecutar_comando_reiniciar_dispositivo_gps()
+        
+        #region COMANDOS - GPS - LISTENER Y CONFIGURACION
+        private void reset_to_default_manufactured()
         {
+            string str_reset_default = "181 98 6 9 13 0 255 255 0 0 0 0 0 0 255 255 0 0 7 31 158";
 
-
+            string[] arr_reset_default_str = str_reset_default.Split(' ');
+            decimal[] arr_reset_default_decimal = new decimal[21];
+            for (int i = 0; i < arr_reset_default_str.Length; i++)
+            {
+                arr_reset_default_decimal[i] = Convert.ToDecimal(arr_reset_default_str[i]);
+                BufferSendData_gps[i] = decimal.ToByte(arr_reset_default_decimal[i]);
+            }
+            open_serial_port_gps();
+            puertoSerie_gps.Write(BufferSendData_gps, 0, 21);
         }
-        private void ejecutar_comando_5_obtener_posicion_gps()
+        private void settings_params_gps()
         {
-            // REPLY:
-            // Current position!Lat:N22.577092333333333,E113.91651583333332,Course:0.0,Speed:0,DateTime:2019-07-12 10:02:46
             try
             {
-                string strComando = "WHERE#";
+                #region OBTENER CONFIG VARIOS DE GPS
+                ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
+                config_varios cv_gps_frecuencia_segundos = serv_config_varios.getEntityByClave("GPS_FRECUENCIA_SEGUNDOS");
 
-                open_serial_port_gps();
-                puertoSerie_gps.WriteLine(strComando);
-                Task.WaitAll(new Task[] { Task.Delay(100) });
-                string res = puertoSerie_gps.ReadLine();
-                //string res = "Current position!Lat: N22.577092333333333,E113.91651583333332,Course: 0.0,Speed: 0,DateTime: 2019 - 07 - 12 10:02:46";
+                // PARAMETRIZAR PARA HABILITAR O DESHABILITAR DEL OUTPUT LOS REGISTROS
+                config_varios cv_gps_GPDTM = serv_config_varios.getEntityByClave("GPS_GPDTM");
+                config_varios cv_gps_GPGBS = serv_config_varios.getEntityByClave("GPS_GPGBS");
+                config_varios cv_gps_GPGGA = serv_config_varios.getEntityByClave("GPS_GPGGA");
+                config_varios cv_gps_GPGLL = serv_config_varios.getEntityByClave("GPS_GPGLL");
+                config_varios cv_gps_GPGRS = serv_config_varios.getEntityByClave("GPS_GPGRS");
+                config_varios cv_gps_GPGSA = serv_config_varios.getEntityByClave("GPS_GPGSA");
+                config_varios cv_gps_GPGST = serv_config_varios.getEntityByClave("GPS_GPGST");
+                config_varios cv_gps_GPGSV = serv_config_varios.getEntityByClave("GPS_GPGSV");
+                config_varios cv_gps_GNRMC = serv_config_varios.getEntityByClave("GPS_GNRMC");
+                config_varios cv_gps_GPVTG = serv_config_varios.getEntityByClave("GPS_GPVTG");
+                config_varios cv_gps_GPZDA = serv_config_varios.getEntityByClave("GPS_GPZDA");
+                #endregion
 
-                if (res.Length > 0)
+                ClearBufferSendData_gps();
+
+                #region GPS FRECUENCIA SEGUNDOS
+                //B5 62 06 08 06 00 88 13 01 00 01 00 B1 49 B5 62 06 08 00 00 0E 30
+                //PARAMETRIZAR PARA QUE OBTENGA LA INFO CADA 5 SEGUNDOS DESDE EL GPS
+                string str_1_seg = "181 98 6 8 6 0 232 3 1 0 1 0 1 57";
+                string str_3_seg = "181 98 6 8 6 0 184 11 1 0 1 0 217 65 181 98 6 8 0 0 14 48";
+                string str_5_seg = "181 98 06 08 06 00 136 19 01 00 01 00 177 73 181 98 06 08 00 00 15 48";
+                string str_10_seg = "181 98	6 8	6 0	16 39 1	0 1	0 77 221 181 98	6 8	0 0	14 48";
+                string str_20_seg = "181 98	6 8	6 0	32 78 1	0 1	0 132 0	181	98 6 8 0 0 14 48";
+
+                
+                int frecuencia_minutos_gps = Convert.ToInt32(cv_gps_frecuencia_segundos.valor);
+                switch (frecuencia_minutos_gps)
                 {
-                    string a = res.Substring(22);
-                    string[] arr_b = a.Split(',');
-                    string lat = arr_b[0].ToString().Trim();
-                    string lng = arr_b[1].ToString().Trim();
+                    case 1:
+                        string[] arr_1_seg_str = str_1_seg.Split(' ');
+                        decimal[] arr_1_seg_decimal = new decimal[14];
+                        for (int i = 0; i < arr_1_seg_str.Length; i++)
+                        {
+                            arr_1_seg_decimal[i] = Convert.ToDecimal(arr_1_seg_str[i]);
+                            BufferSendData_gps[i] = decimal.ToByte(arr_1_seg_decimal[i]);
+                        }
+                        open_serial_port_gps();
+                        puertoSerie_gps.Write(BufferSendData_gps, 0, 14);
+                        break;
+                    case 3:
+                        string[] arr_3_seg_str = str_3_seg.Split(' ');
+                        decimal[] arr_3_seg_decimal = new decimal[22];
+                        for (int i = 0; i < arr_3_seg_str.Length; i++)
+                        {
+                            arr_3_seg_decimal[i] = Convert.ToDecimal(arr_3_seg_str[i]);
+                            BufferSendData_gps[i] = decimal.ToByte(arr_3_seg_decimal[i]);
+                        }
+                        open_serial_port_gps();
+                        puertoSerie_gps.Write(BufferSendData_gps, 0, 22);
+                        break;
+                    case 5:
+                        string[] arr_5_seg_str = str_5_seg.Split(' ');
+                        decimal[] arr_5_seg_decimal = new decimal[22];
+                        for (int i = 0; i < arr_5_seg_str.Length; i++)
+                        {
+                            arr_5_seg_decimal[i] = Convert.ToDecimal(arr_5_seg_str[i]);
+                            BufferSendData_gps[i] = decimal.ToByte(arr_5_seg_decimal[i]);
+                        }
+                        open_serial_port_gps();
+                        puertoSerie_gps.Write(BufferSendData_gps, 0, 22);
+                        break;
+                    case 10:
+                        string[] arr_10_seg_str = str_10_seg.Split(' ');
+                        decimal[] arr_10_seg_decimal = new decimal[22];
+                        for (int i = 0; i < arr_10_seg_str.Length; i++)
+                        {
+                            arr_10_seg_decimal[i] = Convert.ToDecimal(arr_10_seg_str[i]);
+                            BufferSendData_gps[i] = decimal.ToByte(arr_10_seg_decimal[i]);
+                        }
+                        open_serial_port_gps();
+                        puertoSerie_gps.Write(BufferSendData_gps, 0, 22);
+                        break;
+                    case 20:
+                        string[] arr_20_seg_str = str_20_seg.Split(' ');
+                        decimal[] arr_20_seg_decimal = new decimal[22];
+                        for (int i = 0; i < arr_20_seg_str.Length; i++)
+                        {
+                            arr_20_seg_decimal[i] = Convert.ToDecimal(arr_20_seg_str[i]);
+                            BufferSendData_gps[i] = decimal.ToByte(arr_20_seg_decimal[i]);
+                        }
+                        open_serial_port_gps();
+                        puertoSerie_gps.Write(BufferSendData_gps, 0, 22);
+                        break;
+                }
+                #endregion
 
-                    if (lat.StartsWith("N")) { lat = lat.Replace("N", ""); } else { lat = lat.Replace("S", "-"); }
-                    if (lng.StartsWith("E")) { lng = lng.Replace("E", ""); } else { lng = lng.Replace("W", "-"); }
+                ClearBufferSendData_gps();
 
-                    Console.WriteLine(lat);
-                    Console.WriteLine(lng);
-
+                #region GPDTM
+                string str_Enable_GPDTM = "36 69 73 71 80 81 44 68 84 77 42 51 66 13 10 181 98 6 1 3 0 240 10 1 5 36";
+                string str_Disable_GPDTM = "36 69 73 71 80 81 44 68 84 77 42 51 66 13 10 181 98 6 1 3 0 240 10 0 4 35";
+                decimal[] arr_gps_GPDTM_decimal = new decimal[26];
+                if (cv_gps_GPDTM.valor == "SI") 
+                {
+                    string[] arr_gps_GPDTM_str = str_Enable_GPDTM.Split(' ');
+                    for (int i = 0; i < arr_gps_GPDTM_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPDTM_str[i]));
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+                    string[] arr_gps_GPDTM_str = str_Disable_GPDTM.Split(' ');
+                    for (int i = 0; i < arr_gps_GPDTM_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPDTM_str[i]));
+                    }
                 }
+                open_serial_port_gps();
+                puertoSerie_gps.Write(BufferSendData_gps, 0, 26);
+                #endregion
+
+                ClearBufferSendData_gps();
+
+                #region GPGBS
+                string str_Enable_GPGBS = "36 69 73 71 80 81 44 71 66 83 42 51 48 13 10 181 98 6 1 3 0 240 9 1 4 34";
+                string str_Disable_GPGBS = "36 69 73 71 80 81 44 71 66 83 42 51 48 13 10 181 98 6 1 3 0 240 9 0 3 33";
+                decimal[] arr_gps_GPGBS_decimal = new decimal[26];
+                if (cv_gps_GPGBS.valor == "SI")
+                {
+                    string[] arr_gps_GPGBS_str = str_Enable_GPGBS.Split(' ');
+                    for (int i = 0; i < arr_gps_GPGBS_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPGBS_str[i]));
+                    }
+                }
+                else
+                {
+                    string[] arr_gps_GPGBS_str = str_Disable_GPGBS.Split(' ');
+                    for (int i = 0; i < arr_gps_GPGBS_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPGBS_str[i]));
+                    }
+                }
+                open_serial_port_gps();
+                puertoSerie_gps.Write(BufferSendData_gps, 0, 26);
+                #endregion
+
+                ClearBufferSendData_gps();
+
+                #region GPGGA
+                string str_Enable_GPGGA = "36 69 73 71 80 81 44 71 71 65 42 50 55 13 10 181 98 6 1 3 0 240 0 1 251 16";
+                string str_Disable_GPGGA = "36 69 73 71 80 81 44 71 71 65 42 50 55 13 10 181 98 6 1 3 0 240 0 0 250 15";
+                decimal[] arr_gps_GPGGA_decimal = new decimal[26];
+                if (cv_gps_GPGGA.valor == "SI")
+                {
+                    string[] arr_gps_GPGGA_str = str_Enable_GPGGA.Split(' ');
+                    for (int i = 0; i < arr_gps_GPGGA_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPGGA_str[i]));
+                    }
+                }
+                else
+                {
+                    string[] arr_gps_GPGGA_str = str_Disable_GPGGA.Split(' ');
+                    for (int i = 0; i < arr_gps_GPGGA_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPGGA_str[i]));
+                    }
+                }
+                open_serial_port_gps();
+                puertoSerie_gps.Write(BufferSendData_gps, 0, 26);
+                #endregion
+
+                ClearBufferSendData_gps();
+
+                #region GPGLL
+                string str_Enable_GPGLL = "36 69 73 71 80 81 44 71 76 76 42 50 49 13 10 181 98 6 1 3 0 240 1 1 252 18";
+                string str_Disable_GPGLL = "36 69 73 71 80 81 44 71 76 76 42 50 49 13 10 181 98 6 1 3 0 240 1 0 251 17";
+                decimal[] arr_gps_GPGLL_decimal = new decimal[26];
+                if (cv_gps_GPGLL.valor == "SI")
+                {
+                    string[] arr_gps_GPGLL_str = str_Enable_GPGLL.Split(' ');
+                    for (int i = 0; i < arr_gps_GPGLL_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPGLL_str[i]));
+                    }
+                }
+                else
+                {
+                    string[] arr_gps_GPGLL_str = str_Disable_GPGLL.Split(' ');
+                    for (int i = 0; i < arr_gps_GPGLL_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPGLL_str[i]));
+                    }
+                }
+                open_serial_port_gps();
+                puertoSerie_gps.Write(BufferSendData_gps, 0, 26);
+                #endregion
+
+                ClearBufferSendData_gps();
+
+                #region GPGRS
+                string str_Enable_GPGRS = "36 69 73 71 80 81 44 71 82 83 42 50 48 13 10 181 98 6 1 3 0 240 6 1 1 28";
+                string str_Disable_GPGRS = "36 69 73 71 80 81 44 71 82 83 42 50 48 13 10 181 98 6 1 3 0 240 6 0 0 27";
+                decimal[] arr_gps_GPGRS_decimal = new decimal[26];
+                if (cv_gps_GPGRS.valor == "SI")
+                {
+                    string[] arr_gps_GPGRS_str = str_Enable_GPGRS.Split(' ');
+                    for (int i = 0; i < arr_gps_GPGRS_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPGRS_str[i]));
+                    }
+                }
+                else
+                {
+                    string[] arr_gps_GPGRS_str = str_Disable_GPGRS.Split(' ');
+                    for (int i = 0; i < arr_gps_GPGRS_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPGRS_str[i]));
+                    }
+                }
+                open_serial_port_gps();
+                puertoSerie_gps.Write(BufferSendData_gps, 0, 26);
+                #endregion
+
+                ClearBufferSendData_gps();
+
+                #region GPGSA
+                string str_Disable_GPGSA = "36 69 73 71 80 81 44 71 83 65 42 51 51 13 10 181 98 6 1 3 0 240 2 0 252 19";
+                string str_Enable_GPGSA = "36 69 73 71 80 81 44 71 83 65 42 51 51 13 10 181 98 6 1 3 0 240 2 1 253 20";
+                decimal[] arr_gps_GPGSA_decimal = new decimal[26];
+                if (cv_gps_GPGSA.valor == "SI")
+                {
+                    string[] arr_gps_GPGSA_str = str_Enable_GPGSA.Split(' ');
+                    for (int i = 0; i < arr_gps_GPGSA_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPGSA_str[i]));
+                    }
+                }
+                else
+                {
+                    string[] arr_gps_GPGSA_str = str_Disable_GPGSA.Split(' ');
+                    for (int i = 0; i < arr_gps_GPGSA_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPGSA_str[i]));
+                    }
+                }
+                open_serial_port_gps();
+                puertoSerie_gps.Write(BufferSendData_gps, 0, 26);
+                #endregion
+
+                ClearBufferSendData_gps();
+
+                #region GPGST
+                string str_Disable_GPGST = "36 69 73 71 80 81 44 71 83 84 42 50 54 13 10 181 98 6 1 3 0 240 7 0 1 29";
+                string str_Enable_GPGST = "36 69 73 71 80 81 44 71 83 84 42 50 54 13 10 181 98 6 1 3 0 240 7 1 2 30";
+                decimal[] arr_gps_GPGST_decimal = new decimal[26];
+                if (cv_gps_GPGST.valor == "SI")
+                {
+                    string[] arr_gps_GPGST_str = str_Enable_GPGST.Split(' ');
+                    for (int i = 0; i < arr_gps_GPGST_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPGST_str[i]));
+                    }
+                }
+                else
+                {
+                    string[] arr_gps_GPGST_str = str_Disable_GPGST.Split(' ');
+                    for (int i = 0; i < arr_gps_GPGST_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPGST_str[i]));
+                    }
+                }
+                open_serial_port_gps();
+                puertoSerie_gps.Write(BufferSendData_gps, 0, 26);
+                #endregion
+
+                ClearBufferSendData_gps();
+
+                #region GPGSV
+                string str_Disable_GPGSV = "36 69 73 71 80 81 44 71 83 86 42 50 52 13 10 181 98 6 1 3 0 240 3 0 253 21";
+                string str_Enable_GPGSV = "36 69 73 71 80 81 44 71 83 86 42 50 52 13 10 181 98 6 1 3 0 240 3 1 254 22";
+                decimal[] arr_gps_GPGSV_decimal = new decimal[26];
+                if (cv_gps_GPGSV.valor == "SI")
+                {
+                    string[] arr_gps_GPGSV_str = str_Enable_GPGSV.Split(' ');
+                    for (int i = 0; i < arr_gps_GPGSV_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPGSV_str[i]));
+                    }
+                }
+                else
+                {
+                    string[] arr_gps_GPGSV_str = str_Disable_GPGSV.Split(' ');
+                    for (int i = 0; i < arr_gps_GPGSV_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPGSV_str[i]));
+                    }
+                }
+                open_serial_port_gps();
+                puertoSerie_gps.Write(BufferSendData_gps, 0, 26);
+                #endregion
+
+                ClearBufferSendData_gps();
+
+                #region GNRMC
+                string str_Disable_GNRMC = "36 69 73 71 80 81 44 82 77 67 42 51 65 13 10 181 98 6 1 3 0 240 4 0 254 23";
+                string str_Enable_GNRMC = "36 69 73 71 80 81 44 82 77 67 42 51 65 13 10 181 98 6 1 3 0 240 4 1 255 24";
+                decimal[] arr_gps_GNRMC_decimal = new decimal[26];
+                if (cv_gps_GNRMC.valor == "SI")
+                {
+                    string[] arr_gps_GNRMC_str = str_Enable_GNRMC.Split(' ');
+                    for (int i = 0; i < arr_gps_GNRMC_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GNRMC_str[i]));
+                    }
+                }
+                else
+                {
+                    string[] arr_gps_GNRMC_str = str_Disable_GNRMC.Split(' ');
+                    for (int i = 0; i < arr_gps_GNRMC_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GNRMC_str[i]));
+                    }
+                }
+                open_serial_port_gps();
+                puertoSerie_gps.Write(BufferSendData_gps, 0, 26);
+                #endregion
+
+                ClearBufferSendData_gps();
+
+                #region GPVTG
+                string str_Disable_GPVTG = "36 69 73 71 80 81 44 86 84 71 42 50 51 13 10 181 98 6 1 3 0 240 5 0 255 25";
+                string str_Enable_GPVTG = "36 69 73 71 80 81 44 86 84 71 42 50 51 13 10 181 98 6 1 3 0 240 5 1 0 26";
+                decimal[] arr_gps_GPVTG_decimal = new decimal[26];
+                if (cv_gps_GPVTG.valor == "SI")
+                {
+                    string[] arr_gps_GPVTG_str = str_Enable_GPVTG.Split(' ');
+                    for (int i = 0; i < arr_gps_GPVTG_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPVTG_str[i]));
+                    }
+                }
+                else
+                {
+                    string[] arr_gps_GPVTG_str = str_Disable_GPVTG.Split(' ');
+                    for (int i = 0; i < arr_gps_GPVTG_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPVTG_str[i]));
+                    }
+                }
+                open_serial_port_gps();
+                puertoSerie_gps.Write(BufferSendData_gps, 0, 26);
+                #endregion
+
+                ClearBufferSendData_gps();
+
+                #region GPZDA
+                string str_Disable_GPZDA = "36 69 73 71 80 81 44 90 68 65 42 51 57 13 10 181 98 6 1 3 0 240 8 0 2 31";
+                string str_Enable_GPZDA = "36 69 73 71 80 81 44 90 68 65 42 51 57 13 10 181 98 6 1 3 0 240 8 1 3 32";
+                decimal[] arr_gps_GPZDA_decimal = new decimal[26];
+                if (cv_gps_GPZDA.valor == "SI")
+                {
+                    string[] arr_gps_GPZDA_str = str_Enable_GPZDA.Split(' ');
+                    for (int i = 0; i < arr_gps_GPZDA_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPZDA_str[i]));
+                    }
+                }
+                else
+                {
+                    string[] arr_gps_GPZDA_str = str_Disable_GPZDA.Split(' ');
+                    for (int i = 0; i < arr_gps_GPZDA_str.Length; i++)
+                    {
+                        BufferSendData_gps[i] = decimal.ToByte(Convert.ToDecimal(arr_gps_GPZDA_str[i]));
+                    }
+                }
+                open_serial_port_gps();
+                puertoSerie_gps.Write(BufferSendData_gps, 0, 26);
+                #endregion
 
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "EXCEPTION");
+                MessageBox.Show(ex.Message);
             }
         }
+        private sy_posicion_gps escuchar_gps_GNRMC()
+        {
+            sy_posicion_gps obj = new sy_posicion_gps();
+            try
+            {
+                //for (int i = 1; i <= 1; i++)
+                //{
+                string res = puertoSerie_gps.ReadLine();
+                if (res.Contains("GNRMC"))
+                {
+                    // $GNRMC,205832.00,A,2040.26072,N,10322.86300,W,1.051,,021024,,,A*7A
+
+                    string[] arrGNRMC = new string[8];
+                    arrGNRMC = res.Split(',');
+
+                    if (arrGNRMC[2].ToString().Trim() == "A")
+                    {
+                        // LAT
+                        if (arrGNRMC[3] != null && arrGNRMC[3].ToString().Trim() != "")
+                        {
+                            string[] arrLat = new string[2];
+                            arrLat = arrGNRMC[3].Split('.');
+
+                            arrLat[0] = Convert.ToInt32(arrLat[0]).ToString("D5");
+                            arrLat[1] = Convert.ToInt32(arrLat[1]).ToString("D5");
+
+                            //dddmm.mmmmm
+                            string dd_izq = arrLat[0].ToString().Trim().Substring(0, 3);
+                            string mm_izq = arrLat[0].ToString().Trim().Substring(3, 2);
+                            string mm_der = arrLat[1].ToString().Trim();
+
+                            decimal parte_DECIMAL = (Convert.ToDecimal(mm_izq + "." + mm_der) / 60);
+
+                            // CONVERSION A COMO LO TOMA GOOGLE MAPS
+                            decimal izq_der_FINAL_LAT = Convert.ToDecimal(dd_izq) + parte_DECIMAL;
+
+                            double aux_value = Math.Pow(10, 5);
+                            decimal value = (Math.Truncate(Convert.ToDecimal(izq_der_FINAL_LAT) * Convert.ToDecimal(aux_value)) / Convert.ToDecimal(aux_value));
+                            string izq_der_str_FINAL_LAT = value.ToString();
+
+                            if (arrGNRMC[4].Equals("S")) { izq_der_str_FINAL_LAT = (Convert.ToDecimal(izq_der_str_FINAL_LAT) * -1).ToString(); }
+
+                            Console.WriteLine(izq_der_str_FINAL_LAT);
+                            obj.lat = izq_der_str_FINAL_LAT;
+                        }
+
+                        // LNG
+                        if (arrGNRMC[5] != null && arrGNRMC[5].ToString().Trim() != "")
+                        {
+                            string[] arrLng = new string[2];
+                            arrLng = arrGNRMC[5].Split('.');
+
+                            arrLng[0] = Convert.ToInt32(arrLng[0]).ToString("D5");
+                            arrLng[1] = Convert.ToInt32(arrLng[1]).ToString("D5");
+
+                            //dddmm.mmmmm
+                            string dd_izq = arrLng[0].ToString().Trim().Substring(0, 3);
+                            string mm_izq = arrLng[0].ToString().Trim().Substring(3, 2);
+                            string mm_der = arrLng[1].ToString().Trim();
+
+                            decimal parte_DECIMAL = (Convert.ToDecimal(mm_izq + "." + mm_der) / 60);
+
+                            // CONVERSION A COMO LO TOMA GOOGLE MAPS
+                            decimal izq_der_FINAL_LNG = Convert.ToDecimal(dd_izq) + parte_DECIMAL;
+
+                            double aux_value = Math.Pow(10, 5);
+                            decimal value = (Math.Truncate(Convert.ToDecimal(izq_der_FINAL_LNG) * Convert.ToDecimal(aux_value)) / Convert.ToDecimal(aux_value));
+                            string izq_der_str_FINAL_LNG = value.ToString();
+
+                            if (arrGNRMC[6].Equals("W")) { izq_der_str_FINAL_LNG = (Convert.ToDecimal(izq_der_str_FINAL_LNG) * -1).ToString(); }
+
+                            Console.WriteLine(izq_der_str_FINAL_LNG);
+                            obj.lng = izq_der_str_FINAL_LNG;
+                        }
+
+                        // FECHA
+                        string fecha_gps = "";
+                        if (arrGNRMC[9] != null && arrGNRMC[9].ToString().Trim() != "")
+                        {
+                            fecha_gps = "20" + arrGNRMC[9].Substring(4, 2) + "-" + arrGNRMC[9].Substring(2, 2) + "-" + arrGNRMC[9].Substring(0, 2);
+                        }
+                        // HORA
+                        string hora_gps = "";
+                        if (arrGNRMC[1] != null && arrGNRMC[1].ToString().Trim() != "")
+                        {
+                            hora_gps = arrGNRMC[1].Substring(0, 2) + ":" + arrGNRMC[1].Substring(2, 2) + ":" + arrGNRMC[1].Substring(4, 2);
+                        }
+
+                        string fecha_hora_gps = fecha_gps + " " + hora_gps;
+                        string fecha_hora_gps_correcta = (Convert.ToDateTime(fecha_hora_gps).AddHours(-6)).ToString("yyyy-MM-dd HH:mm:ss.fff");
+
+                            
+                        obj.fkAsignacion = FK_ASIGNACION_ACTIVA;
+                        obj.fkStatus = 1;
+                        obj.fecha_hora = fecha_hora_gps_correcta; //fecha_hora_gps;
+                        obj.enviado = 0;
+                        obj.confirmado = 0;
+                        obj.modo = 0;
+                        obj.created_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:fff");
+                        obj.updated_at = null;
+                        obj.deleted_at = null;
+
+
+                    }
+                    //else
+                    //{
+                    //    Console.WriteLine("AUN NO CALCULA LA UBICACION EL GPS GNRMC");
+                    //}
+                        
+                }
+                    
+                //}
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                return obj;
+
+            }
+        }
+        private void insertar_gps_GNRMC_db_local(sy_posicion_gps obj)
+        {
+            ServicePosicionGPS serv_pos_gps = new ServicePosicionGPS();
+            if(obj.fkAsignacion != null && obj.fkAsignacion != 0)
+            {
+                serv_pos_gps.addEntity(obj);
+            }
+            
+        }
+
+
+        private void escuchar_gps_GNGLL()
+        {
+            try
+            {
+                string cadena_gps = "";
+                for (int i = 1; i <= 10; i++)
+                {
+                    string res = puertoSerie_gps.ReadLine();
+                    if (res.Contains("GNGLL"))
+                    {
+                        // $GNGLL,2040.21545,N,10322.85736,W,214904.00,A,A*63
+
+                        string[] arrGNGLL = new string[8];
+                        arrGNGLL = res.Split(',');
+
+                        if (arrGNGLL[6].ToString().Trim() == "A")
+                        {
+                            if (arrGNGLL[1] != null && arrGNGLL[1].ToString().Trim() != "")
+                            {
+                                string[] arrLat = new string[2];
+                                arrLat = arrGNGLL[1].Split('.');
+
+                                arrLat[0] = Convert.ToInt32(arrLat[0]).ToString("D5");
+                                arrLat[1] = Convert.ToInt32(arrLat[1]).ToString("D5");
+
+                                //dddmm.mmmmm
+                                string dd_izq = arrLat[0].ToString().Trim().Substring(0, 3);
+                                string mm_izq = arrLat[0].ToString().Trim().Substring(3, 2);
+                                string mm_der = arrLat[1].ToString().Trim();
+
+                                decimal parte_DECIMAL = (Convert.ToDecimal(mm_izq + "." + mm_der) / 60);
+
+                                // CONVERSION A COMO LO TOMA GOOGLE MAPS
+                                decimal izq_der_FINAL_LAT = Convert.ToDecimal(dd_izq) + parte_DECIMAL;
+
+                                double aux_value = Math.Pow(10, 5);
+                                decimal value = (Math.Truncate(Convert.ToDecimal(izq_der_FINAL_LAT) * Convert.ToDecimal(aux_value)) / Convert.ToDecimal(aux_value));
+                                string izq_der_str_FINAL_LAT = value.ToString();
+
+                                if (arrGNGLL[2].Equals("S")) { izq_der_str_FINAL_LAT = (Convert.ToDecimal(izq_der_str_FINAL_LAT) * -1).ToString(); }
+
+
+                                Console.WriteLine(izq_der_str_FINAL_LAT);
+                            }
+
+                            if (arrGNGLL[3] != null && arrGNGLL[3].ToString().Trim() != "")
+                            {
+                                string[] arrLng = new string[2];
+                                arrLng = arrGNGLL[3].Split('.');
+
+                                arrLng[0] = Convert.ToInt32(arrLng[0]).ToString("D5");
+                                arrLng[1] = Convert.ToInt32(arrLng[1]).ToString("D5");
+
+                                //dddmm.mmmmm
+                                string dd_izq = arrLng[0].ToString().Trim().Substring(0, 3);
+                                string mm_izq = arrLng[0].ToString().Trim().Substring(3, 2);
+                                string mm_der = arrLng[1].ToString().Trim();
+
+                                decimal parte_DECIMAL = (Convert.ToDecimal(mm_izq + "." + mm_der) / 60);
+
+                                // CONVERSION A COMO LO TOMA GOOGLE MAPS
+                                decimal izq_der_FINAL_LNG = Convert.ToDecimal(dd_izq) + parte_DECIMAL;
+
+                                double aux_value = Math.Pow(10, 5);
+                                decimal value = (Math.Truncate(Convert.ToDecimal(izq_der_FINAL_LNG) * Convert.ToDecimal(aux_value)) / Convert.ToDecimal(aux_value));
+                                string izq_der_str_FINAL_LNG = value.ToString();
+
+                                if (arrGNGLL[4].Equals("W")) { izq_der_str_FINAL_LNG = (Convert.ToDecimal(izq_der_str_FINAL_LNG) * -1).ToString(); }
+
+                                Console.WriteLine(izq_der_str_FINAL_LNG);
+
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("AUN NO CALCULA LA UBICACION EL GPS GNGLL");
+                        }
+
+                        //cadena_gps = res;
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+
+            }
+        }
+
         #endregion
+
+
 
         #region PUERTO SERIAL - ALCANCIA
         public void configura_puerto_serial()
@@ -2334,25 +3312,29 @@ namespace TestMdfEntityFramework
                 //config_varios cv_handshake = scv.getEntityByClave("HANDSHAKE");
 
                 ServiceConfigPuertos scp = new ServiceConfigPuertos();
-                ct_config_puertos config_puerto = scp.getEntity(1);
-                string cv_port_name = config_puerto.port_name;
-                string cv_baud_rate = config_puerto.baud_rate;
-                string cv_paridad = config_puerto.paridad;
-                string cv_data_bits = config_puerto.data_bits;
-                string cv_stop_bits = config_puerto.stop_bits;
-                string cv_handshake = config_puerto.handshake;
-
-                if (cv_port_name != "")
+                ct_config_puertos config_puerto = scp.getEntityByNombreDispositivo("ALCANCIA");
+                if (config_puerto != null)
                 {
-                    this.puertoSerie_alcancia = new System.IO.Ports.SerialPort
-                    ("" + cv_port_name
-                    , Convert.ToInt32(cv_baud_rate)
-                    , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
-                    , Convert.ToInt32(cv_data_bits)
-                    , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
-                    );
-                    puertoSerie_alcancia.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+                    string cv_port_name = config_puerto.port_name;
+                    string cv_baud_rate = config_puerto.baud_rate;
+                    string cv_paridad = config_puerto.paridad;
+                    string cv_data_bits = config_puerto.data_bits;
+                    string cv_stop_bits = config_puerto.stop_bits;
+                    string cv_handshake = config_puerto.handshake;
+
+                    if (cv_port_name != "")
+                    {
+                        this.puertoSerie_alcancia = new System.IO.Ports.SerialPort
+                        ("" + cv_port_name
+                        , Convert.ToInt32(cv_baud_rate)
+                        , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                        , Convert.ToInt32(cv_data_bits)
+                        , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                        );
+                        puertoSerie_alcancia.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+                    }
                 }
+                    
             }
             catch
             {
@@ -2384,61 +3366,65 @@ namespace TestMdfEntityFramework
 
         #endregion
 
-        #region PUERTO SERIAL - CUENTA COCOS 1
-        void ClearBufferSendData_cc1()
+        #region PUERTO SERIAL - CUENTA COCOS
+        void ClearBufferSendData_cuenta_cocos()
         {
-            for (int i = 0; i < BufferSendData_cc1.Length; i++)
+            for (int i = 0; i < BufferSendData_cuenta_cocos.Length; i++)
             {
-                BufferSendData_cc1[i] = 0;
+                BufferSendData_cuenta_cocos[i] = 0;
             }
         }
-        void ClearBufferRecievedDataGlobal_cc1()
+        void ClearBufferRecievedDataGlobal_cuenta_cocos()
         {
-            for (int i = 0; i < RecievedDataGlobal_cc1.Length; i++)
+            for (int i = 0; i < RecievedDataGlobal_cuenta_cocos.Length; i++)
             {
-                RecievedDataGlobal_cc1[i] = 0;
+                RecievedDataGlobal_cuenta_cocos[i] = 0;
             }
         }
-        public void configura_puerto_serial_cc1()
+        public void configura_puerto_serial_cuenta_cocos()
         {
             try
             {
                 ServiceConfigPuertos scp = new ServiceConfigPuertos();
-                ct_config_puertos config_puerto = scp.getEntity(2);
-                string cv_port_name = config_puerto.port_name;
-                string cv_baud_rate = config_puerto.baud_rate;
-                string cv_paridad = config_puerto.paridad;
-                string cv_data_bits = config_puerto.data_bits;
-                string cv_stop_bits = config_puerto.stop_bits;
-                string cv_handshake = config_puerto.handshake;
-
-                if (cv_port_name != "")
+                ct_config_puertos config_puerto = scp.getEntityByNombreDispositivo("CUENTA_COCOS");
+                if(config_puerto != null)
                 {
-                    this.puertoSerie_cc1 = new System.IO.Ports.SerialPort
-                    ("" + cv_port_name
-                    , Convert.ToInt32(cv_baud_rate)
-                    , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
-                    , Convert.ToInt32(cv_data_bits)
-                    , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
-                    );
-                    puertoSerie_cc1.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+                    string cv_port_name = config_puerto.port_name;
+                    string cv_baud_rate = config_puerto.baud_rate;
+                    string cv_paridad = config_puerto.paridad;
+                    string cv_data_bits = config_puerto.data_bits;
+                    string cv_stop_bits = config_puerto.stop_bits;
+                    string cv_handshake = config_puerto.handshake;
 
-                    close_serial_port_cc1();
-                    open_serial_port_cc1(); //EMD 2024-05-06
+                    if (cv_port_name != "")
+                    {
+                        this.puertoSerie_cuenta_cocos = new System.IO.Ports.SerialPort
+                        ("" + cv_port_name
+                        , Convert.ToInt32(cv_baud_rate)
+                        , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                        , Convert.ToInt32(cv_data_bits)
+                        , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                        );
+                        puertoSerie_cuenta_cocos.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+
+                        close_serial_port_cuenta_cocos();
+                        open_serial_port_cuenta_cocos(); //EMD 2024-05-06
+                    }
                 }
+                
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
             }
         }
-        private void open_serial_port_cc1()
+        private void open_serial_port_cuenta_cocos()
         {
             try
             {
-                if (puertoSerie_cc1.IsOpen == false)
+                if (puertoSerie_cuenta_cocos.IsOpen == false)
                 {
-                    puertoSerie_cc1.Open();
+                    puertoSerie_cuenta_cocos.Open();
                 }
             }
             catch (Exception ex)
@@ -2446,177 +3432,22 @@ namespace TestMdfEntityFramework
 
             }
         }
-        private void close_serial_port_cc1()
+        private void close_serial_port_cuenta_cocos()
         {
-            if (puertoSerie_cc1.IsOpen == true)
+            if (puertoSerie_cuenta_cocos.IsOpen == true)
             {
-                puertoSerie_cc1.Close();
+                puertoSerie_cuenta_cocos.Close();
             }
         }
-        private void dispose_serial_port_cc1()
+        private void dispose_serial_port_cuenta_cocos()
         {
-            if (puertoSerie_cc1.IsOpen == false)
+            if (puertoSerie_cuenta_cocos.IsOpen == false)
             {
-                puertoSerie_cc1.Dispose();
+                puertoSerie_cuenta_cocos.Dispose();
             }
         }
         #endregion
 
-        #region PUERTO SERIAL - CUENTA COCOS 2
-        void ClearBufferSendData_cc2()
-        {
-            for (int i = 0; i < BufferSendData_cc2.Length; i++)
-            {
-                BufferSendData_cc2[i] = 0;
-            }
-        }
-        void ClearBufferRecievedDataGlobal_cc2()
-        {
-            for (int i = 0; i < RecievedDataGlobal_cc2.Length; i++)
-            {
-                RecievedDataGlobal_cc2[i] = 0;
-            }
-        }
-        public void configura_puerto_serial_cc2()
-        {
-            try
-            {
-                ServiceConfigPuertos scp = new ServiceConfigPuertos();
-                ct_config_puertos config_puerto = scp.getEntity(3);
-                string cv_port_name = config_puerto.port_name;
-                string cv_baud_rate = config_puerto.baud_rate;
-                string cv_paridad = config_puerto.paridad;
-                string cv_data_bits = config_puerto.data_bits;
-                string cv_stop_bits = config_puerto.stop_bits;
-                string cv_handshake = config_puerto.handshake;
-
-                if (cv_port_name != "")
-                {
-                    this.puertoSerie_cc2 = new System.IO.Ports.SerialPort
-                    ("" + cv_port_name
-                    , Convert.ToInt32(cv_baud_rate)
-                    , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
-                    , Convert.ToInt32(cv_data_bits)
-                    , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
-                    );
-                    puertoSerie_cc2.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
-
-                    close_serial_port_cc2();
-                    open_serial_port_cc2(); //EMD 2024-05-06
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
-            }
-        }
-        private void open_serial_port_cc2()
-        {
-            try
-            {
-                if (puertoSerie_cc2.IsOpen == false)
-                {
-                    puertoSerie_cc2.Open();
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
-        private void close_serial_port_cc2()
-        {
-            if (puertoSerie_cc2.IsOpen == true)
-            {
-                puertoSerie_cc2.Close();
-            }
-        }
-        private void dispose_serial_port_cc2()
-        {
-            if (puertoSerie_cc2.IsOpen == false)
-            {
-                puertoSerie_cc2.Dispose();
-            }
-        }
-        #endregion
-
-        #region PUERTO SERIAL - CUENTA COCOS 3
-        void ClearBufferSendData_cc3()
-        {
-            for (int i = 0; i < BufferSendData_cc3.Length; i++)
-            {
-                BufferSendData_cc3[i] = 0;
-            }
-        }
-        void ClearBufferRecievedDataGlobal_cc3()
-        {
-            for (int i = 0; i < RecievedDataGlobal_cc3.Length; i++)
-            {
-                RecievedDataGlobal_cc3[i] = 0;
-            }
-        }
-        public void configura_puerto_serial_cc3()
-        {
-            try
-            {
-                ServiceConfigPuertos scp = new ServiceConfigPuertos();
-                ct_config_puertos config_puerto = scp.getEntity(4);
-                string cv_port_name = config_puerto.port_name;
-                string cv_baud_rate = config_puerto.baud_rate;
-                string cv_paridad = config_puerto.paridad;
-                string cv_data_bits = config_puerto.data_bits;
-                string cv_stop_bits = config_puerto.stop_bits;
-                string cv_handshake = config_puerto.handshake;
-
-                if (cv_port_name != "")
-                {
-                    this.puertoSerie_cc3 = new System.IO.Ports.SerialPort
-                    ("" + cv_port_name
-                    , Convert.ToInt32(cv_baud_rate)
-                    , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
-                    , Convert.ToInt32(cv_data_bits)
-                    , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
-                    );
-                    puertoSerie_cc3.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
-
-                    close_serial_port_cc3();
-                    open_serial_port_cc3(); //EMD 2024-05-06
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
-            }
-        }
-        private void open_serial_port_cc3()
-        {
-            try
-            {
-                if (puertoSerie_cc3.IsOpen == false)
-                {
-                    puertoSerie_cc3.Open();
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
-        private void close_serial_port_cc3()
-        {
-            if (puertoSerie_cc3.IsOpen == true)
-            {
-                puertoSerie_cc3.Close();
-            }
-        }
-        private void dispose_serial_port_cc3()
-        {
-            if (puertoSerie_cc3.IsOpen == false)
-            {
-                puertoSerie_cc3.Dispose();
-            }
-        }
-        #endregion
 
         #region PUERTO SERIAL - GPS
         void ClearBufferSendData_gps()
@@ -2638,28 +3469,32 @@ namespace TestMdfEntityFramework
             try
             {
                 ServiceConfigPuertos scp = new ServiceConfigPuertos();
-                ct_config_puertos config_puerto = scp.getEntity(2);
-                string cv_port_name = config_puerto.port_name;
-                string cv_baud_rate = config_puerto.baud_rate;
-                string cv_paridad = config_puerto.paridad;
-                string cv_data_bits = config_puerto.data_bits;
-                string cv_stop_bits = config_puerto.stop_bits;
-                string cv_handshake = config_puerto.handshake;
-
-                if (cv_port_name != "")
+                ct_config_puertos config_puerto = scp.getEntityByNombreDispositivo("GPS");
+                if (config_puerto != null)
                 {
-                    this.puertoSerie_gps = new System.IO.Ports.SerialPort
-                    ("" + cv_port_name
-                    , Convert.ToInt32(cv_baud_rate)
-                    , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
-                    , Convert.ToInt32(cv_data_bits)
-                    , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
-                    );
-                    puertoSerie_gps.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+                    string cv_port_name = config_puerto.port_name;
+                    string cv_baud_rate = config_puerto.baud_rate;
+                    string cv_paridad = config_puerto.paridad;
+                    string cv_data_bits = config_puerto.data_bits;
+                    string cv_stop_bits = config_puerto.stop_bits;
+                    string cv_handshake = config_puerto.handshake;
 
-                    close_serial_port_gps();
-                    open_serial_port_gps(); //EMD 2024-05-06
+                    if (cv_port_name != "")
+                    {
+                        this.puertoSerie_gps = new System.IO.Ports.SerialPort
+                        ("" + cv_port_name
+                        , Convert.ToInt32(cv_baud_rate)
+                        , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                        , Convert.ToInt32(cv_data_bits)
+                        , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                        );
+                        puertoSerie_gps.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+
+                        close_serial_port_gps();
+                        open_serial_port_gps(); //EMD 2024-05-06
+                    }
                 }
+                    
             }
             catch (Exception ex)
             {

@@ -31,6 +31,8 @@
     <EntitySet Name="ct_rutas" EntityType="databaseModel.ct_rutas" />
     <EntitySet Name="ct_unidades" EntityType="databaseModel.ct_unidades" />
     <EntitySet Name="ct_config_puertos" EntityType="databaseModel.ct_config_puertos" />
+    <EntitySet Name="sy_conteo_cuenta_cocos" EntityType="databaseModel.sy_conteo_cuenta_cocos" />
+    <EntitySet Name="sy_posicion_gps" EntityType="databaseModel.sy_posicion_gps" />
   </EntityContainer>
   <EntityType Name="config_varios">
     <Key>
@@ -499,5 +501,45 @@
     <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="sy_conteo_cuenta_cocos">
+    <Key>
+      <PropertyRef Name="pkConteoCuentaCocos" />
+    </Key>
+    <Property Name="pkConteoCuentaCocos" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="pkConteoCuentaCocosTISA" Type="Int64" />
+    <Property Name="fkAsignacion" Type="Int64" />
+    <Property Name="fkStatus" Type="Int64" />
+    <Property Name="cc1_subidas" Type="Int64" />
+    <Property Name="cc1_bajadas" Type="Int64" />
+    <Property Name="cc2_subidas" Type="Int64" />
+    <Property Name="cc2_bajadas" Type="Int64" />
+    <Property Name="cc3_subidas" Type="Int64" />
+    <Property Name="cc3_bajadas" Type="Int64" />
+    <Property Name="fecha_hora" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="enviado" Type="Int32" />
+    <Property Name="confirmado" Type="Int32" />
+    <Property Name="modo" Type="Int32" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="sy_posicion_gps">
+    <Key>
+      <PropertyRef Name="pkPosicionGPS" />
+    </Key>
+    <Property Name="pkPosicionGPS" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="pkPosicionGPSTISA" Type="Int64" />
+    <Property Name="fkAsignacion" Type="Int64" />
+    <Property Name="fkStatus" Type="Int64" />
+    <Property Name="lat" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="lng" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="fecha_hora" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="enviado" Type="Int32" />
+    <Property Name="confirmado" Type="Int32" />
+    <Property Name="modo" Type="Int32" />
+    <Property Name="created_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="updated_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="deleted_at" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
   </EntityType>
 </Schema>

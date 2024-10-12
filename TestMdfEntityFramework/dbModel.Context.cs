@@ -55,5 +55,7 @@ namespace TestMdfEntityFramework
         public virtual DbSet<ct_rutas> ct_rutas { get; set; }
         public virtual DbSet<ct_unidades> ct_unidades { get; set; }
         public virtual DbSet<ct_config_puertos> ct_config_puertos { get; set; }
+        public virtual DbSet<sy_conteo_cuenta_cocos> sy_conteo_cuenta_cocos { get; set; }
+        public virtual DbSet<sy_posicion_gps> sy_posicion_gps { get; set; }
     }
 }

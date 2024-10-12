@@ -35,6 +35,8 @@
         <EntityTypeShape EntityType="databaseModel.ct_rutas" Width="1.5" PointX="0.5" PointY="3.375" />
         <EntityTypeShape EntityType="databaseModel.ct_unidades" Width="1.5" PointX="13.5" PointY="0.5" />
         <EntityTypeShape EntityType="databaseModel.ct_config_puertos" Width="1.5" PointX="2.625" PointY="12.875" />
+        <EntityTypeShape EntityType="databaseModel.sy_conteo_cuenta_cocos" Width="1.5" PointX="5.125" PointY="14" />
+        <EntityTypeShape EntityType="databaseModel.sy_posicion_gps" Width="1.5" PointX="6.875" PointY="14" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

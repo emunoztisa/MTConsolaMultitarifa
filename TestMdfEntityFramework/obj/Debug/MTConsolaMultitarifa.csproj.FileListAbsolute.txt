@@ -85,3 +85,5 @@ C:\Users\Juan Pablo\source\repos\MTConsolaMultitarifa\TestMdfEntityFramework\obj
 C:\Users\Juan Pablo\source\repos\MTConsolaMultitarifa\TestMdfEntityFramework\obj\Debug\MTConsolaMultitarifa.csproj.CopyComplete
 C:\Users\Juan Pablo\source\repos\MTConsolaMultitarifa\TestMdfEntityFramework\obj\Debug\Views\ConfiguracionV4.g.cs
 C:\Users\Juan Pablo\source\repos\MTConsolaMultitarifa\TestMdfEntityFramework\obj\Debug\Views\ConfiguracionV4.baml
+C:\Users\Juan Pablo\source\repos\MTConsolaMultitarifa\TestMdfEntityFramework\obj\Debug\Views\CobroMultitarifaV2.g.cs
+C:\Users\Juan Pablo\source\repos\MTConsolaMultitarifa\TestMdfEntityFramework\obj\Debug\Views\CobroMultitarifaV2.baml

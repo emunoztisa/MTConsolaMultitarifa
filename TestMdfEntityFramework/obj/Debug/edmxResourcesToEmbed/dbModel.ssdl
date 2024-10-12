@@ -338,6 +338,28 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_taqui
     <Property Name="updated_at" Type="nvarchar" MaxLength="30" />
     <Property Name="deleted_at" Type="nvarchar" MaxLength="30" />
   </EntityType>
+  <EntityType Name="sy_conteo_cuenta_cocos">
+    <Key>
+      <PropertyRef Name="pkConteoCuentaCocos" />
+    </Key>
+    <Property Name="pkConteoCuentaCocos" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="pkConteoCuentaCocosTISA" Type="bigint" />
+    <Property Name="fkAsignacion" Type="bigint" />
+    <Property Name="fkStatus" Type="bigint" />
+    <Property Name="cc1_subidas" Type="bigint" />
+    <Property Name="cc1_bajadas" Type="bigint" />
+    <Property Name="cc2_subidas" Type="bigint" />
+    <Property Name="cc2_bajadas" Type="bigint" />
+    <Property Name="cc3_subidas" Type="bigint" />
+    <Property Name="cc3_bajadas" Type="bigint" />
+    <Property Name="fecha_hora" Type="nvarchar" MaxLength="30" />
+    <Property Name="enviado" Type="int" />
+    <Property Name="confirmado" Type="int" />
+    <Property Name="modo" Type="int" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
   <EntityType Name="sy_cortes">
     <Key>
       <PropertyRef Name="pkCorte" />
@@ -421,6 +443,24 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.ct_taqui
     <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
     <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
   </EntityType>
+  <EntityType Name="sy_posicion_gps">
+    <Key>
+      <PropertyRef Name="pkPosicionGPS" />
+    </Key>
+    <Property Name="pkPosicionGPS" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="pkPosicionGPSTISA" Type="bigint" />
+    <Property Name="fkAsignacion" Type="bigint" />
+    <Property Name="fkStatus" Type="bigint" />
+    <Property Name="lat" Type="nvarchar" MaxLength="50" />
+    <Property Name="lng" Type="nvarchar" MaxLength="50" />
+    <Property Name="fecha_hora" Type="nvarchar" MaxLength="30" />
+    <Property Name="enviado" Type="int" />
+    <Property Name="confirmado" Type="int" />
+    <Property Name="modo" Type="int" />
+    <Property Name="created_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="updated_at" Type="nvarchar" MaxLength="50" />
+    <Property Name="deleted_at" Type="nvarchar" MaxLength="50" />
+  </EntityType>
   <!--Errores durante la generación:
 advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_status' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
   <EntityType Name="sy_status">
@@ -496,10 +536,12 @@ advertencia 6002: La tabla o vista 'C:\MT_CON_DATABASE\DATABASE.MDF.dbo.sy_statu
     <EntitySet Name="sy_boletos" EntityType="Self.sy_boletos" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sy_boletos_detalle" EntityType="Self.sy_boletos_detalle" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sy_boletos_tarifa_fija" EntityType="Self.sy_boletos_tarifa_fija" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sy_conteo_cuenta_cocos" EntityType="Self.sy_conteo_cuenta_cocos" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sy_cortes" EntityType="Self.sy_cortes" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sy_empresa_corredor_operador" EntityType="Self.sy_empresa_corredor_operador" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sy_lugar_ruta" EntityType="Self.sy_lugar_ruta" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sy_mensajes" EntityType="Self.sy_mensajes" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sy_posicion_gps" EntityType="Self.sy_posicion_gps" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sy_tarifas" EntityType="Self.sy_tarifas" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sy_ubicacion" EntityType="Self.sy_ubicacion" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="users" EntityType="Self.users" Schema="dbo" store:Type="Tables" />

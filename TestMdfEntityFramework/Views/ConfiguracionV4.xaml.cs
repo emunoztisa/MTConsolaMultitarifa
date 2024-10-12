@@ -37,15 +37,28 @@ namespace TestMdfEntityFramework.Views
         SpeechSynthesizer synthesizer = new SpeechSynthesizer();
         List<VoiceInfo> vocesInfo = new List<VoiceInfo>();
 
-        //SERIAL PORT
+        //SERIAL PORT - ALCANCIA
         System.IO.Ports.SerialPort puertoSerie1 = new System.IO.Ports.SerialPort();
         String[] listado_puerto = System.IO.Ports.SerialPort.GetPortNames();
-        
+
+        //SERIAL PORT - CUENTA COCOS
+        System.IO.Ports.SerialPort puertoSerie_cuenta_cocos = new System.IO.Ports.SerialPort();
+
+        //SERIAL PORT - GPS
+        System.IO.Ports.SerialPort puertoSerie_gps = new System.IO.Ports.SerialPort();
 
 
         //BUFFERS SEND AND RECIEVED
         byte[] BufferSendData = new byte[80];
         byte[] RecievedDataGlobal = new byte[80];
+
+        //BUFFERS SEND AND RECIEVED - CUENTA COCOS
+        byte[] BufferSendData_cuenta_cocos = new byte[80];
+        byte[] RecievedDataGlobal_cuenta_cocos = new byte[80];
+
+        //BUFFERS SEND AND RECIEVED - GPS
+        byte[] BufferSendData_gps = new byte[80];
+        byte[] RecievedDataGlobal_gps = new byte[80];
 
 
         //POPUP OK
@@ -71,18 +84,35 @@ namespace TestMdfEntityFramework.Views
 
         private void ConfiguracionV4_OnLoad(object sender, RoutedEventArgs e)
         {
-            //MuestraValoresConfigSerial();
-
             llenarGridConfigPuertos();
 
-            if (validaPuertoCOMConfigurado())
+            ServiceConfigVarios scv = new ServiceConfigVarios();
+
+            config_varios config_alcancia_activa = scv.getEntityByClave("ALCANCIA_ACTIVA");
+            config_varios config_cc1_activo = scv.getEntityByClave("CC1_ACTIVO");
+            config_varios config_cc2_activo = scv.getEntityByClave("CC2_ACTIVO");
+            config_varios config_cc3_activo = scv.getEntityByClave("CC3_ACTIVO");
+            config_varios config_gps_activo = scv.getEntityByClave("UBICACION_ACTIVA");
+
+
+            if (config_alcancia_activa.valor == "HABILITADO")
             {
-                configura_puerto_serial();
+                if (validaPuertoCOMConfigurado())
+                {
+                    configura_puerto_serial();
+                }
             }
 
-            //EVENTOS PARA POPUP OK
-            SetPopupDlgCenter();
-            InitializeAnimations();
+            if (config_cc1_activo.valor == "HABILITADO" || config_cc2_activo.valor == "HABILITADO" || config_cc3_activo.valor == "HABILITADO")
+            {
+                configura_puerto_serial_cuenta_cocos();
+            }
+
+            if (config_gps_activo.valor == "HABILITADO")
+            {
+                configura_puerto_serial_gps();
+            }
+
 
             try
             {
@@ -97,6 +127,13 @@ namespace TestMdfEntityFramework.Views
             {
                 MessageBox.Show(ex.Message, "ATENCION !!!");
             }
+
+
+            //EVENTOS PARA POPUP OK
+            SetPopupDlgCenter();
+            InitializeAnimations();
+
+           
         }
         private void ConfiguracionV4_OnUnload(object sender, RoutedEventArgs e)
         {
@@ -127,59 +164,59 @@ namespace TestMdfEntityFramework.Views
                 }
             }
 
-            config_varios config_baud_rate = scv.getEntityByClave("BAUD_RATE");
-            for (int i = 0; i < cmbBausRate.Items.Count; i++)
-            {
-                if (cmbBausRate.Items[i].ToString() == config_baud_rate.valor)
-                {
-                    cmbBausRate.SelectedValue = config_baud_rate.valor;
-                }
-            }
+            //config_varios config_baud_rate = scv.getEntityByClave("BAUD_RATE");
+            //for (int i = 0; i < cmbBausRate.Items.Count; i++)
+            //{
+            //    if (cmbBausRate.Items[i].ToString() == config_baud_rate.valor)
+            //    {
+            //        cmbBausRate.SelectedValue = config_baud_rate.valor;
+            //    }
+            //}
 
-            config_varios config_paridad = scv.getEntityByClave("PARIDAD");
-            for (int i = 0; i < cmbParity.Items.Count; i++)
-            {
-                if (cmbParity.Items[i].ToString() == config_paridad.valor)
-                {
-                    cmbParity.SelectedValue = config_paridad.valor;
-                }
-            }
+            //config_varios config_paridad = scv.getEntityByClave("PARIDAD");
+            //for (int i = 0; i < cmbParity.Items.Count; i++)
+            //{
+            //    if (cmbParity.Items[i].ToString() == config_paridad.valor)
+            //    {
+            //        cmbParity.SelectedValue = config_paridad.valor;
+            //    }
+            //}
 
-            config_varios config_data_bits = scv.getEntityByClave("DATA_BITS");
-            for (int i = 0; i < cmbDataBits.Items.Count; i++)
-            {
-                if (cmbDataBits.Items[i].ToString() == config_data_bits.valor)
-                {
-                    cmbDataBits.SelectedValue = config_data_bits.valor;
-                }
-            }
+            //config_varios config_data_bits = scv.getEntityByClave("DATA_BITS");
+            //for (int i = 0; i < cmbDataBits.Items.Count; i++)
+            //{
+            //    if (cmbDataBits.Items[i].ToString() == config_data_bits.valor)
+            //    {
+            //        cmbDataBits.SelectedValue = config_data_bits.valor;
+            //    }
+            //}
 
-            config_varios config_stop_bits = scv.getEntityByClave("STOP_BITS");
-            for (int i = 0; i < cmbStopBits.Items.Count; i++)
-            {
-                if (cmbStopBits.Items[i].ToString() == config_stop_bits.valor)
-                {
-                    cmbStopBits.SelectedValue = config_stop_bits.valor;
-                }
-            }
+            //config_varios config_stop_bits = scv.getEntityByClave("STOP_BITS");
+            //for (int i = 0; i < cmbStopBits.Items.Count; i++)
+            //{
+            //    if (cmbStopBits.Items[i].ToString() == config_stop_bits.valor)
+            //    {
+            //        cmbStopBits.SelectedValue = config_stop_bits.valor;
+            //    }
+            //}
 
-            config_varios config_handshake = scv.getEntityByClave("HANDSHAKE");
-            for (int i = 0; i < cmbHandShake.Items.Count; i++)
-            {
-                if (cmbHandShake.Items[i].ToString() == config_handshake.valor)
-                {
-                    cmbHandShake.SelectedValue = config_handshake.valor;
-                }
-            }
+            //config_varios config_handshake = scv.getEntityByClave("HANDSHAKE");
+            //for (int i = 0; i < cmbHandShake.Items.Count; i++)
+            //{
+            //    if (cmbHandShake.Items[i].ToString() == config_handshake.valor)
+            //    {
+            //        cmbHandShake.SelectedValue = config_handshake.valor;
+            //    }
+            //}
 
-            config_varios config_port_name = scv.getEntityByClave("PORT_NAME");
-            for (int i = 0; i < cmbComPorts.Items.Count; i++)
-            {
-                if (cmbComPorts.Items[i].ToString() == config_port_name.valor)
-                {
-                    cmbComPorts.SelectedValue = config_port_name.valor;
-                }
-            }
+            //config_varios config_port_name = scv.getEntityByClave("PORT_NAME");
+            //for (int i = 0; i < cmbComPorts.Items.Count; i++)
+            //{
+            //    if (cmbComPorts.Items[i].ToString() == config_port_name.valor)
+            //    {
+            //        cmbComPorts.SelectedValue = config_port_name.valor;
+            //    }
+            //}
 
             config_varios config_empresa = scv.getEntityByClave("EMPRESA");
             for (int i = 0; i < cmbEmpresa.Items.Count; i++)
@@ -272,12 +309,51 @@ namespace TestMdfEntityFramework.Views
                 }
             }
 
-            config_varios config_ubicacion_activa = scv.getEntityByClave("UBICACION_ACTIVA");
-            for (int i = 0; i < cmbActivarUbicacion.Items.Count; i++)
+            config_varios config_cc3_activo = scv.getEntityByClave("CC3_ACTIVO");
+            for (int i = 0; i < cmbActivar_CC3.Items.Count; i++)
             {
-                if (cmbActivarUbicacion.Items[i].ToString() == config_ubicacion_activa.valor)
+                if (cmbActivar_CC3.Items[i].ToString() == config_cc3_activo.valor)
                 {
-                    cmbActivarUbicacion.SelectedValue = config_ubicacion_activa.valor;
+                    cmbActivar_CC3.SelectedValue = config_cc3_activo.valor;
+                }
+            }
+
+            config_varios config_cc2_activo = scv.getEntityByClave("CC2_ACTIVO");
+            for (int i = 0; i < cmbActivar_CC2.Items.Count; i++)
+            {
+                if (cmbActivar_CC2.Items[i].ToString() == config_cc2_activo.valor)
+                {
+                    cmbActivar_CC2.SelectedValue = config_cc2_activo.valor;
+                }
+            }
+
+            config_varios config_cc1_activo = scv.getEntityByClave("CC1_ACTIVO");
+            for (int i = 0; i < cmbActivar_CC1.Items.Count; i++)
+            {
+                if (cmbActivar_CC1.Items[i].ToString() == config_cc1_activo.valor)
+                {
+                    cmbActivar_CC1.SelectedValue = config_cc1_activo.valor;
+                }
+            }
+
+            config_varios config_alcancia_activa = scv.getEntityByClave("ALCANCIA_ACTIVA");
+            for (int i = 0; i < cmbActivar_AlcanciaMultitarifa.Items.Count; i++)
+            {
+                if (cmbActivar_AlcanciaMultitarifa.Items[i].ToString() == config_alcancia_activa.valor)
+                {
+                    cmbActivar_AlcanciaMultitarifa.SelectedValue = config_alcancia_activa.valor;
+                }
+            }
+
+           
+
+
+            config_varios config_ubicacion_activa = scv.getEntityByClave("UBICACION_ACTIVA");
+            for (int i = 0; i < cmbActivar_Ubicacion.Items.Count; i++)
+            {
+                if (cmbActivar_Ubicacion.Items[i].ToString() == config_ubicacion_activa.valor)
+                {
+                    cmbActivar_Ubicacion.SelectedValue = config_ubicacion_activa.valor;
                 }
             }
 
@@ -318,23 +394,28 @@ namespace TestMdfEntityFramework.Views
             }
 
 
-            if (validaPuertoCOMConfigurado())
+            if (config_alcancia_activa.valor == "HABILITADO")
             {
-                if (validaDispositivoConectadoEnPuertoCOM())
+                if (validaPuertoCOMConfigurado())
                 {
-                    // DEBEN ESTAR ACTIVOS ESTOS 3 REGISTROS, SOLO SE COMENTARON PARA PODER REALIZAR PRUEBAS
-                    // MIENTRAS NO SE TIENE EL DISPLAY CONECTADO A LA ALCANCIA - AAAAA
-                    
-                    //SetearValoresTextoEncabezadosYPiePagina();
-                    //SetearValoresLblNoSerieAlcancia();
-                    //SetearValoresTextoDisplayAlcancia();
-                }
-                else
-                {
-                    MessageBox.Show("Favor de Validar que este conectado el dispositivo al puerto COM");
-                }
+                    if (validaDispositivoConectadoEnPuertoCOM())
+                    {
+                        // DEBEN ESTAR ACTIVOS ESTOS 3 REGISTROS, SOLO SE COMENTARON PARA PODER REALIZAR PRUEBAS
+                        // MIENTRAS NO SE TIENE EL DISPLAY CONECTADO A LA ALCANCIA - AAAAA
 
+                        SetearValoresTextoEncabezadosYPiePagina();
+                        SetearValoresLblNoSerieAlcancia();
+                        SetearValoresTextoDisplayAlcancia();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Favor de Validar que este conectado el dispositivo al puerto COM");
+                    }
+
+                }
             }
+
+           
 
         }
         private void SetearValoresTextoEncabezadosYPiePagina()
@@ -473,6 +554,11 @@ namespace TestMdfEntityFramework.Views
             //llenaComboUnidades();
 
             LlenarVocesEnCombo();
+
+            llenarComboActivar_Alcancia();
+            llenarComboActivar_CC1();
+            llenarComboActivar_CC2();
+            llenarComboActivar_CC3();
 
             llenarComboActivarUbicacion();
             llenarComboActivarVoz();
@@ -645,12 +731,45 @@ namespace TestMdfEntityFramework.Views
                 cmbActivarVoz.Items.Add(item);
             }
         }
+
+        private void llenarComboActivar_Alcancia()
+        {
+            List<string> list = getCatalogo_ActivarAlcancia_BaseLocal();
+            foreach (var item in list)
+            {
+                cmbActivar_AlcanciaMultitarifa.Items.Add(item);
+            }
+        }
+        private void llenarComboActivar_CC1()
+        {
+            List<string> list = getCatalogo_ActivarCC1_BaseLocal();
+            foreach (var item in list)
+            {
+                cmbActivar_CC1.Items.Add(item);
+            }
+        }
+        private void llenarComboActivar_CC2()
+        {
+            List<string> list = getCatalogo_ActivarCC2_BaseLocal();
+            foreach (var item in list)
+            {
+                cmbActivar_CC2.Items.Add(item);
+            }
+        }
+        private void llenarComboActivar_CC3()
+        {
+            List<string> list = getCatalogo_ActivarCC3_BaseLocal();
+            foreach (var item in list)
+            {
+                cmbActivar_CC3.Items.Add(item);
+            }
+        }
         private void llenarComboActivarUbicacion()
         {
             List<string> list = getCatalogo_ActivarUbicacion_BaseLocal();
             foreach (var item in list)
             {
-                cmbActivarUbicacion.Items.Add(item);
+                cmbActivar_Ubicacion.Items.Add(item);
             }
         }
         private void LlenarVocesEnCombo()
@@ -864,7 +983,7 @@ namespace TestMdfEntityFramework.Views
         private List<ct_config_puertos> getCatalogo_ConfigPuertos_BaseLocal()
         {
             ServiceConfigPuertos serv = new ServiceConfigPuertos();
-            List<ct_config_puertos> list = serv.getEntities();
+            List<ct_config_puertos> list = serv.getEntitiesNotDeleted();
            
             return list;
         }
@@ -974,6 +1093,51 @@ namespace TestMdfEntityFramework.Views
             return list2;
         }
 
+        private List<string> getCatalogo_ActivarAlcancia_BaseLocal()
+        {
+            ServiceOpcionesGenerales sog = new ServiceOpcionesGenerales();
+            List<opciones_generales> list = sog.getEntitiesByAgrupador("OPCION");
+            List<string> list2 = new List<string>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                list2.Add(list[i].opcion_general);
+            }
+            return list2;
+        }
+        private List<string> getCatalogo_ActivarCC1_BaseLocal()
+        {
+            ServiceOpcionesGenerales sog = new ServiceOpcionesGenerales();
+            List<opciones_generales> list = sog.getEntitiesByAgrupador("OPCION");
+            List<string> list2 = new List<string>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                list2.Add(list[i].opcion_general);
+            }
+            return list2;
+        }
+        private List<string> getCatalogo_ActivarCC2_BaseLocal()
+        {
+            ServiceOpcionesGenerales sog = new ServiceOpcionesGenerales();
+            List<opciones_generales> list = sog.getEntitiesByAgrupador("OPCION");
+            List<string> list2 = new List<string>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                list2.Add(list[i].opcion_general);
+            }
+            return list2;
+        }
+        private List<string> getCatalogo_ActivarCC3_BaseLocal()
+        {
+            ServiceOpcionesGenerales sog = new ServiceOpcionesGenerales();
+            List<opciones_generales> list = sog.getEntitiesByAgrupador("OPCION");
+            List<string> list2 = new List<string>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                list2.Add(list[i].opcion_general);
+            }
+            return list2;
+        }
+
         private List<string> getCatalogo_ActivarUbicacion_BaseLocal()
         {
             ServiceOpcionesGenerales sog = new ServiceOpcionesGenerales();
@@ -1060,9 +1224,11 @@ namespace TestMdfEntityFramework.Views
         {
             bool isConfigured = false;
 
+            ServiceConfigPuertos serv_cp = new ServiceConfigPuertos();
+            ct_config_puertos cp = serv_cp.getEntityByNombreDispositivo("ALCANCIA");
+
             ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
-            config_varios cv_port_name = serv_config_varios.getEntityByClave("PORT_NAME");
-            if (cv_port_name.valor != null && cv_port_name.valor != "")
+            if (cp != null && cp.port_name != "")
             {
                 isConfigured = true;
             }
@@ -1119,6 +1285,8 @@ namespace TestMdfEntityFramework.Views
 
         #endregion
 
+       
+
         #region BOTONES DE GUARDAR DE CADA PANTALLA EN CONFIGURACION
 
         private void btnGuardarConfiguracion_Click(object sender, RoutedEventArgs e)
@@ -1141,55 +1309,55 @@ namespace TestMdfEntityFramework.Views
         }
         private void btnGuardarConf_Puertos_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                //CONFIGURACION DE PUERTO SERIE
-                string port_name = cmbComPorts.Text;
-                string baud_rate = cmbBausRate.Text;
-                string data_bits = cmbDataBits.Text;
-                string stop_bits = cmbStopBits.Text;
-                string paridad = cmbParity.Text;
-                string handshake = cmbHandShake.Text;
+            //try
+            //{
+            //    //CONFIGURACION DE PUERTO SERIE
+            //    string port_name = cmbComPorts.Text;
+            //    string baud_rate = cmbBausRate.Text;
+            //    string data_bits = cmbDataBits.Text;
+            //    string stop_bits = cmbStopBits.Text;
+            //    string paridad = cmbParity.Text;
+            //    string handshake = cmbHandShake.Text;
 
-                ServiceConfigVarios scv = new ServiceConfigVarios();
-                config_varios cv = new config_varios();
+            //    ServiceConfigVarios scv = new ServiceConfigVarios();
+            //    config_varios cv = new config_varios();
 
-                cv.clave = "PORT_NAME";
-                cv.valor = port_name;
-                scv.updEntityByClave(cv);
+            //    cv.clave = "PORT_NAME";
+            //    cv.valor = port_name;
+            //    scv.updEntityByClave(cv);
 
-                cv.clave = "BAUD_RATE";
-                cv.valor = baud_rate;
-                scv.updEntityByClave(cv);
+            //    cv.clave = "BAUD_RATE";
+            //    cv.valor = baud_rate;
+            //    scv.updEntityByClave(cv);
 
-                cv.clave = "DATA_BITS";
-                cv.valor = data_bits;
-                scv.updEntityByClave(cv);
+            //    cv.clave = "DATA_BITS";
+            //    cv.valor = data_bits;
+            //    scv.updEntityByClave(cv);
 
-                cv.clave = "STOP_BITS";
-                cv.valor = stop_bits;
-                scv.updEntityByClave(cv);
+            //    cv.clave = "STOP_BITS";
+            //    cv.valor = stop_bits;
+            //    scv.updEntityByClave(cv);
 
-                cv.clave = "PARIDAD";
-                cv.valor = paridad;
-                scv.updEntityByClave(cv);
+            //    cv.clave = "PARIDAD";
+            //    cv.valor = paridad;
+            //    scv.updEntityByClave(cv);
 
-                cv.clave = "HANDSHAKE";
-                cv.valor = handshake;
-                scv.updEntityByClave(cv);
+            //    cv.clave = "HANDSHAKE";
+            //    cv.valor = handshake;
+            //    scv.updEntityByClave(cv);
 
 
 
-                txtMensajePopup.Text = "CONFIGURACION EXITOSA";
-                mostrarPopupOk();
+            //    txtMensajePopup.Text = "CONFIGURACION EXITOSA";
+            //    mostrarPopupOk();
 
-                //close_serial_port();
-            }
-            catch (Exception ex)
-            {
-                //close_serial_port();
-                MessageBox.Show(ex.Message, "ATENCION", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            //    //close_serial_port();
+            //}
+            //catch (Exception ex)
+            //{
+            //    //close_serial_port();
+            //    MessageBox.Show(ex.Message, "ATENCION", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
 
 
         }
@@ -1231,6 +1399,9 @@ namespace TestMdfEntityFramework.Views
             conf_varios_boleto.clave = "PREFIJO_FOLIO_CORTE";
             conf_varios_boleto.valor = prefijo_folio_corte;
             serv_config_varios_boleto.updEntityByClave(conf_varios_boleto);
+
+            txtMensajePopup.Text = "CONFIGURACION EXITOSA";
+            mostrarPopupOk();
 
             #endregion
 
@@ -1486,18 +1657,45 @@ namespace TestMdfEntityFramework.Views
 
             #endregion
         }
-        private void btnGuardarConfiguracionUbicacion_Click(object sender, RoutedEventArgs e)
+        private void btnGuardarConfiguracionSensores_Click(object sender, RoutedEventArgs e)
         {
             ServiceConfigVarios serv_config_varios = new ServiceConfigVarios();
-            config_varios cv_ubicacion = new config_varios();
+            config_varios cv = new config_varios();
 
-            // UBICACION
-            string activar_ubicacion = cmbActivarUbicacion.Text;
+            // VALORES EN COMBOS
+            string activar_alcancia = cmbActivar_AlcanciaMultitarifa.Text;
+            string activar_cc1 = cmbActivar_CC1.Text;
+            string activar_cc2 = cmbActivar_CC2.Text;
+            string activar_cc3 = cmbActivar_CC3.Text;
+            string activar_ubicacion = cmbActivar_Ubicacion.Text;
+
+
+            // ALCANCIA ACTIVA
+            cv.clave = "ALCANCIA_ACTIVA";
+            cv.valor = activar_alcancia;
+            serv_config_varios.updEntityByClave(cv);
+
+            // CC1 ACTIVO
+            cv.clave = "CC1_ACTIVO";
+            cv.valor = activar_cc1;
+            serv_config_varios.updEntityByClave(cv);
+
+            // CC2 ACTIVO
+            cv.clave = "CC2_ACTIVO";
+            cv.valor = activar_cc2;
+            serv_config_varios.updEntityByClave(cv);
+
+            // CC3 ACTIVO
+            cv.clave = "CC3_ACTIVO";
+            cv.valor = activar_cc3;
+            serv_config_varios.updEntityByClave(cv);
 
             // UBICACION ACTIVA
-            cv_ubicacion.clave = "UBICACION_ACTIVA";
-            cv_ubicacion.valor = activar_ubicacion;
-            serv_config_varios.updEntityByClave(cv_ubicacion);
+            cv.clave = "UBICACION_ACTIVA";
+            cv.valor = activar_ubicacion;
+            serv_config_varios.updEntityByClave(cv);
+
+
 
             // MUESTRA POPUP DE CONFIRMACION DE QUE SE GUARDO EXITOSAMENTE.
             txtMensajePopup.Text = "CONFIGURACION EXITOSA";
@@ -1969,30 +2167,37 @@ namespace TestMdfEntityFramework.Views
                 //config_varios cv_handshake = scv.getEntityByClave("HANDSHAKE");
 
                 ServiceConfigPuertos scp = new ServiceConfigPuertos();
-                ct_config_puertos config_puerto = scp.getEntity(1);
-                string cv_port_name = config_puerto.port_name;
-                string cv_baud_rate = config_puerto.baud_rate;
-                string cv_paridad = config_puerto.paridad;
-                string cv_data_bits = config_puerto.data_bits;
-                string cv_stop_bits = config_puerto.stop_bits;
-                string cv_handshake = config_puerto.handshake;
-
-                if (cv_port_name != "")
+                ct_config_puertos config_puerto = scp.getEntityByNombreDispositivo("ALCANCIA");
+                if(config_puerto != null)
                 {
-                    this.puertoSerie1 = new System.IO.Ports.SerialPort
-                    ("" + cv_port_name
-                    , Convert.ToInt32(cv_baud_rate)
-                    , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
-                    , Convert.ToInt32(cv_data_bits)
-                    , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
-                    );
-                    puertoSerie1.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+                    string cv_port_name = config_puerto.port_name;
+                    string cv_baud_rate = config_puerto.baud_rate;
+                    string cv_paridad = config_puerto.paridad;
+                    string cv_data_bits = config_puerto.data_bits;
+                    string cv_stop_bits = config_puerto.stop_bits;
+                    string cv_handshake = config_puerto.handshake;
 
-                    close_serial_port();
-                    //dispose_serial_port();
+                    if (cv_port_name != "")
+                    {
+                        this.puertoSerie1 = new System.IO.Ports.SerialPort
+                        ("" + cv_port_name
+                        , Convert.ToInt32(cv_baud_rate)
+                        , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                        , Convert.ToInt32(cv_data_bits)
+                        , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                        );
+                        puertoSerie1.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
 
-                    open_serial_port(); //EMD 2024-05-06
+                        //puertoSerie1.ReadTimeout = 10000;
+                        //puertoSerie1.WriteTimeout = 10000;
+
+                        close_serial_port();
+                        //dispose_serial_port();
+
+                        open_serial_port(); //EMD 2024-05-06
+                    }
                 }
+                
             }
             catch(Exception ex)
             {
@@ -2057,6 +2262,163 @@ namespace TestMdfEntityFramework.Views
         }
 
         #endregion
+
+        #region PUERTO SERIAL - CUENTA COCOS 1
+        void ClearBufferSendData_cuenta_cocos()
+        {
+            for (int i = 0; i < BufferSendData_cuenta_cocos.Length; i++)
+            {
+                BufferSendData_cuenta_cocos[i] = 0;
+            }
+        }
+        void ClearBufferRecievedDataGlobal_cuenta_cocos()
+        {
+            for (int i = 0; i < RecievedDataGlobal_cuenta_cocos.Length; i++)
+            {
+                RecievedDataGlobal_cuenta_cocos[i] = 0;
+            }
+        }
+        public void configura_puerto_serial_cuenta_cocos()
+        {
+            try
+            {
+                ServiceConfigPuertos scp = new ServiceConfigPuertos();
+                ct_config_puertos config_puerto = scp.getEntityByNombreDispositivo("CUENTA_COCOS");
+                string cv_port_name = config_puerto.port_name;
+                string cv_baud_rate = config_puerto.baud_rate;
+                string cv_paridad = config_puerto.paridad;
+                string cv_data_bits = config_puerto.data_bits;
+                string cv_stop_bits = config_puerto.stop_bits;
+                string cv_handshake = config_puerto.handshake;
+
+                if (cv_port_name != "")
+                {
+                    this.puertoSerie_cuenta_cocos = new System.IO.Ports.SerialPort
+                    ("" + cv_port_name
+                    , Convert.ToInt32(cv_baud_rate)
+                    , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                    , Convert.ToInt32(cv_data_bits)
+                    , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                    );
+                    puertoSerie_cuenta_cocos.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+
+                    close_serial_port_cuenta_cocos();
+                    open_serial_port_cuenta_cocos(); //EMD 2024-05-06
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
+            }
+        }
+        private void open_serial_port_cuenta_cocos()
+        {
+            try
+            {
+                if (puertoSerie_cuenta_cocos.IsOpen == false)
+                {
+                    puertoSerie_cuenta_cocos.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void close_serial_port_cuenta_cocos()
+        {
+            if (puertoSerie_cuenta_cocos.IsOpen == true)
+            {
+                puertoSerie_cuenta_cocos.Close();
+            }
+        }
+        private void dispose_serial_port_cuenta_cocos()
+        {
+            if (puertoSerie_cuenta_cocos.IsOpen == false)
+            {
+                puertoSerie_cuenta_cocos.Dispose();
+            }
+        }
+        #endregion
+
+        #region PUERTO SERIAL - GPS
+        void ClearBufferSendData_gps()
+        {
+            for (int i = 0; i < BufferSendData_gps.Length; i++)
+            {
+                BufferSendData_gps[i] = 0;
+            }
+        }
+        void ClearBufferRecievedDataGlobal_gps()
+        {
+            for (int i = 0; i < RecievedDataGlobal_gps.Length; i++)
+            {
+                RecievedDataGlobal_gps[i] = 0;
+            }
+        }
+        public void configura_puerto_serial_gps()
+        {
+            try
+            {
+                ServiceConfigPuertos scp = new ServiceConfigPuertos();
+                ct_config_puertos config_puerto = scp.getEntity(5);
+                string cv_port_name = config_puerto.port_name;
+                string cv_baud_rate = config_puerto.baud_rate;
+                string cv_paridad = config_puerto.paridad;
+                string cv_data_bits = config_puerto.data_bits;
+                string cv_stop_bits = config_puerto.stop_bits;
+                string cv_handshake = config_puerto.handshake;
+
+                if (cv_port_name != "")
+                {
+                    this.puertoSerie_gps = new System.IO.Ports.SerialPort
+                    ("" + cv_port_name
+                    , Convert.ToInt32(cv_baud_rate)
+                    , cv_paridad == "NONE" ? System.IO.Ports.Parity.None : System.IO.Ports.Parity.Mark
+                    , Convert.ToInt32(cv_data_bits)
+                    , Convert.ToInt32(cv_stop_bits) == 1 ? System.IO.Ports.StopBits.One : System.IO.Ports.StopBits.None
+                    );
+                    puertoSerie_gps.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
+
+                    close_serial_port_gps();
+                    open_serial_port_gps(); //EMD 2024-05-06
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Verifique" + System.Environment.NewLine + "- Alimentación" + System.Environment.NewLine + "- Conexión del puerto", "Error de puerto COMM");
+            }
+        }
+        private void open_serial_port_gps()
+        {
+            try
+            {
+                if (puertoSerie_gps.IsOpen == false)
+                {
+                    puertoSerie_gps.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void close_serial_port_gps()
+        {
+            if (puertoSerie_gps.IsOpen == true)
+            {
+                puertoSerie_gps.Close();
+            }
+        }
+        private void dispose_serial_port_gps()
+        {
+            if (puertoSerie_gps.IsOpen == false)
+            {
+                puertoSerie_gps.Dispose();
+            }
+        }
+        #endregion
+
 
         #region COMANDOS
         void ClearBufferSendData()
@@ -2350,7 +2712,7 @@ namespace TestMdfEntityFramework.Views
             //close_serial_port();
             //dispose_serial_port();
 
-            open_serial_port();
+            //open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
 
             Task.WaitAll(new Task[] { Task.Delay(200) });
@@ -2401,7 +2763,7 @@ namespace TestMdfEntityFramework.Views
                 //close_serial_port();
                 //dispose_serial_port();
 
-                open_serial_port();
+                //open_serial_port();
                 puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
 
                 Task.WaitAll(new Task[] { Task.Delay(100) });
@@ -2419,7 +2781,7 @@ namespace TestMdfEntityFramework.Views
             catch (Exception ex)
             {
                 mensaje = "";
-                MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+                MessageBox.Show("ejecutar_commando_83_get_mensaje", "Error en comando enviado");
             }
 
             return mensaje;
@@ -2459,7 +2821,7 @@ namespace TestMdfEntityFramework.Views
                 //close_serial_port();
                 //dispose_serial_port();
 
-                open_serial_port();
+                //open_serial_port();
                 puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
 
                 Task.WaitAll(new Task[] { Task.Delay(100) });
@@ -2477,7 +2839,7 @@ namespace TestMdfEntityFramework.Views
             catch (Exception ex)
             {
                 mensaje = "";
-                MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+                MessageBox.Show("ejecutar_commando_85_get_texto_display_alcancia", "Error en comando enviado");
             }
 
             return mensaje;
@@ -2513,7 +2875,7 @@ namespace TestMdfEntityFramework.Views
             //close_serial_port();
             //dispose_serial_port();
 
-            open_serial_port();
+            //open_serial_port();
             puertoSerie1.Write(BufferSendData, 0, K_offsetDatos + CantidadDatos + K_CRCs);
 
             Task.WaitAll(new Task[] { Task.Delay(100) });
@@ -2525,7 +2887,7 @@ namespace TestMdfEntityFramework.Views
             }
             else
             {
-                MessageBox.Show("Verifique la estructura del comando enviado", "Error en comando enviado");
+                MessageBox.Show("ejecutar_commando_88_obtener_serie_alcancia", "Error en comando enviado");
             }
             return no_serie_alcancia;
         }
@@ -2745,7 +3107,7 @@ namespace TestMdfEntityFramework.Views
 
                 //Obtener los puertos ya configurados y guardados en la base para validar que no haya otro con el mismo nombre
                 int bnd_existe_nombre_dispositivo = 0;
-                List< ct_config_puertos> list_config_puertos_existentes = serv_config_puertos.getEntities();
+                List< ct_config_puertos> list_config_puertos_existentes = serv_config_puertos.getEntitiesNotDeleted();
                 foreach (var item in list_config_puertos_existentes)
                 {
                     if(nombre_dispositivo == item.nombre_dispositivo)

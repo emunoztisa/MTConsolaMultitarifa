@@ -257,6 +257,164 @@
         <Grid>
             <TabControl Background="Transparent">
 
+                <!--#region SENSORES -->
+                <TabItem Width="85">
+                    <TabItem.Header>
+                        <StackPanel>
+                            <Image Width="40" Source="/SCS/IMG/usb_2.png"/>
+                            <TextBlock Text="Sensores" Foreground="White" FontWeight="SemiBold" FontSize="14"/>
+                        </StackPanel>
+                    </TabItem.Header>
+                    <Grid>
+                        <!--#region COLS ROWS UBICACION-->
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="234*"/>
+                            <ColumnDefinition Width="234*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="233*"/>
+                            <ColumnDefinition Width="233"/>
+                            <ColumnDefinition Width="10"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition/>
+                            <RowDefinition Height="60"/>
+                            <RowDefinition Height="10"/>
+                        </Grid.RowDefinitions>
+                        <!--#endregion-->
+
+                        <!--#region CONF ALCANCIA -->
+                        <TextBlock Grid.Row="1" 
+                           Grid.Column="1"
+                           Text="ACTIVAR ALCANCIA"
+                           Foreground="Cyan" 
+                           FontSize="15" 
+                           FontWeight="Bold" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="cmbActivar_AlcanciaMultitarifa"
+                          Grid.Row="1" Grid.Column="2"
+                          Background="Transparent"
+                          BorderBrush="White" FontSize="15" 
+                          Margin="2,2,2,2"
+                          Style="{DynamicResource COMBOSTYLE}">
+                        </ComboBox>
+                        <!--#endregion-->
+
+                        <!--#region CONF CUENTA COCOS 1 -->
+                        <TextBlock Grid.Row="3" 
+                           Grid.Column="1"
+                           Text="ACTIVAR CUENTA COCOS 1" 
+                           Foreground="Cyan" 
+                           FontSize="15" 
+                           FontWeight="Bold" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="cmbActivar_CC1"
+                          Grid.Row="3" Grid.Column="2"
+                          Background="Transparent"
+                          BorderBrush="White" FontSize="15" 
+                          Margin="2,2,2,2"
+                          Style="{DynamicResource COMBOSTYLE}">
+                        </ComboBox>
+                        <!--#endregion-->
+
+                        <!--#region CONF CUENTA COCOS 2 -->
+                        <TextBlock Grid.Row="4" 
+                           Grid.Column="1"
+                           Text="ACTIVAR CUENTA COCOS 2" 
+                           Foreground="Cyan" 
+                           FontSize="15" 
+                           FontWeight="Bold" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="cmbActivar_CC2"
+                          Grid.Row="4" Grid.Column="2"
+                          Background="Transparent"
+                          BorderBrush="White" FontSize="15" 
+                          Margin="2,2,2,2"
+                          Style="{DynamicResource COMBOSTYLE}">
+                        </ComboBox>
+                        <!--#endregion-->
+
+                        <!--#region CONF CUENTA COCOS 3 -->
+                        <TextBlock Grid.Row="5" 
+                           Grid.Column="1"
+                           Text="ACTIVAR CUENTA COCOS 3" 
+                           Foreground="Cyan" 
+                           FontSize="15" 
+                           FontWeight="Bold" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="cmbActivar_CC3"
+                          Grid.Row="5" Grid.Column="2"
+                          Background="Transparent"
+                          BorderBrush="White" FontSize="15" 
+                          Margin="2,2,2,2"
+                          Style="{DynamicResource COMBOSTYLE}">
+                        </ComboBox>
+                        <!--#endregion-->
+
+                        <!--#region CONF UBICACION -->
+                        <TextBlock Grid.Row="7" 
+                           Grid.Column="1"
+                           Text="ACTIVAR UBICACION" 
+                           Foreground="Cyan" 
+                           FontSize="15" 
+                           FontWeight="Bold" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="cmbActivar_Ubicacion"
+                          Grid.Row="7" Grid.Column="2"
+                          Background="Transparent"
+                          BorderBrush="White" FontSize="15" 
+                          Margin="2,2,2,2"
+                          Style="{DynamicResource COMBOSTYLE}">
+                        </ComboBox>
+                        <!--#endregion-->
+
+                        <!--#region BOTON GUARDAR -->
+                        <Button x:Name="btnGuardarConf_Ubicacion" 
+                            Grid.Column="5" Grid.Row="9"
+                            Width="210" Height="40" 
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Background="GreenYellow"
+                            Margin="0,0,0,0"
+                            Style="{DynamicResource BTNSTYLE}" 
+                            Click="btnGuardarConfiguracionSensores_Click">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="10"></ColumnDefinition>
+                                    <ColumnDefinition ></ColumnDefinition>
+                                    <ColumnDefinition Width="20"></ColumnDefinition>
+                                    <ColumnDefinition ></ColumnDefinition>
+                                    <ColumnDefinition Width="10"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="1"
+                                    Text="GUARDAR" Foreground="Black" 
+                                    FontSize="18" FontWeight="SemiBold"
+                                    VerticalAlignment="Center" 
+                                    HorizontalAlignment="Center"/>
+                                <Image Grid.Column="3" Width="30" Height="30"
+                                    Source="../SCS/IMG/save_disckete.png" 
+                                    VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                            </Grid>
+                        </Button>
+                        <!--#endregion-->
+                    </Grid>
+                </TabItem>
+                <!--#endregion-->
+
                 <!--#region PUERTOS -->
                 <TabItem Width="70">
                     <TabItem.Header>
@@ -648,7 +806,7 @@
                         <!--#endregion-->
 
                         <!--#region BOTON GUARDAR -->
-                        <Button x:Name="btnGuardarConf_Puertos" 
+                        <!--<Button x:Name="btnGuardarConf_Puertos" 
                             Grid.Column="7" Grid.Row="8"
                             Grid.ColumnSpan="2"
                             Width="210" Height="40" 
@@ -676,7 +834,7 @@
                                     Source="../SCS/IMG/save_disckete.png" 
                                     VerticalAlignment="Top" HorizontalAlignment="Center"/>
                             </Grid>
-                        </Button>
+                        </Button>-->
                         <!--#endregion-->
                     </Grid>
 
@@ -1926,92 +2084,6 @@
                             </Grid>
                         </Button>
 
-                        <!--#endregion-->
-                    </Grid>
-                </TabItem>
-                <!--#endregion-->
-
-                <!--#region UBICACION -->
-                <TabItem Width="85">
-                    <TabItem.Header>
-                        <StackPanel>
-                            <Image Width="40" Source="/SCS/IMG/gps.png"/>
-                            <TextBlock Text="Ubicacion" Foreground="White" FontWeight="SemiBold" FontSize="14"/>
-                        </StackPanel>
-                    </TabItem.Header>
-                    <Grid>
-                        <!--#region COLS ROWS UBICACION-->
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="234*"/>
-                            <ColumnDefinition Width="234*"/>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="233*"/>
-                            <ColumnDefinition Width="233"/>
-                            <ColumnDefinition Width="10"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="35"/>
-                            <RowDefinition Height="35"/>
-                            <RowDefinition Height="35"/>
-                            <RowDefinition Height="35"/>
-                            <RowDefinition Height="35"/>
-                            <RowDefinition Height="35"/>
-                            <RowDefinition Height="35"/>
-                            <RowDefinition/>
-                            <RowDefinition Height="60"/>
-                            <RowDefinition Height="10"/>
-                        </Grid.RowDefinitions>
-                        <!--#endregion-->
-
-                        <!--#region CONF UBICACION -->
-                        <TextBlock Grid.Row="1" 
-                           Grid.Column="1"
-                           Text="ACTIVAR UBICACION" 
-                           Foreground="Cyan" 
-                           FontSize="15" 
-                           FontWeight="Bold" 
-                           VerticalAlignment="Center" 
-                           HorizontalAlignment="Center"/>
-                        <ComboBox x:Name="cmbActivarUbicacion"
-                          Grid.Row="1" Grid.Column="2"
-                          Background="Transparent"
-                          BorderBrush="White" FontSize="15" 
-                          Margin="1"
-                          Style="{DynamicResource COMBOSTYLE}">
-                        </ComboBox>
-                        <!--#endregion-->
-
-                        <!--#region BOTON GUARDAR -->
-                        <Button x:Name="btnGuardarConf_Ubicacion" 
-                            Grid.Column="5" Grid.Row="9"
-                            Width="210" Height="40" 
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Background="GreenYellow"
-                            Margin="0,0,0,0"
-                            Style="{DynamicResource BTNSTYLE}" 
-                            Click="btnGuardarConfiguracionUbicacion_Click">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="10"></ColumnDefinition>
-                                    <ColumnDefinition ></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition ></ColumnDefinition>
-                                    <ColumnDefinition Width="10"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock Grid.Column="1"
-                                    Text="GUARDAR" Foreground="Black" 
-                                    FontSize="18" FontWeight="SemiBold"
-                                    VerticalAlignment="Center" 
-                                    HorizontalAlignment="Center"/>
-                                <Image Grid.Column="3" Width="30" Height="30"
-                                    Source="../SCS/IMG/save_disckete.png" 
-                                    VerticalAlignment="Top" HorizontalAlignment="Center"/>
-                            </Grid>
-                        </Button>
                         <!--#endregion-->
                     </Grid>
                 </TabItem>

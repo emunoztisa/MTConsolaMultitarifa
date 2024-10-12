@@ -156,6 +156,59 @@ namespace TestMdfEntityFramework.Clases
                 }
             }
         }
+        public static void SincronizaConteoCuentaCocos()
+        {
+            ServiceCuentaCocos serv_cc = new ServiceCuentaCocos();
+            List<sy_conteo_cuenta_cocos> list = serv_cc.getEntitiesByEnviados();
+
+            CuentaCocosController bc = new CuentaCocosController();
+            foreach (var item in list)
+            {
+                ResCuentaCocos_Insert resCuentaCocosInserted = bc.InsertConteoCuentaCocos(item);
+                if (resCuentaCocosInserted != null && resCuentaCocosInserted.response == true && resCuentaCocosInserted.status == 200)
+                {
+                    // TODO: Actualizar el pkBoletoTISA en la base de datos local
+                    item.pkConteoCuentaCocosTISA = resCuentaCocosInserted.data.pkConteoCuentaCocos;
+                    item.enviado = 1;
+                    item.confirmado = 1;
+                    item.modo = 1;
+                    serv_cc.updEntity(item);
+                }
+            }
+        }
+
+        public static void SincronizaPosicionGPS()
+        {
+            try
+            {
+                ServicePosicionGPS serv_pos_gps = new ServicePosicionGPS();
+                List<sy_posicion_gps> list = serv_pos_gps.getEntitiesByEnviados();
+
+                PosicionGPSController bc = new PosicionGPSController();
+                foreach (var item in list)
+                {
+
+                    ResPosicionGPS_Insert resPosicionGPSInserted = bc.InsertPosicionGPS(item);
+                    if (resPosicionGPSInserted != null && resPosicionGPSInserted.response == true && resPosicionGPSInserted.status == 200)
+                    {
+                        // TODO: Actualizar el pkBoletoTISA en la base de datos local
+                        item.pkPosicionGPSTISA = resPosicionGPSInserted.data.pkPosicionGPS;
+                        item.enviado = 1;
+                        item.confirmado = 1;
+                        item.modo = 1;
+                        serv_pos_gps.updEntity(item);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                
+            }
+            
+        }
+
+
 
 
     }

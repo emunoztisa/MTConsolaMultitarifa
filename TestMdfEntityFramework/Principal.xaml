@@ -184,7 +184,7 @@
                     <TextBlock Text="CONSOLA MULTITARIFA" Grid.Column="0" 
                                FontSize="20" FontWeight="Bold"
                                Foreground="White" HorizontalAlignment="Left" 
-                               VerticalAlignment="Center" Margin="15,5,5,5"
+                               VerticalAlignment="Center" Margin="25,5,5,5"
                                />
                     <!-- #ENDREGION-->
 
@@ -240,6 +240,15 @@
                         </Grid>
                     </Button>
                     <!--#endregion-->
+                    <!-- #REGION ASIGNACION ACTIVA -->
+                    <TextBlock x:Name="txtAsignacionActivaActual"
+                        Text="" Grid.Column="2" FontWeight="Bold"
+                               FontSize="18"
+                               Foreground="White" HorizontalAlignment="Left" 
+                               VerticalAlignment="Center" Margin="155,5,5,5" />
+                    <!-- #ENDREGION-->
+                    
+                    
                     <!--#region MI CUENTA-->
                     <Button x:Name="btnCuenta" Grid.Column="2" 
                             Background="Transparent" FontSize="15" 
@@ -541,9 +550,9 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="970" />
                     </Grid.ColumnDefinitions>
-                    <!-- #REGION VERSION-->
-                    <TextBlock x:Name="txtVersion"
-                        Text="" Grid.Column="0" 
+                    <!-- #REGION USUARIO ACTUAL-->
+                    <TextBlock x:Name="txtUsuarioActivo"
+                        Text="" Grid.Column="0" FontWeight="Bold"
                                Foreground="White" HorizontalAlignment="Left" 
                                VerticalAlignment="Center" Margin="15,5,5,5" />
                     <!-- #ENDREGION-->
@@ -555,12 +564,27 @@
                            Margin="5,5,600,5"
                            Source="SCS/IMG/validando_conexion.png"/>
                     <!--#endregion-->
-                    <!--#region HAY CONEXION PUERTO SERIAL -->
-                    <Image x:Name="imgHayConexionSerial" 
+                    <!--#region HAY CONEXION PUERTO SERIAL ALCANCIA -->
+                    <Image x:Name="imgHayConexionSerial_Alcancia" 
                            Grid.Column="0" 
                            HorizontalAlignment="Center"   
                            Width="30"
                            Margin="0,0,500,0"
+                           Source="SCS/IMG/puerto_gris.png"/>
+                    <!--#endregion-->
+                    <!--#region HAY CONEXION PUERTO SERIAL CUENTA COCOS -->
+                    <Image x:Name="imgHayConexionSerial_CuentaCocos" 
+                           Grid.Column="0" 
+                           HorizontalAlignment="Center"   
+                           Width="30"
+                           Margin="0,0,400,0"
+                           Source="SCS/IMG/puerto_gris.png"/>
+                    <!--#endregion-->
+                    <Image x:Name="imgHayConexionSerial_GPS" 
+                           Grid.Column="0" 
+                           HorizontalAlignment="Center"   
+                           Width="30"
+                           Margin="0,0,300,0"
                            Source="SCS/IMG/puerto_gris.png"/>
                     <!--#endregion-->
                     <!-- #REGION DIA-->
@@ -570,7 +594,7 @@
                                Foreground="White" 
                                HorizontalAlignment="Center" 
                                VerticalAlignment="Center" 
-                               Margin="5,5,200,5" 
+                               Margin="5,5,40,5" 
                                Text=""/>
                     <!-- #ENDREGION-->
                     <!-- #REGION RELOJ-->
@@ -580,13 +604,13 @@
                                Foreground="White" 
                                HorizontalAlignment="Center" 
                                VerticalAlignment="Center" 
-                               Margin="180,5,5,5" />
+                               Margin="340,5,5,5" />
                     <!-- #ENDREGION-->
                     <!-- #REGION COPYRIGHT-->
                     <TextBlock x:Name="txtCopyright"
                         Text="" Grid.Column="0" 
                                Foreground="White" HorizontalAlignment="Right" 
-                               VerticalAlignment="Center" Margin="5,5,15,5" />
+                               VerticalAlignment="Center" Margin="5,5,5,5" />
                     <!-- #ENDREGION-->
                    
                 </Grid>
