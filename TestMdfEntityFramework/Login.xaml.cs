@@ -785,11 +785,11 @@ namespace TestMdfEntityFramework
             Comun comun = new Comun();
             if (comun.HayConexionInternet())
             {
-                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/conectado.png", UriKind.Relative));
+                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/RED_INTERNET_VERDE.png", UriKind.Relative));
             }
             else
             {
-                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/desconectado.png", UriKind.Relative));
+                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/RED_INTERNET_ROJO.png", UriKind.Relative));
             }
         }
 

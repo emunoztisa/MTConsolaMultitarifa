@@ -64,9 +64,14 @@ namespace TestMdfEntityFramework.EntityServices
             }
         }
 
-        public List<sy_posicion_gps> getEntitiesByEnviados()
+        public List<sy_posicion_gps> getEntitiesByNoEnviados()
         {
             return em.sy_posicion_gps.Where(q => q.enviado == 0 || q.enviado == null).ToList<sy_posicion_gps>();
+        }
+
+        public sy_posicion_gps getEntitiesByNoEnviadosUltimoRegistradoLocal()
+        {
+            return em.sy_posicion_gps.Where(q => q.enviado == 0 || q.enviado == null).OrderByDescending(q => q.fecha_hora).First();
         }
     }
 }

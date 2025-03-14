@@ -182,7 +182,7 @@ namespace TestMdfEntityFramework.Clases
             try
             {
                 ServicePosicionGPS serv_pos_gps = new ServicePosicionGPS();
-                List<sy_posicion_gps> list = serv_pos_gps.getEntitiesByEnviados();
+                List<sy_posicion_gps> list = serv_pos_gps.getEntitiesByNoEnviados();
 
                 PosicionGPSController bc = new PosicionGPSController();
                 foreach (var item in list)
@@ -206,6 +206,35 @@ namespace TestMdfEntityFramework.Clases
                 
             }
             
+        }
+
+        public static void SincronizaPosicionGPS_UltimoRegistradoLocal()
+        {
+            try
+            {
+                ServicePosicionGPS serv_pos_gps = new ServicePosicionGPS();
+                sy_posicion_gps ultimo_registro_local = serv_pos_gps.getEntitiesByNoEnviadosUltimoRegistradoLocal();
+
+                PosicionGPSController bc = new PosicionGPSController();
+               
+                ResPosicionGPS_Insert resPosicionGPSInserted = bc.InsertPosicionGPS(ultimo_registro_local);
+                if (resPosicionGPSInserted != null && resPosicionGPSInserted.response == true && resPosicionGPSInserted.status == 200)
+                {
+                    // TODO: Actualizar el pkBoletoTISA en la base de datos local
+                    ultimo_registro_local.pkPosicionGPSTISA = resPosicionGPSInserted.data.pkPosicionGPS;
+                    ultimo_registro_local.enviado = 1;
+                    ultimo_registro_local.confirmado = 1;
+                    ultimo_registro_local.modo = 1;
+                    serv_pos_gps.updEntity(ultimo_registro_local);
+                }
+                
+            }
+            catch (Exception)
+            {
+
+
+            }
+
         }
 
 

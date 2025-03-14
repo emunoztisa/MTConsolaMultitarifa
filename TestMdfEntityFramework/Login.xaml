@@ -329,7 +329,7 @@
                            Grid.Column="0" 
                            HorizontalAlignment="Center"   
                            Width="30" 
-                           Source="SCS/IMG/validando_conexion.png"/>
+                           Source="SCS/IMG/RED_INTERNET_GRIS.png"/>
                     <!--#endregion-->
                     <!--#region HAY CONEXION PUERTO SERIAL -->
                     <Image x:Name="imgHayConexionSerial" 

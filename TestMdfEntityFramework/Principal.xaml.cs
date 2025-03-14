@@ -100,9 +100,13 @@ namespace TestMdfEntityFramework
         }
         private void inicializa_timer_posicion_gps()
         {
+            ServiceConfigVarios serv_cv = new ServiceConfigVarios();
+            config_varios cv_frec_gps = serv_cv.getEntityByClave("GPS_FRECUENCIA_SEGUNDOS");
+            int segundos = cv_frec_gps.valor != null && cv_frec_gps.valor != "" ? Convert.ToInt32(cv_frec_gps.valor) : 3;
+
             // INICIA TIMER QUE ESTARA ACTUALIZANDO EL VALOR DE ESTATUS
             timerPosicionGPS.Tick += new EventHandler(dispatcherTimerPosicionGPS_Tick);
-            timerPosicionGPS.Interval = new TimeSpan(0, 0, 3);
+            timerPosicionGPS.Interval = new TimeSpan(0, 0, segundos);
             timerPosicionGPS.Start();
 
            
@@ -201,6 +205,7 @@ namespace TestMdfEntityFramework
                 //Envia los pendientes por enviar hacia TISA.
                 // Cuenta Cocos
                 SincronizacionTISA.SincronizaConteoCuentaCocos();
+                //SincronizacionTISA.SincronizaPosicionGPS_UltimoRegistradoLocal();
             }
             catch (Exception ex)
             {
@@ -1749,11 +1754,11 @@ namespace TestMdfEntityFramework
             Comun comun = new Comun();
             if (comun.HayConexionInternet())
             {
-                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/conectado.png", UriKind.Relative));
+                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/RED_INTERNET_VERDE.png", UriKind.Relative));
             }
             else
             {
-                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/desconectado.png", UriKind.Relative));
+                imgHayInternet.Source = new BitmapImage(new Uri(@"/SCS/IMG/RED_INTERNET_ROJO.png", UriKind.Relative));
             }
         }
         private bool HayAsignacionActiva()
@@ -2715,8 +2720,8 @@ namespace TestMdfEntityFramework
                 string str_1_seg = "181 98 6 8 6 0 232 3 1 0 1 0 1 57";
                 string str_3_seg = "181 98 6 8 6 0 184 11 1 0 1 0 217 65 181 98 6 8 0 0 14 48";
                 string str_5_seg = "181 98 06 08 06 00 136 19 01 00 01 00 177 73 181 98 06 08 00 00 15 48";
-                string str_10_seg = "181 98	6 8	6 0	16 39 1	0 1	0 77 221 181 98	6 8	0 0	14 48";
-                string str_20_seg = "181 98	6 8	6 0	32 78 1	0 1	0 132 0	181	98 6 8 0 0 14 48";
+                string str_10_seg = "181 98 6 8 6 0 16 39 1 0 1 0 77 221 181 98 6 8 0 0 14 48";
+                string str_20_seg = "181 98 6 8 6 0 32 78 1 0 1 0 132 0 181 98 6 8 0 0 14 48";
 
                 
                 int frecuencia_minutos_gps = Convert.ToInt32(cv_gps_frecuencia_segundos.valor);
