@@ -109,8 +109,8 @@ namespace TestMdfEntityFramework
             timerPosicionGPS.Interval = new TimeSpan(0, 0, segundos);
             timerPosicionGPS.Start();
 
-           
-            
+
+
         }
 
         private void dispatcherTimerReloj_Tick(object sender, EventArgs e)
@@ -281,7 +281,7 @@ namespace TestMdfEntityFramework
             inicializa_timer_reloj();
             inicializa_timer_evalua_mensajes();
             inicializa_timer_sincroniza();
-            
+
 
             Comun comun = new Comun();
             if (comun.HayConexionInternet())
@@ -375,7 +375,7 @@ namespace TestMdfEntityFramework
         {
             ServiceConfigVarios serv_cv = new ServiceConfigVarios();
             config_varios config_varios_alcancia = serv_cv.getEntityByClave("ALCANCIA_ACTIVA");
-            if(config_varios_alcancia.valor == "HABILITADO")
+            if (config_varios_alcancia.valor == "HABILITADO")
             {
                 if (HayAsignacionActiva())
                 {
@@ -1978,7 +1978,7 @@ namespace TestMdfEntityFramework
             {
                 imgHayConexionSerial_CuentaCocos.Source = new BitmapImage(new Uri(@"/SCS/IMG/puerto_gris.png", UriKind.Relative));
             }
-                
+
         }
         #endregion
 
@@ -2062,7 +2062,7 @@ namespace TestMdfEntityFramework
                 imgHayConexionSerial_GPS.Source = new BitmapImage(new Uri(@"/SCS/IMG/puerto_gris.png", UriKind.Relative));
             }
 
-               
+
         }
         #endregion
 
@@ -2163,11 +2163,11 @@ namespace TestMdfEntityFramework
             //settings_params_gps();
 
             sy_posicion_gps obj = escuchar_gps_GNRMC();
-            if(obj != null) 
-            { 
-                insertar_gps_GNRMC_db_local(obj); 
+            if (obj != null)
+            {
+                insertar_gps_GNRMC_db_local(obj);
             }
-            
+
 
         }
 
@@ -2674,7 +2674,7 @@ namespace TestMdfEntityFramework
 
         #endregion
 
-        
+
         #region COMANDOS - GPS - LISTENER Y CONFIGURACION
         private void reset_to_default_manufactured()
         {
@@ -2723,7 +2723,7 @@ namespace TestMdfEntityFramework
                 string str_10_seg = "181 98 6 8 6 0 16 39 1 0 1 0 77 221 181 98 6 8 0 0 14 48";
                 string str_20_seg = "181 98 6 8 6 0 32 78 1 0 1 0 132 0 181 98 6 8 0 0 14 48";
 
-                
+
                 int frecuencia_minutos_gps = Convert.ToInt32(cv_gps_frecuencia_segundos.valor);
                 switch (frecuencia_minutos_gps)
                 {
@@ -2791,7 +2791,7 @@ namespace TestMdfEntityFramework
                 string str_Enable_GPDTM = "36 69 73 71 80 81 44 68 84 77 42 51 66 13 10 181 98 6 1 3 0 240 10 1 5 36";
                 string str_Disable_GPDTM = "36 69 73 71 80 81 44 68 84 77 42 51 66 13 10 181 98 6 1 3 0 240 10 0 4 35";
                 decimal[] arr_gps_GPDTM_decimal = new decimal[26];
-                if (cv_gps_GPDTM.valor == "SI") 
+                if (cv_gps_GPDTM.valor == "SI")
                 {
                     string[] arr_gps_GPDTM_str = str_Enable_GPDTM.Split(' ');
                     for (int i = 0; i < arr_gps_GPDTM_str.Length; i++)
@@ -3168,7 +3168,7 @@ namespace TestMdfEntityFramework
                         string fecha_hora_gps = fecha_gps + " " + hora_gps;
                         string fecha_hora_gps_correcta = (Convert.ToDateTime(fecha_hora_gps).AddHours(-6)).ToString("yyyy-MM-dd HH:mm:ss.fff");
 
-                            
+
                         obj.fkAsignacion = FK_ASIGNACION_ACTIVA;
                         obj.fkStatus = 1;
                         obj.fecha_hora = fecha_hora_gps_correcta; //fecha_hora_gps;
@@ -3185,9 +3185,9 @@ namespace TestMdfEntityFramework
                     //{
                     //    Console.WriteLine("AUN NO CALCULA LA UBICACION EL GPS GNRMC");
                     //}
-                        
+
                 }
-                    
+
                 //}
                 return obj;
             }
@@ -3200,11 +3200,11 @@ namespace TestMdfEntityFramework
         private void insertar_gps_GNRMC_db_local(sy_posicion_gps obj)
         {
             ServicePosicionGPS serv_pos_gps = new ServicePosicionGPS();
-            if(obj.fkAsignacion != null && obj.fkAsignacion != 0)
+            if (obj.fkAsignacion != null && obj.fkAsignacion != 0)
             {
                 serv_pos_gps.addEntity(obj);
             }
-            
+
         }
 
 
@@ -3339,7 +3339,7 @@ namespace TestMdfEntityFramework
                         puertoSerie_alcancia.Handshake = cv_handshake == "NONE" ? System.IO.Ports.Handshake.None : System.IO.Ports.Handshake.XOnXOff;
                     }
                 }
-                    
+
             }
             catch
             {
@@ -3392,7 +3392,7 @@ namespace TestMdfEntityFramework
             {
                 ServiceConfigPuertos scp = new ServiceConfigPuertos();
                 ct_config_puertos config_puerto = scp.getEntityByNombreDispositivo("CUENTA_COCOS");
-                if(config_puerto != null)
+                if (config_puerto != null)
                 {
                     string cv_port_name = config_puerto.port_name;
                     string cv_baud_rate = config_puerto.baud_rate;
@@ -3416,7 +3416,7 @@ namespace TestMdfEntityFramework
                         open_serial_port_cuenta_cocos(); //EMD 2024-05-06
                     }
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -3499,7 +3499,7 @@ namespace TestMdfEntityFramework
                         open_serial_port_gps(); //EMD 2024-05-06
                     }
                 }
-                    
+
             }
             catch (Exception ex)
             {
